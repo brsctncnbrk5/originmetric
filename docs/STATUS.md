@@ -4,11 +4,13 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P0 — Repository & Dev Foundation** |
-| P0 | **TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW** |
+| Current phase | **None in progress** (P0 accepted; P1a not started) |
+| P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
+| P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
+| Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **NOT STARTED** (do not start without a separate instruction) |
 | Base commit | `1b7b1e2539b590614cf762aca1e7b47db3ac14d0` (`main`) |
-| Implementation branch | `claude/originmetric-p0-foundation` (pushed; **not merged to `main`**) |
+| Implementation branch | `claude/originmetric-p0-foundation` (accepted; fast-forwarded into `main`) |
 | Repository | `brsctncnbrk5/originmetric` (default branch `main`, public) |
 | MASTER DEVELOPMENT PLAN v1 | **REJECTED / SUPERSEDED** (commit `4b24e5c`; Git history only; do not use) — D-000 |
 | MASTER DEVELOPMENT PLAN v2 R1 | **APPROVED / LOCKED** (2026-09-28) — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) — D-001 |
@@ -18,7 +20,7 @@
 
 ## Next step
 
-Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate instruction is given.
+P0 is accepted and merged to `main`. Next: **P1a — Core Domain** (schema, attribution engine, trusted identify, Revenue API) in a fresh session. **Do not begin P1a** until its dedicated instruction is given.
 
 ## P0 result (2026-09-28)
 
@@ -65,13 +67,14 @@ Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate in
 | PLAN-0 v2 R1 | REVIEWED (ChatGPT: PASS, no R2) | `facb60d` | Privacy/ingestion gates G1/G2, server-only identify, one Cloudflare rate-limit rule, P0 deps fixed, decisions triaged 3/6/10, Resend corrected, plan-lock workflow |
 | PLAN-0 lock | **COMPLETE — APPROVED / LOCKED** | `cf4f87a` | U0, U13, U2 locked (D-001…D-003) |
 | Pre-P0 transition | COMPLETE | `1b7b1e2` | Repo renamed to `originmetric`; `main` established as default branch |
-| P0 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | `581979f` (+ STATUS commit) | CI run #1 green; branch `claude/originmetric-p0-foundation` |
-| P0-R1 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
-| P1a | NOT STARTED | — | Awaiting review of P0 |
+| P0 | **COMPLETE / ACCEPTED** | `581979f` (+ STATUS commit) | CI run #1 green; branch `claude/originmetric-p0-foundation` |
+| P0-R1 | **COMPLETE / ACCEPTED** | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
+| P0 acceptance | COMPLETE | `b99a4a9` (accepted head, CI run #4 green) | Barış + ChatGPT: APPROVE AS-IS; P0-R1 PASS; branch fast-forwarded into `main` |
+| P1a | NOT STARTED | — | Awaiting dedicated P1a instruction |
 
 ## For a fresh Claude Code session
 
 1. `CLAUDE.md` is loaded automatically. Follow its rules.
 2. Read this file.
 3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
-4. Do not implement anything unless this file shows a phase as in progress. Right now **no phase is in progress**: P0 is awaiting review and P1a has not started.
+4. Do not implement anything unless this file shows a phase as in progress. Right now **no phase is in progress**: P0 is accepted and P1a has not started.
