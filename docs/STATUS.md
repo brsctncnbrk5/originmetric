@@ -4,11 +4,13 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P1a — Core Domain** (schema, attribution engine, trusted identify, Revenue API) |
+| Current phase | **P1a — Core Domain**: technically complete, awaiting review |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
-| P1a | **IN PROGRESS** (started 2026-09-28 on its dedicated instruction) |
+| P1a | **TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW** (not accepted; do not merge) |
+| P1b | **NOT STARTED** (do not start without a separate instruction) |
+| P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
 | P1a implementation branch | `claude/originmetric-p1a-core` |
 | P0 base commit | `1b7b1e2539b590614cf762aca1e7b47db3ac14d0` (`main`) |
@@ -22,9 +24,55 @@
 
 ## Next step
 
-P1a — Core Domain is **in progress** on `claude/originmetric-p1a-core` (base `main` = `03aaea9`). Plan sections: §3, §4, §7, §9–§14, §20, §22, §26, §28 (P1a). P0 remains COMPLETE / ACCEPTED. P1b must not start.
+**Barış + ChatGPT review P1a** on branch `claude/originmetric-p1a-core`. Do not merge to `main` and do not begin P1b until a separate instruction is given.
 
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
+
+## P1a result (2026-09-28)
+
+- Branch `claude/originmetric-p1a-core` from `main` `03aaea9e9abf779c704b974909495a20189f6edf`. Code commit `760362f`.
+- CI: GitHub Actions run #7 — **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36405850470
+
+**Migrations** (forward-only; `0000_foundation.sql` unchanged):
+- `0001_p1a_core_domain.sql` (Drizzle-generated): 9 tables `workspaces`, `projects`, `api_keys`, `events`, `sessions`, `customers`, `customer_visitors`, `revenue_events`, `customer_attribution`; `uuidv7()` IDs, `timestamptz`, BIGINT money, `project_id`-leading keys/indexes (only the §12 indexes), composite `(project_id, x_id)` FKs, CHECKs (amount > 0, currency/event_id/prefix/hash formats, link methods, types, statuses).
+- `0002_p1a_integrity.sql` (hand-written, not expressible in Drizzle): UPDATE-forbidding triggers on `revenue_events`, `customer_visitors`, `events`; entry-source immutability trigger on `sessions` (only `last_seen_at`/`pageviews` may change); `customer_attribution` session pointers → `sessions(project_id, id)` `ON DELETE SET NULL (<pointer column>)` so copied source strings survive session purge.
+- Not created: Better Auth tables, `workspace_members`, `usage_daily`, `job_runs`, billing/subscription/audit tables.
+- Verified: empty DB → all apply; P0 DB → 0001/0002 apply (test); `db:check` clean; `drizzle-kit generate` → no changes.
+
+**Implementation**
+- ISO 4217: in-repo table (0/2/3/4-decimal exponents), exact decimal formatting via `Intl.NumberFormat` string input, per-currency sums only. No FX, no MRR.
+- Source normalization (pure, `rules_version` 1): UTM (trim/lowercase/200-char cap/aliases) → click-ID presence hint (`gclid`/`fbclid`/`msclkid` → google/facebook/bing, `paid (inferred)`, value never an input) → external referrer (known hosts, else registrable domain via `tldts`) → `direct`. Self-referral = project domains and subdomains + built-in payment/auth list + project exclusions.
+- Attribution engine `attribute(touches, facts, rules)`: pure; acquisition = min(first link, first payment); eligible = linked visitors' sessions in [acq − 90 d, acq] (inclusive); latest non-direct → `attributed`, all direct → `direct`, none → `unattributed`; ties by (started_at, session UUID). Materializer recomputes one customer inside the fact-changing transaction under a `FOR UPDATE` lock on the customer row.
+- Server keys `om_sk_<8 base62>_<43 base62 = 32 CSPRNG bytes>`; stored prefix + SHA-256 hex only; `timingSafeEqual` (dummy compare on unknown prefix); one identical 401 for missing/malformed/unknown/wrong/revoked keys and keys of soft-deleted projects; `last_used_at` at most once per minute; multiple active keys; `revoked_at`.
+- `POST /api/v1/identify`: `visitor_id: null` → `skipped` with no writes; else customer upsert + `server_identify` link + recompute in one transaction → `linked` / `duplicate`.
+- `POST /api/v1/revenue-events`: strict Zod contract, 16 KB body cap, strict RFC 3339 parser, injected `Clock` bounds; `payload_hash` = SHA-256 of a fixed-shape canonical array of normalized values; unique `(project_id, event_id)` is the race authority (`ON CONFLICT DO NOTHING` → re-read → duplicate/409 with full rollback); refund rules under customer + original-payment row locks; `revenue_api` links.
+- Logging: only route, method, status, duration, project_id, api_key_prefix, error_code, outcome; unexpected errors log class + SQLSTATE only. P0 redaction unchanged.
+- `ops` CLI (`npm run ops -- …`, esbuild-bundled to `dist/ops.mjs`): `create-project`, `create-key` (secret printed once), `recompute --project <id> (--all | --customer <id>)`.
+
+| Check | Result |
+|---|---|
+| Vitest: **314 passed / 0 failed**, 17 files (unit 199: engine 25, normalization 60, currency 31, revenue validation/time 52, key format 22, P0 9; real PostgreSQL 18.6 115: constraints 20, identify/401/tenancy 27, revenue/idempotency/refunds/renewals 36, materializer 6, keys 6, ops 10, logging 2, migrations 5, connectivity 3) | PASS |
+| Concurrency: 8 identical revenue requests → 1×201 + 7×200, one row, one link; 6 same-`event_id`/different-customer → 1×201 + 5×409, no stray customers; 6 concurrent 300-unit refunds of a 1000 payment → 3×201 + 3×422, total 900 (repeated 6×, stable) | PASS |
+| Cross-project DB tests (trusted link, revenue customer, refund_of, attribution row, session pointer, event→session) all fail with FK violations | PASS |
+| `npm run check` (lint, format, typecheck, tests, tracker 112 B / 2560 B) | PASS |
+| `npm run test:e2e` (Next.js build + Playwright: smoke + server API against the real build) | PASS |
+| gitleaks v8.30.1 (full history) | PASS |
+| curl walkthrough (below) | PASS |
+
+**curl walkthrough** (live `next start`, key redacted): `ops create-project` → project + `pk_…`; `ops create-key` → `om_sk_5QjOH7Eu_<redacted>` (shown once). identify without key → `401 {"error":{"code":"unauthorized"}}`; identify → `200 linked`; again → `200 duplicate`; `visitor_id:null` → `200 skipped`; revenue `inv_2026_000123` → `201 created, attribution {source:null, status:"unattributed"}` (no tracker yet: correct); retry → `200 duplicate` (same id); amount changed → `409 idempotency_conflict`; email customer → `422 invalid_request field customer_id`; wrong secret → `401`; `ops recompute --all` → `1 customer unattributed`. Server logs contained no key, customer ID or visitor ID. Commands: README "Server API walkthrough".
+
+**New dependencies** (exact pins, runtime): `zod` 4.6.5 (strict API schema validation, anticipated by the plan; already in the lockfile transitively); `tldts` 7.4.16 (+ `tldts-core` 7.4.16; Public Suffix List for registrable domains, zero other deps, bundled list, no network).
+
+**Choices to review / warnings:**
+- Session `source` is normalized at ingestion (P1b) and stored; recompute does not re-normalize old sessions, so a later change to project domains/exclusions affects new sessions only.
+- Referrer medium is left `null` (plan defines none). Click IDs outrank an external referrer (UTM still wins).
+- Self-referral matches the project domain *and all its subdomains*.
+- Test payments (`test: true`) count toward the acquisition moment (plan literal); reporting will exclude them later.
+- `customer_id` containing `@` is rejected (email-looking PII rule, deliberately broad); IDs are 1–128 printable ASCII without whitespace.
+- `occurred_at` fractional seconds beyond milliseconds are truncated (stored precision); two payloads differing only below 1 ms are duplicates.
+- Lookback = exactly 90 × 24 h before the acquisition moment, both bounds inclusive.
+- Every payment triggers a (bounded, idempotent) recompute; refunds recompute only for a new customer or new link.
+- `npm audit`: the 4 known moderate drizzle-kit/esbuild dev-only advisories remain (unchanged from P0).
 
 ## P0 result (2026-09-28)
 
@@ -74,11 +122,12 @@ P1a — Core Domain is **in progress** on `claude/originmetric-p1a-core` (base `
 | P0 | **COMPLETE / ACCEPTED** | `581979f` (+ STATUS commit) | CI run #1 green; branch `claude/originmetric-p0-foundation` |
 | P0-R1 | **COMPLETE / ACCEPTED** | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
 | P0 acceptance | COMPLETE | `b99a4a9` (accepted head, CI run #4 green) | Barış + ChatGPT: APPROVE AS-IS; P0-R1 PASS; branch fast-forwarded into `main` |
-| P1a | IN PROGRESS | — | Branch `claude/originmetric-p1a-core` from `main` `03aaea9` |
+| P1a | **TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW** | `760362f` (+ STATUS commit) | Branch `claude/originmetric-p1a-core` from `main` `03aaea9`; CI run #7 |
+| P1b | NOT STARTED | — | Awaiting review of P1a and a dedicated instruction |
 
 ## For a fresh Claude Code session
 
 1. `CLAUDE.md` is loaded automatically. Follow its rules.
 2. Read this file.
 3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
-4. Do not implement anything unless this file shows a phase as in progress. Right now **P1a is in progress** (P0 accepted).
+4. Do not implement anything unless this file shows a phase as in progress. Right now **P1a is technically complete and awaiting review**; no phase is in progress and P1b must not start.
