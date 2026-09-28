@@ -16,9 +16,9 @@
 ## Next step: pre-P0 repository transition (plan §28, §37)
 
 1. ✅ Plan locked; decisions recorded (D-001…D-003); STATUS updated; plan-lock commit on the planning branch.
-2. ⏳ **Barış:** rename the GitHub repository `Olacak` → `originmetric` (U14) and update the Claude Code environment/repo selection.
-3. ⏳ **Claude (after the rename):** verify the remote URL, Claude's GitHub access (fetch + push to the planning branch) and all branch refs (same head SHAs as before), per §37.
-4. ⏳ Establish the locked PLAN-0 state on `main` (Barış merges or approves the merge; no force push, no history rewrite). Verify a clean remote.
+2. ✅ **Barış:** renamed the GitHub repository `Olacak` → `originmetric` (U14).
+3. ✅ **Claude (2026-09-28):** verified per §37. Remote `https://github.com/brsctncnbrk5/originmetric.git`; fetch OK; push to the planning branch OK (dry run); planning branch head `cf4f87a` locally, on the remote and via the GitHub API (unchanged). **Finding:** the remote has **no `main` branch**; the only branch is the planning branch, and GitHub's default branch is set to it. Repo visibility: public.
+4. ⏳ Establish the locked PLAN-0 state on `main`: create `main` from the planning branch head (Barış approves), then Barış sets `main` as the GitHub default branch (Settings → Branches). No force push, no history rewrite. Verify a clean remote.
 5. ⏳ Only then open a separate P0 implementation branch from `main`.
 
 **Do not begin P0 or any implementation until steps 2–5 are done and this file marks P0 as in progress.**
