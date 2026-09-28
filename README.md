@@ -2,18 +2,20 @@
 
 **Know where your revenue comes from.**
 
-OriginMetric is a micro-SaaS that connects website traffic and acquisition sources to actual revenue — deterministic revenue attribution for indie SaaS founders and small software businesses, including those whose payments don't flow through Stripe.
+OriginMetric is a revenue-attribution micro-SaaS. It connects website traffic sources and campaigns to real revenue through a small tracker and a payment-provider-neutral Revenue API. It is built for indie and small SaaS founders, including those whose payments don't go through Stripe.
 
-## Project Status
+## Project status
 
-This repository currently contains **planning documentation only**. No application code has been written.
+This repository currently contains **planning documentation only**. No application code exists.
 
-- **Current phase**: PLAN-0 (Master Planning / Architecture)
-- **Plan status**: `MASTER DEVELOPMENT PLAN v1 — READY FOR USER REVIEW` (not yet approved)
+- Current phase: **PLAN-0 CLEAN REPLAN**
+- Canonical plan: **MASTER DEVELOPMENT PLAN v2 — READY FOR USER REVIEW** (not approved)
+- The earlier plan v1 was rejected and superseded. It is not in the working tree.
 
-## Start Here
+## Start here
 
-1. [`docs/STATUS.md`](docs/STATUS.md) — current phase, what exists, what's next.
-2. [`docs/planning/MASTER_DEVELOPMENT_PLAN_v1.md`](docs/planning/MASTER_DEVELOPMENT_PLAN_v1.md) — the full architecture, domain model, attribution engine design, security/privacy strategy, roadmap, decision table, and risk register.
+1. [`docs/STATUS.md`](docs/STATUS.md) — current state and next step.
+2. [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md) — the proposed master plan.
+3. [`docs/DECISIONS.md`](docs/DECISIONS.md) — locked decisions log.
 
-Implementation does not begin until the master plan is explicitly approved by the product owner.
+Implementation does not begin until the product owner declares the plan `APPROVED / LOCKED`.

@@ -1,41 +1,42 @@
 # OriginMetric — Project Status
 
-**Read this file first in any new session, then `docs/planning/MASTER_DEVELOPMENT_PLAN_v1.md` for full context.**
+> Single source of truth for "where are we". Read after `CLAUDE.md`, before anything else.
 
-## Current Phase
+| Item | State |
+|---|---|
+| Current phase | **PLAN-0 CLEAN REPLAN** |
+| MASTER DEVELOPMENT PLAN v1 | **REJECTED / SUPERSEDED** (commit `4b24e5c`; the file was removed from the working tree and stays in Git history only; do not use it) |
+| MASTER DEVELOPMENT PLAN v2 | **READY FOR USER REVIEW** — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) |
+| Plan locked? | **NO** |
+| Implementation | **NOT STARTED.** No application code, schema, tracker or deployment exists |
+| Remote push | Blocked by GitHub App authorization (unresolved). Local commits only |
 
-PLAN-0 — Master Planning / Architecture
+## Next step
 
-## Plan Status
+Barış + ChatGPT review MASTER DEVELOPMENT PLAN v2 → possible revision R1/R2 → Barış declares **APPROVED / LOCKED** → only then P0.
 
-MASTER DEVELOPMENT PLAN v1 — READY FOR USER REVIEW (not approved, not locked)
+**Do not begin P0 or any implementation until Barış explicitly says `APPROVED / LOCKED`.**
 
-## Product Implementation Status
+## Decisions needed before P0 (see plan §33)
 
-NOT STARTED. No application code, schema, tracker, or deployment exists yet.
+- U0: approve/revise the plan
+- U2: attribution model (last non-direct touch, customer-level, 90-day lookback)
+- U13: core stack (Next.js 16 + Drizzle + PostgreSQL 18)
+- U18: GitHub Actions for CI
+- U14 (recommended before P0): rename repo `Olacak` → `originmetric` and fix GitHub App push authorization
 
-## What Exists in the Repository
+Other decisions (U1, U3–U12, U15–U17) block later phases only. See plan §33.
 
-- `docs/planning/MASTER_DEVELOPMENT_PLAN_v1.md` — the canonical planning document (architecture, domain model, attribution engine, security/privacy, roadmap, decision table, risk register, assumptions register).
-- `docs/STATUS.md` — this file.
-- `README.md` — project pointer.
+## Phase log
 
-## Next Step
+| Phase | Status | Commit | Notes |
+|---|---|---|---|
+| PLAN-0 v1 | REJECTED | `4b24e5c` | Superseded |
+| PLAN-0 v2 | READY FOR USER REVIEW | (this commit) | Clean replan from first principles |
 
-Product owner (Barış) + ChatGPT review `MASTER_DEVELOPMENT_PLAN_v1.md`. Implementation (P0 — Repository & Project Bootstrap) must NOT begin until the plan is explicitly approved/locked by the product owner.
+## For a fresh Claude Code session
 
-## Open Decisions Blocking Nothing Yet, But Unresolved
-
-See "§15 User Decisions Required Before Implementation" in the master plan:
-1. Auth approach (Auth.js + self-modeled tenancy recommended, vs. third-party auth SaaS)
-2. Attribution semantics confirmation (30-min session boundary, direct-doesn't-overwrite-last-touch)
-3. Data retention specifics (recommended defaults in §16, need sign-off)
-4. Pricing/billing tiers (not needed until P8)
-5. Domain/branding confirmation (needed by P11)
-
-## For a Fresh Claude Code Session
-
-1. Read this file.
-2. Read `docs/planning/MASTER_DEVELOPMENT_PLAN_v1.md`.
-3. Check `git log` for the latest commits.
-4. Do not start implementation (P0) unless the product owner has explicitly said the plan is approved/locked.
+1. `CLAUDE.md` is loaded automatically. Follow its rules.
+2. Read this file.
+3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
+4. Do not implement anything unless this file shows the plan as `APPROVED / LOCKED` and a phase is marked as in progress.
