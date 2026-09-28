@@ -1,0 +1,28 @@
+# Development-only PostgreSQL 18. Not a production deployment.
+# Usage: cp .env.example .env && docker compose -f docker-compose.dev.yml up -d
+name: originmetric-dev
+
+services:
+  postgres:
+    # Pinned PostgreSQL 18 patch release; bump deliberately.
+    image: postgres:18.0-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    ports:
+      # Bound to loopback only: never exposed beyond this machine.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # PostgreSQL 18 images keep data under /var/lib/postgresql/<major>/...
+      - originmetric-dev-pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  originmetric-dev-pgdata:

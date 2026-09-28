@@ -1,0 +1,12 @@
+node_modules/
+.next/
+tracker/dist/
+coverage/
+test-results/
+playwright-report/
+package-lock.json
+drizzle/meta/
+next-env.d.ts
+
+# Hand-written docs (locked planning content must not be reformatted)
+*.md

@@ -1,0 +1,33 @@
+# dependencies
+node_modules/
+
+# build output / caches
+.next/
+out/
+build/
+dist/
+tracker/dist/
+next-env.d.ts
+*.tsbuildinfo
+coverage/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# environment & secrets (fail safe: ignore every .env* except the example)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+
+# logs & OS noise
+*.log
+npm-debug.log*
+.DS_Store
