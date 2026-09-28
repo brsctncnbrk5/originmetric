@@ -20,6 +20,8 @@
     "test:unit": "vitest run --project unit",
     "test:db": "vitest run --project db",
     "tracker:build": "node scripts/build-tracker.mjs",
+    "ops:build": "node scripts/build-ops.mjs",
+    "ops": "node scripts/build-ops.mjs && node dist/ops.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:check": "drizzle-kit check",
@@ -32,7 +34,9 @@
     "pino": "10.3.1",
     "postgres": "3.4.9",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "tldts": "7.4.16",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",

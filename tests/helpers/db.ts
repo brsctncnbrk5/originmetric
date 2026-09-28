@@ -4,6 +4,7 @@ import { createDb, requireDatabaseUrl, type DbHandle } from "@/server/db/client"
 
 export interface TempDatabase extends DbHandle {
   name: string;
+  url: string;
   /** Close connections and drop the temporary database. */
   destroy: () => Promise<void>;
 }
@@ -12,7 +13,7 @@ export interface TempDatabase extends DbHandle {
  * Create a fresh, empty database on the real PostgreSQL server named by DATABASE_URL.
  * Each test file gets its own database, so tests never share state. No mocks.
  */
-export async function createTempDatabase(): Promise<TempDatabase> {
+export async function createTempDatabase(options: { max?: number } = {}): Promise<TempDatabase> {
   const baseUrl = requireDatabaseUrl();
   const name = `om_test_${randomBytes(6).toString("hex")}`;
   const admin = postgres(baseUrl, { max: 1, onnotice: () => {} });
@@ -24,11 +25,12 @@ export async function createTempDatabase(): Promise<TempDatabase> {
 
   const url = new URL(baseUrl);
   url.pathname = `/${name}`;
-  const handle = createDb(url.toString(), { max: 2 });
+  const handle = createDb(url.toString(), { max: options.max ?? 2 });
 
   return {
     ...handle,
     name,
+    url: url.toString(),
     destroy: async () => {
       await handle.close();
       const cleanup = postgres(baseUrl, { max: 1, onnotice: () => {} });

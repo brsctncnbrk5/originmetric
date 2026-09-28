@@ -61,3 +61,24 @@ export function createLogger(options: CreateLoggerOptions = {}): Logger {
 }
 
 export const logger: Logger = createLogger({ name: "originmetric" });
+
+/**
+ * Loggable facts about an unexpected error: its class and, for database errors, the SQLSTATE
+ * (following `cause`, since Drizzle wraps driver errors). Never the message: PostgreSQL error
+ * messages and details can contain input values.
+ */
+export function errorFacts(err: unknown): { error_class: string; sqlstate?: string } {
+  const facts: { error_class: string; sqlstate?: string } = {
+    error_class: err instanceof Error ? err.name : typeof err,
+  };
+  let current: unknown = err;
+  for (let depth = 0; depth < 5 && current !== null && typeof current === "object"; depth++) {
+    const code = (current as { code?: unknown }).code;
+    if (typeof code === "string" && /^[0-9A-Z]{5}$/.test(code)) {
+      facts.sqlstate = code;
+      break;
+    }
+    current = (current as { cause?: unknown }).cause;
+  }
+  return facts;
+}

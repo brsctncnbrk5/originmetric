@@ -20,6 +20,7 @@ export default defineConfig([
     "coverage/**",
     "next-env.d.ts",
     "tracker/dist/**",
+    "dist/**",
     "test-results/**",
     "playwright-report/**",
   ]),

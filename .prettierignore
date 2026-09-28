@@ -1,6 +1,7 @@
 node_modules/
 .next/
 tracker/dist/
+dist/
 coverage/
 test-results/
 playwright-report/

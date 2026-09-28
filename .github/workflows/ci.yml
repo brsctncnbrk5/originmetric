@@ -92,7 +92,7 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
 
-      - name: Playwright smoke
+      - name: Playwright (smoke + server API)
         run: npx playwright test
 
       - name: Upload Playwright report

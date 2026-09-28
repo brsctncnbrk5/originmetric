@@ -1,8 +1,16 @@
 import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { PostgresJsTransaction } from "drizzle-orm/postgres-js/session";
+import type { ExtractTablesWithRelations } from "drizzle-orm";
 import postgres, { type Sql } from "postgres";
 import * as schema from "./schema";
 
 export type Database = PostgresJsDatabase<typeof schema>;
+export type Transaction = PostgresJsTransaction<
+  typeof schema,
+  ExtractTablesWithRelations<typeof schema>
+>;
+/** Anything that can run queries: the pool-backed database or an open transaction. */
+export type Executor = Database | Transaction;
 
 export interface DbHandle {
   db: Database;
@@ -23,7 +31,12 @@ export function createDb(
   url: string = requireDatabaseUrl(),
   options: { max?: number } = {},
 ): DbHandle {
-  const sql = postgres(url, { max: options.max ?? 10, onnotice: () => {} });
+  // The DB session runs in UTC (plan §11); timestamptz values are absolute either way.
+  const sql = postgres(url, {
+    max: options.max ?? 10,
+    onnotice: () => {},
+    connection: { TimeZone: "UTC" },
+  });
   const db = drizzle(sql, { schema });
   return { db, sql, close: () => sql.end({ timeout: 5 }) };
 }

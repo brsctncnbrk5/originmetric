@@ -8,6 +8,20 @@
       "when": 1790582229340,
       "tag": "0000_foundation",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790587930702,
+      "tag": "0001_p1a_core_domain",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790587936625,
+      "tag": "0002_p1a_integrity",
+      "breakpoints": true
     }
   ]
 }
