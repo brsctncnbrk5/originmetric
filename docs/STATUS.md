@@ -9,7 +9,7 @@
 | MASTER DEVELOPMENT PLAN v2 | **READY FOR USER REVIEW** — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) |
 | Plan locked? | **NO** |
 | Implementation | **NOT STARTED.** No application code, schema, tracker or deployment exists |
-| Remote push | Blocked by GitHub App authorization (unresolved). Local commits only |
+| Remote push | Working as of 2026-09-28 (branch `claude/originmetric-master-plan-k5c3w5` pushed) |
 
 ## Next step
 
@@ -23,7 +23,7 @@ Barış + ChatGPT review MASTER DEVELOPMENT PLAN v2 → possible revision R1/R2 
 - U2: attribution model (last non-direct touch, customer-level, 90-day lookback)
 - U13: core stack (Next.js 16 + Drizzle + PostgreSQL 18)
 - U18: GitHub Actions for CI
-- U14 (recommended before P0): rename repo `Olacak` → `originmetric` and fix GitHub App push authorization
+- U14 (recommended before P0): rename repo `Olacak` → `originmetric` and confirm GitHub App access still works after the rename
 
 Other decisions (U1, U3–U12, U15–U17) block later phases only. See plan §33.
 
