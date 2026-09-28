@@ -22,7 +22,7 @@ Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate in
 
 ## P0 result (2026-09-28)
 
-**P0-R1 correction (2026-09-28):** PostgreSQL image `postgres:18.0-alpine` → `postgres:18.6-alpine` (current 18.x patch) in `docker-compose.dev.yml` and CI. Patch-level only: no schema, dependency or architecture change. Full local verification re-run on 18.6: PASS. Tests still assert server major 18 only.
+**P0-R1 correction (2026-09-28):** PostgreSQL image `postgres:18.0-alpine` → `postgres:18.6-alpine` (current 18.x patch) in `docker-compose.dev.yml` and CI. Patch-level only: no schema, dependency or architecture change. Full local verification re-run on 18.6: PASS. Tests still assert server major 18 only. Code verified by CI at `9703358` (the final commit is the STATUS commit on top of it): GitHub Actions run #3 — **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399231624
 
 - Code verified by CI at `581979f`; the final P0 commit is the STATUS commit on top of it (see `git log`).
 - CI: GitHub Actions run #1 — **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36395109290
@@ -66,7 +66,7 @@ Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate in
 | PLAN-0 lock | **COMPLETE — APPROVED / LOCKED** | `cf4f87a` | U0, U13, U2 locked (D-001…D-003) |
 | Pre-P0 transition | COMPLETE | `1b7b1e2` | Repo renamed to `originmetric`; `main` established as default branch |
 | P0 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | `581979f` (+ STATUS commit) | CI run #1 green; branch `claude/originmetric-p0-foundation` |
-| P0-R1 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | see `git log` | PostgreSQL image bumped to `postgres:18.6-alpine` |
+| P0-R1 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
 | P1a | NOT STARTED | — | Awaiting review of P0 |
 
 ## For a fresh Claude Code session
