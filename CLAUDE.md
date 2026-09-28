@@ -20,6 +20,7 @@ Never use `MASTER_DEVELOPMENT_PLAN_v1` (rejected; it exists only in Git history)
 - Money: integer minor units + ISO currency; never sum across currencies.
 - Git: never force-push or rewrite history. Push only to the assigned branch.
 
-## Checks (available from P0)
-- `npm run check`: lint, typecheck, unit tests
-- `npm run test:e2e`: end-to-end vertical slice
+## Checks
+- `npm run check`: lint, format, typecheck, unit + real-DB tests, tracker size gate (needs PostgreSQL 18 from `docker-compose.dev.yml` and `.env`)
+- `npm run test:e2e`: Next.js build + Playwright (Chromium)
+- CI: `.github/workflows/ci.yml` (also runs gitleaks). Quickstart: `README.md`.
