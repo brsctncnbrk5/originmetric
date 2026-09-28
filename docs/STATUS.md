@@ -5,9 +5,10 @@
 | Item | State |
 |---|---|
 | Current phase | **P0 — Repository & Dev Foundation** |
-| P0 | **IN PROGRESS** |
+| P0 | **TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW** |
+| P1a | **NOT STARTED** (do not start without a separate instruction) |
 | Base commit | `1b7b1e2539b590614cf762aca1e7b47db3ac14d0` (`main`) |
-| Implementation branch | `claude/originmetric-p0-foundation` (not merged to `main`) |
+| Implementation branch | `claude/originmetric-p0-foundation` (pushed; **not merged to `main`**) |
 | Repository | `brsctncnbrk5/originmetric` (default branch `main`, public) |
 | MASTER DEVELOPMENT PLAN v1 | **REJECTED / SUPERSEDED** (commit `4b24e5c`; Git history only; do not use) — D-000 |
 | MASTER DEVELOPMENT PLAN v2 R1 | **APPROVED / LOCKED** (2026-09-28) — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) — D-001 |
@@ -17,7 +18,42 @@
 
 ## Next step
 
-Finish P0 (plan §28 "P0"). Stop at its exit criteria. Do not start P1a.
+Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate instruction is given.
+
+## P0 result (2026-09-28)
+
+- Code verified by CI at `581979f`; the final P0 commit is the STATUS commit on top of it (see `git log`).
+- CI: GitHub Actions run #1 — **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36395109290
+
+| Check | Result |
+|---|---|
+| `npm ci` from lockfile (local clean clone + CI) | PASS |
+| ESLint / Prettier check / `tsc --noEmit` (strict) | PASS |
+| Vitest: 15 tests, 5 files (unit: clock, logger redaction, tracker budget; db: connectivity, migrations) | PASS |
+| PostgreSQL 18 dev container healthcheck | PASS |
+| Real-DB connectivity test (asserts server major = 18) | PASS |
+| All migrations apply to a clean DB (test + `db:migrate` CLI) + `db:check` + no ungenerated schema diff | PASS |
+| Tracker build (IIFE, ES2017) + gzip gate: **112 B** / 2560 B | PASS |
+| Next.js production build | PASS |
+| Playwright Chromium smoke | PASS |
+| `npm run check` / `npm run test:e2e` | PASS |
+| gitleaks v8.30.1 (full history, CI + local) | PASS |
+| actionlint on the workflow | PASS |
+
+**Pins:** Node 22 (`.nvmrc`; local 22.22.2) · npm 10 · Next.js 16.3.6 · React 19.3.0 · TypeScript 6.0.3 · ESLint 9.39.5 + eslint-config-next 16.3.6 · Prettier 3.9.9 · drizzle-orm 0.45.3 · drizzle-kit 0.31.11 · postgres (postgres.js) 3.4.9 · pino 10.3.1 · Vitest 5.0.2 · @playwright/test 1.63.0 · esbuild 0.28.2 · image `postgres:18.0-alpine` · gitleaks v8.30.1 (Docker image).
+
+**Choices to review:**
+- Baseline migration `drizzle/0000_foundation.sql` is a no-op (`SELECT 1`): it creates no tables and only proves the migrator records it in `drizzle.__drizzle_migrations`.
+- DB tests create and drop a temporary database per test file on the server in `DATABASE_URL` (so the DB user needs `CREATEDB`; the dev/CI users are superusers).
+- `.env` is loaded by `drizzle.config.ts` / `vitest.config.ts` with Node's built-in `process.loadEnvFile` (no dotenv dependency).
+- TypeScript 6.0.3 instead of 7.x: typescript-eslint 8.70 supports `<6.1`. ESLint 9 instead of 10: eslint-config-next's React/import plugins don't declare ESLint 10 support.
+- CI runs on `pull_request`, pushes to `main` and `claude/**`, and manual dispatch. One job, no matrix, no deployment. Public repo: standard runners are free.
+
+**Warnings / limitations:**
+- `npm audit`: 4 moderate advisories, all in drizzle-kit's dev-only transitive `@esbuild-kit/*` → old esbuild (GHSA-67mh-4wv8-2f99, esbuild dev-server). Not shipped at runtime and the esbuild dev server is not used. The only "fix" is a breaking drizzle-kit downgrade, so it was left as is. Recheck when drizzle-kit updates.
+- `postgres:18.0-alpine` is the first 18.x patch. A newer 18.x tag could not be checked (Docker Hub rate limit). Bump it deliberately in both `docker-compose.dev.yml` and CI.
+- Drizzle's postgres-js driver returns timestamps as strings on the raw `sql` client it wraps. P1a should use Drizzle column modes consistently.
+- Locally, Playwright used the pre-installed Chromium via `PLAYWRIGHT_CHROMIUM_EXECUTABLE`. CI installs its matching Chromium.
 
 ## Phase log
 
@@ -28,11 +64,12 @@ Finish P0 (plan §28 "P0"). Stop at its exit criteria. Do not start P1a.
 | PLAN-0 v2 R1 | REVIEWED (ChatGPT: PASS, no R2) | `facb60d` | Privacy/ingestion gates G1/G2, server-only identify, one Cloudflare rate-limit rule, P0 deps fixed, decisions triaged 3/6/10, Resend corrected, plan-lock workflow |
 | PLAN-0 lock | **COMPLETE — APPROVED / LOCKED** | `cf4f87a` | U0, U13, U2 locked (D-001…D-003) |
 | Pre-P0 transition | COMPLETE | `1b7b1e2` | Repo renamed to `originmetric`; `main` established as default branch |
-| P0 | IN PROGRESS | — | Branch `claude/originmetric-p0-foundation` |
+| P0 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | `581979f` (+ STATUS commit) | CI run #1 green; branch `claude/originmetric-p0-foundation` |
+| P1a | NOT STARTED | — | Awaiting review of P0 |
 
 ## For a fresh Claude Code session
 
 1. `CLAUDE.md` is loaded automatically. Follow its rules.
 2. Read this file.
 3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
-4. Do not implement anything unless this file shows a phase as in progress. Right now **P0 is in progress**.
+4. Do not implement anything unless this file shows a phase as in progress. Right now **no phase is in progress**: P0 is awaiting review and P1a has not started.
