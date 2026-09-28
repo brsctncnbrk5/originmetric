@@ -4,35 +4,33 @@
 
 | Item | State |
 |---|---|
-| Current phase | **PLAN-0 CLEAN REPLAN** |
+| Current phase | **PLAN-0 v2 R1** (technical-review corrections applied) |
 | MASTER DEVELOPMENT PLAN v1 | **REJECTED / SUPERSEDED** (commit `4b24e5c`; the file was removed from the working tree and stays in Git history only; do not use it) |
-| MASTER DEVELOPMENT PLAN v2 | **READY FOR USER REVIEW** — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) |
+| MASTER DEVELOPMENT PLAN v2 | **REVISION R1 — READY FOR USER REVIEW — NOT APPROVED** — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) |
 | Plan locked? | **NO** |
 | Implementation | **NOT STARTED.** No application code, schema, tracker or deployment exists |
-| Remote push | Working as of 2026-09-28 (branch `claude/originmetric-master-plan-k5c3w5` pushed) |
+| Working branch | `claude/originmetric-master-plan-k5c3w5` (planning only; not merged to `main`) |
 
 ## Next step
 
-Barış + ChatGPT review MASTER DEVELOPMENT PLAN v2 → possible revision R1/R2 → Barış declares **APPROVED / LOCKED** → only then P0.
+Barış + ChatGPT review MASTER DEVELOPMENT PLAN v2 R1 → Barış declares **APPROVED / LOCKED** (or requests R2) → pre-P0 transition (plan §28: DECISIONS.md → STATUS → lock commit → canonical state on `main` → clean remote → P0 branch) → only then P0.
 
 **Do not begin P0 or any implementation until Barış explicitly says `APPROVED / LOCKED`.**
 
-## Decisions needed before P0 (see plan §33)
+## P0 blockers (only these)
 
-- U0: approve/revise the plan
-- U2: attribution model (last non-direct touch, customer-level, 90-day lookback)
-- U13: core stack (Next.js 16 + Drizzle + PostgreSQL 18)
-- U18: GitHub Actions for CI
-- U14 (recommended before P0): rename repo `Olacak` → `originmetric` and confirm GitHub App access still works after the rename
+- **U0:** approve/lock the plan
+- **U13:** core stack (Next.js 16 + Drizzle + PostgreSQL 18)
 
-Other decisions (U1, U3–U12, U15–U17) block later phases only. See plan §33.
+Everything else is a recommended default or is asked when its phase approaches (plan §33). U2 (attribution semantics, incl. the R1 identify trust model) is an owner lock needed before P1a, not P0. The repo rename `Olacak` → `originmetric` (U14) is recommended before P0 but does not block it.
 
 ## Phase log
 
 | Phase | Status | Commit | Notes |
 |---|---|---|---|
 | PLAN-0 v1 | REJECTED | `4b24e5c` | Superseded |
-| PLAN-0 v2 | READY FOR USER REVIEW | (this commit) | Clean replan from first principles |
+| PLAN-0 v2 | SUPERSEDED BY R1 (same file) | `c2e2251` | Clean replan from first principles |
+| PLAN-0 v2 R1 | READY FOR USER REVIEW | (this commit) | Privacy/ingestion gates G1/G2, server-only identify, one Cloudflare rate-limit rule, P0 deps fixed, decisions triaged 3/6/10, Resend corrected, plan-lock workflow |
 
 ## For a fresh Claude Code session
 

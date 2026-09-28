@@ -8,8 +8,8 @@ OriginMetric is a revenue-attribution micro-SaaS. It connects website traffic so
 
 This repository currently contains **planning documentation only**. No application code exists.
 
-- Current phase: **PLAN-0 CLEAN REPLAN**
-- Canonical plan: **MASTER DEVELOPMENT PLAN v2 — READY FOR USER REVIEW** (not approved)
+- Current phase: **PLAN-0 v2 R1**
+- Canonical plan: **MASTER DEVELOPMENT PLAN v2 — R1 — READY FOR USER REVIEW** (not approved)
 - The earlier plan v1 was rejected and superseded. It is not in the working tree.
 
 ## Start here
