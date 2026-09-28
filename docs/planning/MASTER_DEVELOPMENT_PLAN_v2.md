@@ -1139,7 +1139,7 @@ Ratings: L = low, M = medium, H = high.
 | VPS failure | M | H | Off-VPS encrypted backups; DR drill; IaC-lite (compose + scripts in Git) | Uptime alerts | P2/P7 |
 | Backup failure / unrestorable | M | H | Dead-man checks, size checks, restore-check, drills | Healthchecks alerts, `job_runs` | P7 |
 | Founder operational load | M | M | No extra infrastructure, alerts only on actionable events, runbooks | Barış's time log | P7 |
-| GitHub access issue (App authorization) | H (current) | M | Local commits allowed; fix auth + rename before P0 (U14) | Push failures | Before P0 |
+| GitHub access issue (App authorization) | L–M (push worked 2026-09-28) | M | Local commits allowed; re-verify access after rename (U14) | Push failures | Before P0 |
 | Claude Code credit waste | M | M | Small phases, briefs, `/clear`, STATUS handoffs, one check command | Spend per phase in STATUS | Every phase |
 | Scope creep | H | H | Non-goals list, scope-exception protocol, cut lines | Plan review each phase | Every phase |
 | Onboarding friction | M | H | Live checklist, prefilled test commands, timed runs | Timed onboarding, beta | P4/P8 |
@@ -1170,7 +1170,7 @@ Not researched (deliberately deferred to their phases): exact current prices of 
 ## 37. GitHub / repository housekeeping
 
 - **Naming mismatch:** the GitHub repo is `brsctncnbrk5/Olacak`; the canonical product is **OriginMetric**. **Recommendation (U14): rename the repository to `originmetric` before P0.** GitHub redirects the old URL, but CI badges, image names (GHCR), deploy scripts and every future Claude session prompt will use the new name, so renaming later costs more. Barış must do this (Settings → Repository name) and update the Claude Code environment/repo selection afterwards. **Claude will not rename it.**
-- **Remote write access:** the GitHub App authorization for pushes is reported as unresolved. Fix this at the same time as the rename, because P0 needs CI on GitHub.
+- **Remote write access:** it was reported as blocked by GitHub App authorization, but a push to `claude/originmetric-master-plan-k5c3w5` succeeded on 2026-09-28. Re-check it after any rename, because P0 needs CI on GitHub.
 - **History:** commit `4b24e5c` (rejected v1) stays in history. The v1 file is removed from the working tree so no future session follows it. No history rewrite, no force push.
 
 ---
