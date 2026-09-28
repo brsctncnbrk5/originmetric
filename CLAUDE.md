@@ -1,6 +1,6 @@
 # CLAUDE.md — OriginMetric operating rules
 
-Product: **OriginMetric**, a revenue attribution micro-SaaS. The repo is currently named `Olacak` (a rename is proposed).
+Product: **OriginMetric**, a revenue attribution micro-SaaS. Repository: `brsctncnbrk5/originmetric`.
 Roles: Barış = product owner and final decision maker; Claude Code = implementation agent; ChatGPT = review and briefs.
 
 ## Read order (keep context small)
