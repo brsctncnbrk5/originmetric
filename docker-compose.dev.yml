@@ -5,7 +5,7 @@ name: originmetric-dev
 services:
   postgres:
     # Pinned PostgreSQL 18 patch release; bump deliberately.
-    image: postgres:18.0-alpine
+    image: postgres:18.6-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}

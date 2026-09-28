@@ -22,6 +22,8 @@ Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate in
 
 ## P0 result (2026-09-28)
 
+**P0-R1 correction (2026-09-28):** PostgreSQL image `postgres:18.0-alpine` → `postgres:18.6-alpine` (current 18.x patch) in `docker-compose.dev.yml` and CI. Patch-level only: no schema, dependency or architecture change. Full local verification re-run on 18.6: PASS. Tests still assert server major 18 only.
+
 - Code verified by CI at `581979f`; the final P0 commit is the STATUS commit on top of it (see `git log`).
 - CI: GitHub Actions run #1 — **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36395109290
 
@@ -40,7 +42,7 @@ Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate in
 | gitleaks v8.30.1 (full history, CI + local) | PASS |
 | actionlint on the workflow | PASS |
 
-**Pins:** Node 22 (`.nvmrc`; local 22.22.2) · npm 10 · Next.js 16.3.6 · React 19.3.0 · TypeScript 6.0.3 · ESLint 9.39.5 + eslint-config-next 16.3.6 · Prettier 3.9.9 · drizzle-orm 0.45.3 · drizzle-kit 0.31.11 · postgres (postgres.js) 3.4.9 · pino 10.3.1 · Vitest 5.0.2 · @playwright/test 1.63.0 · esbuild 0.28.2 · image `postgres:18.0-alpine` · gitleaks v8.30.1 (Docker image).
+**Pins:** Node 22 (`.nvmrc`; local 22.22.2) · npm 10 · Next.js 16.3.6 · React 19.3.0 · TypeScript 6.0.3 · ESLint 9.39.5 + eslint-config-next 16.3.6 · Prettier 3.9.9 · drizzle-orm 0.45.3 · drizzle-kit 0.31.11 · postgres (postgres.js) 3.4.9 · pino 10.3.1 · Vitest 5.0.2 · @playwright/test 1.63.0 · esbuild 0.28.2 · PostgreSQL 18.6 (image `postgres:18.6-alpine`) · gitleaks v8.30.1 (Docker image).
 
 **Choices to review:**
 - Baseline migration `drizzle/0000_foundation.sql` is a no-op (`SELECT 1`): it creates no tables and only proves the migrator records it in `drizzle.__drizzle_migrations`.
@@ -51,7 +53,6 @@ Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate in
 
 **Warnings / limitations:**
 - `npm audit`: 4 moderate advisories, all in drizzle-kit's dev-only transitive `@esbuild-kit/*` → old esbuild (GHSA-67mh-4wv8-2f99, esbuild dev-server). Not shipped at runtime and the esbuild dev server is not used. The only "fix" is a breaking drizzle-kit downgrade, so it was left as is. Recheck when drizzle-kit updates.
-- `postgres:18.0-alpine` is the first 18.x patch. A newer 18.x tag could not be checked (Docker Hub rate limit). Bump it deliberately in both `docker-compose.dev.yml` and CI.
 - Drizzle's postgres-js driver returns timestamps as strings on the raw `sql` client it wraps. P1a should use Drizzle column modes consistently.
 - Locally, Playwright used the pre-installed Chromium via `PLAYWRIGHT_CHROMIUM_EXECUTABLE`. CI installs its matching Chromium.
 
@@ -65,6 +66,7 @@ Barış + ChatGPT review the P0 result. **Do not begin P1a** until a separate in
 | PLAN-0 lock | **COMPLETE — APPROVED / LOCKED** | `cf4f87a` | U0, U13, U2 locked (D-001…D-003) |
 | Pre-P0 transition | COMPLETE | `1b7b1e2` | Repo renamed to `originmetric`; `main` established as default branch |
 | P0 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | `581979f` (+ STATUS commit) | CI run #1 green; branch `claude/originmetric-p0-foundation` |
+| P0-R1 | TECHNICALLY COMPLETE / AWAITING CHATGPT REVIEW | see `git log` | PostgreSQL image bumped to `postgres:18.6-alpine` |
 | P1a | NOT STARTED | — | Awaiting review of P0 |
 
 ## For a fresh Claude Code session
