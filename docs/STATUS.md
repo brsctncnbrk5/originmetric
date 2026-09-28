@@ -4,13 +4,15 @@
 
 | Item | State |
 |---|---|
-| Current phase | **None in progress** (P0 accepted; P1a not started) |
+| Current phase | **P1a — Core Domain** (schema, attribution engine, trusted identify, Revenue API) |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
-| P1a | **NOT STARTED** (do not start without a separate instruction) |
-| Base commit | `1b7b1e2539b590614cf762aca1e7b47db3ac14d0` (`main`) |
-| Implementation branch | `claude/originmetric-p0-foundation` (accepted; fast-forwarded into `main`) |
+| P1a | **IN PROGRESS** (started 2026-09-28 on its dedicated instruction) |
+| P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
+| P1a implementation branch | `claude/originmetric-p1a-core` |
+| P0 base commit | `1b7b1e2539b590614cf762aca1e7b47db3ac14d0` (`main`) |
+| P0 implementation branch | `claude/originmetric-p0-foundation` (accepted; fast-forwarded into `main`) |
 | Repository | `brsctncnbrk5/originmetric` (default branch `main`, public) |
 | MASTER DEVELOPMENT PLAN v1 | **REJECTED / SUPERSEDED** (commit `4b24e5c`; Git history only; do not use) — D-000 |
 | MASTER DEVELOPMENT PLAN v2 R1 | **APPROVED / LOCKED** (2026-09-28) — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) — D-001 |
@@ -20,7 +22,9 @@
 
 ## Next step
 
-P0 is accepted and merged to `main`. Next: **P1a — Core Domain** (schema, attribution engine, trusted identify, Revenue API) in a fresh session. **Do not begin P1a** until its dedicated instruction is given.
+P1a — Core Domain is **in progress** on `claude/originmetric-p1a-core` (base `main` = `03aaea9`). Plan sections: §3, §4, §7, §9–§14, §20, §22, §26, §28 (P1a). P0 remains COMPLETE / ACCEPTED. P1b must not start.
+
+**P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
 ## P0 result (2026-09-28)
 
@@ -70,11 +74,11 @@ P0 is accepted and merged to `main`. Next: **P1a — Core Domain** (schema, attr
 | P0 | **COMPLETE / ACCEPTED** | `581979f` (+ STATUS commit) | CI run #1 green; branch `claude/originmetric-p0-foundation` |
 | P0-R1 | **COMPLETE / ACCEPTED** | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
 | P0 acceptance | COMPLETE | `b99a4a9` (accepted head, CI run #4 green) | Barış + ChatGPT: APPROVE AS-IS; P0-R1 PASS; branch fast-forwarded into `main` |
-| P1a | NOT STARTED | — | Awaiting dedicated P1a instruction |
+| P1a | IN PROGRESS | — | Branch `claude/originmetric-p1a-core` from `main` `03aaea9` |
 
 ## For a fresh Claude Code session
 
 1. `CLAUDE.md` is loaded automatically. Follow its rules.
 2. Read this file.
 3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
-4. Do not implement anything unless this file shows a phase as in progress. Right now **no phase is in progress**: P0 is accepted and P1a has not started.
+4. Do not implement anything unless this file shows a phase as in progress. Right now **P1a is in progress** (P0 accepted).
