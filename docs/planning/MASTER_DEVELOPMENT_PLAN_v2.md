@@ -3,8 +3,10 @@
 | Field | Value |
 |---|---|
 | Plan | **MASTER DEVELOPMENT PLAN v2 — REVISION R1** |
-| Status | **READY FOR USER REVIEW** — **NOT APPROVED**, not locked |
-| Implementation | **NOT STARTED** — nothing in this plan may be implemented before Barış says `APPROVED / LOCKED` |
+| Status | **APPROVED / LOCKED** (Barış, 2026-09-28) — see `docs/DECISIONS.md` D-001…D-003 |
+| Reviewed commit before lock | `facb60d70c0afe8a9a64989b75687167258a625f` (ChatGPT technical review: PASS, R2 not required) |
+| Locked owner decisions | **U0** (this plan) · **U13** (core stack) · **U2** (attribution + trusted-link model) |
+| Implementation | **NOT STARTED** — P0 begins only after the pre-P0 transition (§28) |
 | Supersedes | MASTER DEVELOPMENT PLAN v1 (commit `4b24e5c`) — **REJECTED / SUPERSEDED**, not used as input |
 | Date | 2026-09-28 (v2), 2026-09-28 (R1) |
 | Owner | Barış (product owner, final decision maker) |
@@ -881,7 +883,7 @@ Added later only when needed: `docs/runbooks/*.md` (P7: deploy, restore, inciden
 Order: foundation → **earliest safe vertical slice** → deploy/dogfood → productize → harden → beta → billing → launch.
 Sessions: "S" = one focused Claude Code session (~1–3 h of agent work).
 
-### Pre-P0 — PLAN-LOCK → P0 transition (workflow only; not performed yet)
+### Pre-P0 — PLAN-LOCK → P0 transition (in progress: plan locked 2026-09-28; see `docs/STATUS.md`)
 
 The plan currently lives on the planning branch `claude/originmetric-master-plan-k5c3w5`. Coding must not start from that ambiguous branch. When (and only when) Barış declares `APPROVED / LOCKED`:
 
@@ -1351,4 +1353,4 @@ Not researched (deliberately deferred to their phases): exact current prices of 
 
 ---
 
-*End of MASTER DEVELOPMENT PLAN v2 — R1 — READY FOR USER REVIEW — NOT APPROVED — IMPLEMENTATION NOT STARTED. Do not implement until Barış declares `APPROVED / LOCKED`.*
+*End of MASTER DEVELOPMENT PLAN v2 — R1 — APPROVED / LOCKED (2026-09-28) — IMPLEMENTATION NOT STARTED. P0 begins only after the pre-P0 transition (§28).*

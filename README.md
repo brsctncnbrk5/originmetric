@@ -8,14 +8,15 @@ OriginMetric is a revenue-attribution micro-SaaS. It connects website traffic so
 
 This repository currently contains **planning documentation only**. No application code exists.
 
-- Current phase: **PLAN-0 v2 R1**
-- Canonical plan: **MASTER DEVELOPMENT PLAN v2 — R1 — READY FOR USER REVIEW** (not approved)
+- Canonical plan: **MASTER DEVELOPMENT PLAN v2 R1 — APPROVED / LOCKED** (2026-09-28)
+- PLAN-0: **COMPLETE**
+- Implementation: **NOT STARTED** (next: pre-P0 repository transition, see `docs/STATUS.md`)
 - The earlier plan v1 was rejected and superseded. It is not in the working tree.
 
 ## Start here
 
 1. [`docs/STATUS.md`](docs/STATUS.md) — current state and next step.
-2. [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md) — the proposed master plan.
+2. [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md) — the locked master plan.
 3. [`docs/DECISIONS.md`](docs/DECISIONS.md) — locked decisions log.
 
-Implementation does not begin until the product owner declares the plan `APPROVED / LOCKED`.
+Implementation does not begin until the pre-P0 transition is complete and `docs/STATUS.md` marks P0 as in progress.
