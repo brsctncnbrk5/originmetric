@@ -97,6 +97,8 @@ describe("POST /api/v1/e browser ingestion", () => {
       utm_medium: "social",
     });
     expect((await handleBrowserEvent(request(second), deps)).status).toBe(202);
+    const lastLog = JSON.parse(deps.logs.lines.at(-1) ?? "{}") as { outcome?: string };
+    expect(lastLog.outcome).toBe("accepted");
 
     rows = await projectRows(project.projectId);
     expect(rows.projectEvents).toHaveLength(2);
