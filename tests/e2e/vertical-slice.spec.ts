@@ -20,7 +20,7 @@ test.afterAll(async () => {
   await handle?.close();
 });
 
-test("complete chain: consented visit → session → identify → revenue → attributed internal result", async ({
+test("vertical slice: consented visit → identify → revenue → attribution", async ({
   page,
   request,
 }) => {
