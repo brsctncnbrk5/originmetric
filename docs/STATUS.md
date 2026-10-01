@@ -4,12 +4,12 @@
 
 | Item | State |
 |---|---|
-| Current phase | **None in progress** (P1a accepted; P1b not started) |
+| Current phase | **P1b — Tracker + ingestion + end-to-end proof** (IN PROGRESS) |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
-| P1b | **NOT STARTED** (do not start without a separate instruction) |
+| P1b | **IN PROGRESS** (started 2026-10-01 on `codex/originmetric-p1b-vertical-slice`) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
 | P1a implementation branch | `claude/originmetric-p1a-core` |
@@ -24,7 +24,7 @@
 
 ## Next step
 
-**P1a is COMPLETE / ACCEPTED.** Next: canonical fast-forward to `main`, then P1b in a separate phase. P1b is **NOT STARTED**.
+**P1a is COMPLETE / ACCEPTED and canonical on `main`. P1b is now IN PROGRESS** on `codex/originmetric-p1b-vertical-slice`.
 
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
@@ -128,11 +128,11 @@
 | P0-R1 | **COMPLETE / ACCEPTED** | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
 | P0 acceptance | COMPLETE | `b99a4a9` (accepted head, CI run #4 green) | Barış + ChatGPT: APPROVE AS-IS; P0-R1 PASS; branch fast-forwarded into `main` |
 | P1a | **COMPLETE / ACCEPTED** | `760362f` (+ reviewed STATUS head `4fbe69e`) | ChatGPT technical review: APPROVE AS-IS; final reviewed CI run #8 green |
-| P1b | NOT STARTED | — | Awaiting review of P1a and a dedicated instruction |
+| P1b | **IN PROGRESS** | — | Tracker + ingestion + first complete local vertical slice |
 
 ## For a fresh Claude Code session
 
 1. `CLAUDE.md` is loaded automatically. Follow its rules.
 2. Read this file.
 3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
-4. Do not implement anything unless this file shows a phase as in progress. Right now **P1a is accepted and no phase is in progress**; P1b must not start until its dedicated phase begins.
+4. Do not implement outside the phase shown as in progress. Right now **P1b is IN PROGRESS** on `codex/originmetric-p1b-vertical-slice`.
