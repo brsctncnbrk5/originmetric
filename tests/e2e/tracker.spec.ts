@@ -44,7 +44,9 @@ async function omState(page: Page) {
     return {
       visitorId: om?.getVisitorId() ?? null,
       cookie: document.cookie,
-      localKeys: Object.keys(localStorage).filter((key) => key.startsWith("om_")).sort(),
+      localKeys: Object.keys(localStorage)
+        .filter((key) => key.startsWith("om_"))
+        .sort(),
     };
   });
 }
