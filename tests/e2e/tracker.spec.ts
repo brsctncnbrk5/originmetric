@@ -49,7 +49,7 @@ async function omState(page: Page) {
   });
 }
 
-test("required consent stores and sends nothing before consent, then withdrawal clears state", async ({
+test("required consent has zero state/network before consent and withdrawal clears state", async ({
   page,
 }) => {
   const project = await fixtureProject("required");
@@ -88,7 +88,7 @@ test("required consent stores and sends nothing before consent, then withdrawal 
   expect(requests).toHaveLength(before);
 });
 
-test("GPC blocks auto mode by default, while data-gpc=ignore explicitly opts out", async ({ page }) => {
+test("GPC blocks auto mode while data-gpc=ignore opts out", async ({ page }) => {
   const project = await fixtureProject("gpc");
   const requests: string[] = [];
   page.on("request", (request) => {
@@ -170,7 +170,7 @@ test("blocked ingestion endpoint never breaks the host page", async ({ page }) =
   expect(pageErrors).toEqual([]);
 });
 
-test("strict CSP fixture loads the tracker without inline script requirements", async ({ page }) => {
+test("strict CSP fixture loads tracker without inline scripts", async ({ page }) => {
   const project = await fixtureProject("csp");
   const event = page.waitForRequest((request) => isIngestion(request.url()));
   const response = await page.goto(`/fixtures/csp?site=${project.siteKey}&utm_source=google`);
@@ -180,7 +180,7 @@ test("strict CSP fixture loads the tracker without inline script requirements", 
   await expect(page.locator("#work-count")).toHaveText("1");
 });
 
-test("browser identify is ignored and cannot create customers or trusted links", async ({ page }) => {
+test("browser identify cannot create customers or trusted links", async ({ page }) => {
   const project = await fixtureProject("identify");
   const event = page.waitForRequest((request) => isIngestion(request.url()));
   await page.goto(`/fixtures/basic?site=${project.siteKey}&utm_source=google`);
