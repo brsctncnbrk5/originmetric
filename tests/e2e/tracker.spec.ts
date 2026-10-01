@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { existsSync } from "node:fs";
-import { and, eq } from "drizzle-orm";
-import { expect, test } from "@playwright/test";
+import { eq } from "drizzle-orm";
+import { expect, test, type Page } from "@playwright/test";
 import { createDb, type DbHandle } from "../../src/server/db/client";
 import { customers, customerVisitors, sessions } from "../../src/server/db/schema";
 import { createProject } from "../../src/server/tenancy/projects";
@@ -34,7 +34,7 @@ async function fixtureProject(label: string) {
 
 const isIngestion = (url: string) => new URL(url).pathname === "/api/v1/e";
 
-async function omState(page: Parameters<typeof test>[0] extends never ? never : import("@playwright/test").Page) {
+async function omState(page: Page) {
   return page.evaluate(() => {
     const om = (
       window as Window & {
