@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { customers, customerVisitors, events, sessions } from "@/server/db/schema";
 import { handleBrowserEvent } from "@/server/ingestion/handler";
