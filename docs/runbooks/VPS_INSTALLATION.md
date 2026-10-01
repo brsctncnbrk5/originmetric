@@ -1,6 +1,6 @@
 # OriginMetric — VPS kurulum ve Codex devir rehberi
 
-Durum: **P2 kurulum hazırlığı**. Bu belge VPS kurulduğu veya G1 geçtiği anlamına gelmez.
+Durum: **P2 kurulum hazırlığı tamamlandı; CI #46 geçti**. Bu belge VPS kurulduğu veya G1 geçtiği anlamına gelmez.
 Kod ve paket testleri ayrı; VPS/DNS/Cloudflare, gerçek dogfood ve gerçek off-VPS geri yükleme ayrı kaydedilir.
 
 ## 1. Tek klasör, tek tmux oturumu

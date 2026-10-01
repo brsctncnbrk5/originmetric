@@ -7,7 +7,7 @@ OriginMetric is a revenue-attribution micro-SaaS. It connects website traffic so
 ## Project status
 
 - Canonical plan: **MASTER DEVELOPMENT PLAN v2 R1 — APPROVED / LOCKED** — see [`docs/STATUS.md`](docs/STATUS.md) for the current phase.
-- P0 and P1a are accepted on `main`. P1b (tracker + browser ingestion + first local end-to-end slice) is technically complete on `codex/originmetric-p1b-vertical-slice` and awaits user review; P2 has not started.
+- P0 and P1a are accepted on `main`. P1b (tracker + browser ingestion + first local end-to-end slice) is technically complete. P2 VPS preparation is implemented and verified on `codex/originmetric-p2-vps-preparation`; actual VPS installation remains next. See [VPS installation guide](docs/runbooks/VPS_INSTALLATION.md) and [preparation report](docs/reports/P2_VPS_PREPARATION_REPORT.md).
 
 ## Start here
 

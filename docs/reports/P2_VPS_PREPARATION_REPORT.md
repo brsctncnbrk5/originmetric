@@ -1,7 +1,7 @@
 # OriginMetric — P2 VPS preparation report
 
 Date: 2026-10-02 (Europe/Istanbul)
-Status: **PREPARATION IMPLEMENTED / VERIFICATION IN PROGRESS — VPS NOT DEPLOYED**
+Status: **PREPARATION COMPLETE / VERIFIED — VPS NOT DEPLOYED**
 Branch: `codex/originmetric-p2-vps-preparation`
 Base: P1b report head `1230645e4bfe9897dd953fdfba6e8d8943fd93d5`
 Authorization: D-004, Barış's explicit instruction to finish VPS preparation and then install through Codex in `/opt/originmetric` under one tmux session.
@@ -24,7 +24,24 @@ Authorization: D-004, Barış's explicit instruction to finish VPS preparation a
 
 ## Validation
 
-Local lint/typecheck/unit/build verification and remote full CI results are recorded in the final update after verification. Unit test count: 217 (new limits/body boundary tests included). Tracker unchanged: 2491/2560 B gzip.
+Tested code head: `a8957d872dc2597d6b2d20203e9c62bebee732f4`.
+Full [GitHub CI run #46](https://github.com/brsctncnbrk5/originmetric/actions/runs/36934400786): **success**, 2026-10-01 UTC / 2026-10-02 Istanbul. The final handoff update changes documentation only.
+
+| Verification | Result |
+|---|---|
+| Full-history secret scan, lint, format, typecheck | PASS |
+| Clean migration application, journal consistency, no ungenerated schema changes | PASS |
+| Unit + real PostgreSQL 18 tests | 341 passed, 22 files (217 unit tests) |
+| Production build and tracker size | PASS; 2491/2560 B gzip |
+| Playwright browser/API tests | 10 passed |
+| Exact P1b demo command | 1 passed |
+| Deploy control: no secret overwrite, prior-image rollback + health, first-failure DB preservation | PASS |
+| Real production Docker image, migration, Caddy validation, smoke | PASS |
+| Production browser consent → trusted identify → test payment → google attribution | PASS |
+| Non-root app, private app/DB ports, protected internal routes, redacted logs | PASS |
+| Synthetic encrypted backup, isolated PostgreSQL restore, missing-remote failure path | PASS |
+
+Local lint/format/typecheck, 217 unit tests, production build, shell syntax/control and schema consistency also passed. CI's local rclone remote contains synthetic data; it is not evidence of a real off-VPS storage service or actual VPS installation.
 
 Preparation runtime has Node 24; CI and Docker pin Node 22.22.2/Node 22. No Docker/PostgreSQL daemon is available in this ChatGPT workspace, so real DB/Playwright/Docker package validation must be observed in GitHub CI; it is not claimed as local VPS testing.
 
