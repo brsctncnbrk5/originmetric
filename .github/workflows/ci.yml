@@ -17,7 +17,7 @@ jobs:
   verify:
     name: Verify (lint, types, tests, migrations, tracker, build, e2e, secrets)
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 35
 
     services:
       postgres:
@@ -97,6 +97,15 @@ jobs:
 
       - name: P1b local demo command
         run: npm run demo
+
+      - name: Production package scripts syntax
+        run: bash -n scripts/deploy.sh scripts/vps/*.sh
+
+      - name: Production Docker package, consent dogfood and encrypted restore proof
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y age rclone
+          bash scripts/vps/ci-package-proof.sh
 
       - name: Upload Playwright report
         if: failure()

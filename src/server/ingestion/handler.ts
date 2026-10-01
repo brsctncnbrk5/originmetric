@@ -5,6 +5,8 @@ import { errorFacts } from "@/server/logging/logger";
 import type { Clock } from "@/server/time/clock";
 import { findProjectBySiteKey, recordBrowserEvent } from "./service";
 import { parseBrowserEvent } from "./validation";
+import { BodyTooLarge, readBoundedBody } from "@/server/http/bounded-body";
+import { ingestionClient, ingestionLimits, type IngestionLimits } from "./limits";
 
 export const MAX_BROWSER_BODY_BYTES = 8 * 1024;
 
@@ -12,6 +14,8 @@ export interface IngestionDeps {
   db: Database;
   clock: Clock;
   logger: Logger;
+  limits?: IngestionLimits;
+  proxyEnv?: Record<string, string | undefined>;
 }
 
 function acceptedResponse(origin: string | null): Response {
@@ -65,19 +69,20 @@ export async function handleBrowserEvent(request: Request, deps: IngestionDeps):
     status: 202,
   };
   let corsOrigin: string | null = null;
+  const limits = deps.limits ?? ingestionLimits;
 
   try {
-    const declared = Number(request.headers.get("content-length") ?? "0");
-    if (Number.isFinite(declared) && declared > MAX_BROWSER_BODY_BYTES) {
-      fields.outcome = "dropped_body_size";
+    const processLimit = limits.admitProcess(deps.clock.now().getTime());
+    if (processLimit) {
+      fields.outcome = processLimit;
       return acceptedResponse(null);
     }
-
-    const bytes = await request.arrayBuffer();
-    if (bytes.byteLength > MAX_BROWSER_BODY_BYTES) {
-      fields.outcome = "dropped_body_size";
+    const client = ingestionClient(request, deps.proxyEnv);
+    if (client === null) {
+      fields.outcome = "dropped_untrusted_proxy";
       return acceptedResponse(null);
     }
+    const bytes = await readBoundedBody(request, MAX_BROWSER_BODY_BYTES);
 
     let raw: unknown;
     try {
@@ -105,14 +110,28 @@ export async function handleBrowserEvent(request: Request, deps: IngestionDeps):
       fields.outcome = "dropped_origin";
       return acceptedResponse(null);
     }
-
-    fields.outcome = await recordBrowserEvent(deps.db, project, input, deps.clock);
+    const projectLimit = limits.admitProject(
+      project.id,
+      input.siteKey,
+      client,
+      deps.clock.now().getTime(),
+    );
+    if (projectLimit) {
+      fields.outcome = projectLimit;
+      return acceptedResponse(corsOrigin);
+    }
+    fields.outcome = await recordBrowserEvent(deps.db, project, input, deps.clock, limits.dailyCap);
     return acceptedResponse(corsOrigin);
   } catch (error) {
+    if (error instanceof BodyTooLarge) {
+      fields.outcome = "dropped_body_size";
+      return acceptedResponse(corsOrigin);
+    }
     Object.assign(fields, errorFacts(error));
     fields.outcome = "dropped_internal";
     return acceptedResponse(corsOrigin);
   } finally {
+    limits.count(String(fields.outcome ?? "dropped_internal"));
     fields.duration_ms = Math.round(performance.now() - started);
     const level = "error_class" in fields ? "warn" : "info";
     deps.logger[level](fields, "browser ingestion");

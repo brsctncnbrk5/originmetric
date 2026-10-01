@@ -44,3 +44,10 @@ Format: `D-NNN | date | decision | why | alternatives rejected | supersedes`.
 - **Why:** this is the product's core definition and its data-integrity model (plan §3, §4.4, §7.1b).
 - **Alternatives rejected:** first touch as primary; a user-selectable attribution model from day one; browser/unsigned identify in the MVP.
 - **Supersedes:** —
+
+### D-004 | 2026-10-02 | Proceed with P2 VPS preparation and Codex VPS handoff
+- **User instruction:** “Vpse kurulum için gerekli olan hazırlıkların hepsini bitir ... 1 tmux oturumu ... ben kodeksi o klasörde çalıştırayım ve kurulumu sen yap.”
+- **Decision:** Complete P2 repository-side preparation now. Installation continues through Codex in a single `originmetric` tmux session in `/opt/originmetric`, after a host audit. ChatGPT/Codex is the implementation agent.
+- **Review basis:** P1b automated technical verification and CI/demo were reviewed. Manual demo viewing by Barış was not performed or claimed. This explicit instruction authorizes advancing with P2 preparation despite the prior waiting state; it does not declare production G1 or P2 acceptance.
+- **Constraints:** No paid service without prior approval; preserve unrelated VPS projects and services. DNS, domain, backup account and actual VPS topology are resolved during installation. Stop after P2, with evidence and report.
+- **Supersedes:** P1b's waiting restriction only for proceeding with the authorized P2 preparation/installation; attribution semantics and other locked decisions are unchanged.

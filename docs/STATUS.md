@@ -4,13 +4,13 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P1b — Tracker + ingestion + end-to-end proof**: TECHNICALLY COMPLETE / AWAITING USER REVIEW |
+| Current phase | **P2 — Deploy the slice & dogfood**: VPS PREPARATION IN PROGRESS |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
-| P1b | **TECHNICALLY COMPLETE / AWAITING USER REVIEW** (`codex/originmetric-p1b-vertical-slice`) |
-| P2 | **NOT STARTED** |
+| P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
+| P2 | **VPS PREPARATION IN PROGRESS — NOT DEPLOYED** |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
@@ -26,7 +26,7 @@
 
 ## Next step
 
-**P1b is TECHNICALLY COMPLETE / AWAITING USER REVIEW.** Barış should run/watch `npm run demo` and confirm the attribution semantics in practice. Do not merge P1b to `main` and do not begin P2 until that review is complete.
+Barış authorized completing VPS preparation on 2026-10-02, followed by a single tmux session and Codex installation in `/opt/originmetric` (D-004). P1b's automated technical review is green; no manual demo viewing is claimed. Work is now on `codex/originmetric-p2-vps-preparation`. Complete and validate the preparation package, then use `docs/runbooks/VPS_INSTALLATION.md` for the VPS handoff. Public G1, real backup/restore and real-site dogfood remain pending. P3 must not start.
 
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
@@ -162,11 +162,11 @@
 | P0-R1 | **COMPLETE / ACCEPTED** | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
 | P0 acceptance | COMPLETE | `b99a4a9` (accepted head, CI run #4 green) | Barış + ChatGPT: APPROVE AS-IS; P0-R1 PASS; branch fast-forwarded into `main` |
 | P1a | **COMPLETE / ACCEPTED** | `760362f` (+ reviewed STATUS head `4fbe69e`) | ChatGPT technical review: APPROVE AS-IS; final reviewed CI run #8 green |
-| P1b | **TECHNICALLY COMPLETE / AWAITING USER REVIEW** | `9ce12b7` | CI run #38 green; vertical slice + exact `npm run demo` green; awaiting Barış review |
+| P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** | `9ce12b7` | CI run #38 green; vertical slice + exact `npm run demo` green; awaiting Barış review |
 
 ## For a fresh Claude Code session
 
 1. `CLAUDE.md` is loaded automatically. Follow its rules.
 2. Read this file.
 3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
-4. Right now **P1b is technically complete and awaiting Barış review**. Do not merge it to `main` and do not start P2 until that review is recorded.
+4. Current task: **P2 VPS preparation**, authorized by Barış (D-004). Read the P2 preparation report and VPS installation runbook. Do not claim P2 live or start P3 without the required VPS evidence.

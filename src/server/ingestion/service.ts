@@ -1,8 +1,15 @@
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull, sql } from "drizzle-orm";
 import { recomputeCustomerAttribution } from "@/server/attribution/materialize";
 import { normalizeSource } from "@/server/attribution/source";
 import type { Database, Executor } from "@/server/db/client";
-import { customerVisitors, customers, events, projects, sessions } from "@/server/db/schema";
+import {
+  customerVisitors,
+  customers,
+  events,
+  projects,
+  sessions,
+  ingestionDaily,
+} from "@/server/db/schema";
 import type { Clock } from "@/server/time/clock";
 import type { BrowserEventInput } from "./validation";
 
@@ -12,7 +19,8 @@ export interface IngestionProject {
   excludedReferrers: string[];
 }
 
-export type IngestOutcome = "accepted" | "duplicate" | "dropped_session_conflict";
+export type IngestOutcome =
+  "accepted" | "duplicate" | "dropped_session_conflict" | "dropped_daily_limit";
 
 class IngestControl extends Error {
   constructor(readonly outcome: Exclude<IngestOutcome, "accepted">) {
@@ -67,10 +75,27 @@ export async function recordBrowserEvent(
   project: IngestionProject,
   input: BrowserEventInput,
   clock: Clock,
+  dailyCap = 200_000,
 ): Promise<IngestOutcome> {
   try {
     return await db.transaction(async (tx): Promise<IngestOutcome> => {
       const now = clock.now();
+      const day = now.toISOString().slice(0, 10);
+      // Atomic persisted budget. Duplicate/conflicting events roll this reservation back.
+      const reserved = await tx
+        .insert(ingestionDaily)
+        .values({
+          projectId: project.id,
+          day,
+          accepted: 1,
+        })
+        .onConflictDoUpdate({
+          target: [ingestionDaily.projectId, ingestionDaily.day],
+          set: { accepted: sql`${ingestionDaily.accepted} + 1` },
+          setWhere: sql`${ingestionDaily.accepted} < ${dailyCap}`,
+        })
+        .returning({ accepted: ingestionDaily.accepted });
+      if (!reserved[0]) throw new IngestControl("dropped_daily_limit");
       let [session] = await tx
         .select({
           visitorId: sessions.visitorId,

@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 // Self-hostable, Node runtime only. No experimental or platform-specific features.
 const nextConfig: NextConfig = {
+  output: "standalone",
   poweredByHeader: false,
   reactStrictMode: true,
   async headers() {

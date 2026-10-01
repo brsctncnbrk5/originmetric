@@ -20,6 +20,7 @@ const P1A_TABLES = [
   "customer_visitors",
   "customers",
   "events",
+  "ingestion_daily",
   "projects",
   "revenue_events",
   "sessions",
@@ -65,7 +66,7 @@ describe("migrations", () => {
     expect(baseline.trim().endsWith("SELECT 1;")).toBe(true);
   });
 
-  it("create exactly the P1a domain tables (no auth, members, billing, usage or job tables)", async () => {
+  it("create domain tables and the P2 abuse budget (no auth, billing or job tables)", async () => {
     expect(await publicTables(tmp)).toEqual(P1A_TABLES);
   });
 });

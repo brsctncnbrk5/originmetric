@@ -1,0 +1,35 @@
+{
+    auto_https off
+    # No access log. Redact request context from Caddy's operational errors too.
+    log {
+        format filter {
+            wrap json
+            fields {
+                request>remote_ip delete
+                request>remote_port delete
+                request>client_ip delete
+                request>headers delete
+                request>uri delete
+            }
+        }
+    }
+}
+:80 {
+    @private path /internal/* /api/internal/*
+    respond @private 404
+    @unsafeFixture path /fixtures/basic /fixtures/gpc /fixtures/csp /fixtures/storage /fixtures/blocked /fixtures/withdrawal
+    respond @unsafeFixture 404
+    header {
+        X-Content-Type-Options nosniff
+        Referrer-Policy strict-origin-when-cross-origin
+    }
+    reverse_proxy app:3000 {
+        header_up X-OM-Proxy-Token {$INGEST_PROXY_TOKEN}
+        # Only this loopback-bound, synthetic review listener uses a fixed address.
+        header_up CF-Connecting-IP 127.0.0.1
+        transport http {
+            dial_timeout 5s
+            response_header_timeout 15s
+        }
+    }
+}

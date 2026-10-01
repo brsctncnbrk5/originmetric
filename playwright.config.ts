@@ -27,6 +27,6 @@ export default defineConfig({
     url: `http://127.0.0.1:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
-    env: { INTERNAL_TOKEN: internalToken },
+    env: { INTERNAL_TOKEN: internalToken, INGEST_PROXY_MODE: "local" },
   },
 });

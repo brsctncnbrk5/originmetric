@@ -1,0 +1,14 @@
+# Explicit, optional public ingress. Requires Compose >= 2.24.4 (!override).
+# Use ONLY after VPS topology, Docker-aware firewall, DNS, cert and G1 review.
+services:
+  caddy:
+    environment:
+      OM_DOMAIN: ${OM_DOMAIN:?Choose the actual domain during VPS installation}
+    ports: !override
+      - "80:80"
+      - "443:443"
+    volumes: !override
+      - ./Caddyfile.public:/etc/caddy/Caddyfile:ro
+      - ../secrets/cloudflare:/certs:ro
+      - caddy_data:/data
+      - caddy_config:/config
