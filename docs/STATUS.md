@@ -4,13 +4,13 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P2 — Deploy the slice & dogfood**: VPS PREPARATION VERIFIED |
+| Current phase | **P2 — Deploy the slice & dogfood**: LOCAL VPS INSTALLATION VERIFIED |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
-| P2 | **VPS PREPARATION VERIFIED — NOT DEPLOYED** |
+| P2 | **LOCAL VPS INSTALLATION VERIFIED — PUBLIC G1 / ACCEPTANCE PENDING** |
 | P2 tested code head | `a8957d872dc2597d6b2d20203e9c62bebee732f4` — [CI run #46: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/36934400786) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
@@ -27,7 +27,7 @@
 
 ## Next step
 
-Barış authorized completing VPS preparation on 2026-10-02, followed by a single tmux session and Codex installation in `/opt/originmetric` (D-004). P1b's automated technical review is green; no manual demo viewing is claimed. Work is now on `codex/originmetric-p2-vps-preparation`. The preparation package passed full CI run #46 (341 unit/DB tests, 10 browser tests, demo and Docker/encrypted restore proof). Use `docs/runbooks/VPS_INSTALLATION.md` for the VPS handoff. Public G1, real backup/restore and real-site dogfood remain pending. P3 must not start.
+The actual VPS now runs OriginMetric from `b750a1b5262eb83d04810afc2c71c35678ecfbcc` on `codex/originmetric-p2-vps-preparation`, using only `127.0.0.1:8088`. Build, migrations, DB-backed smoke, selfcheck, non-root app and unpublished app/DB ports passed; nginx and tradebot services retained their existing processes. See [`P2 VPS installation report`](reports/P2_VPS_INSTALLATION_REPORT.md). The installed SHA adds only documentation to CI #46's tested code head. Domain/dogfood host, Cloudflare and free off-VPS backup/monitoring inputs were requested together and remain pending. Continue P2 with those inputs and the installation runbook; public G1, real-domain consent/dogfood, external port checks, real off-VPS backup/restore and scheduled monitoring must pass before acceptance. Public ingress is disabled. **P3 must not start.**
 
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
