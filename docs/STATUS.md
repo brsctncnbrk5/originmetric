@@ -29,6 +29,8 @@
 
 The actual VPS now runs OriginMetric from `b750a1b5262eb83d04810afc2c71c35678ecfbcc` on `codex/originmetric-p2-vps-preparation`, using only `127.0.0.1:8088`. Build, migrations, DB-backed smoke, selfcheck, non-root app and unpublished app/DB ports passed; nginx and tradebot services retained their existing processes. See [`P2 VPS installation report`](reports/P2_VPS_INSTALLATION_REPORT.md). The installed SHA adds only documentation to CI #46's tested code head. Domain/dogfood host, Cloudflare and free off-VPS backup/monitoring inputs were requested together and remain pending. Continue P2 with those inputs and the installation runbook; public G1, real-domain consent/dogfood, external port checks, real off-VPS backup/restore and scheduled monitoring must pass before acceptance. Public ingress is disabled. **P3 must not start.**
 
+Installation records are committed locally. Push to the assigned branch failed with GitHub 403 because the VPS credential's account lacks repository write access; securely provision an authorized credential before retrying. Existing credentials were preserved.
+
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
 

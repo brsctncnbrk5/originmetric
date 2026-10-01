@@ -87,3 +87,7 @@ Remaining work within P2:
 - Confirm encrypted/password-manager preservation of production secrets by the owner.
 
 **Public G1: not passed. P2: in progress, local installation verified. P3: not started.**
+
+## Repository handoff
+
+Report and STATUS were committed locally on the assigned P2 branch. Push was attempted only to that branch. GitHub rejected it with HTTP 403: the VPS's configured credential authenticates as `brsctncnbrk3-hub`, which cannot write `brsctncnbrk5/originmetric`. No credential, remote or history was changed. A repository-authorized credential must be provisioned securely before retrying the push; the local commit remains available.
