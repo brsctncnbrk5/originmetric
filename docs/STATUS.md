@@ -4,13 +4,15 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P1b — Tracker + ingestion + end-to-end proof** (IN PROGRESS) |
+| Current phase | **P1b — Tracker + ingestion + end-to-end proof**: TECHNICALLY COMPLETE / AWAITING USER REVIEW |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
-| P1b | **IN PROGRESS** (started 2026-10-01 on `codex/originmetric-p1b-vertical-slice`) |
+| P1b | **TECHNICALLY COMPLETE / AWAITING USER REVIEW** (`codex/originmetric-p1b-vertical-slice`) |
+| P2 | **NOT STARTED** |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
+| P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
 | P1a implementation branch | `claude/originmetric-p1a-core` |
 | P0 base commit | `1b7b1e2539b590614cf762aca1e7b47db3ac14d0` (`main`) |
@@ -24,7 +26,7 @@
 
 ## Next step
 
-**P1a is COMPLETE / ACCEPTED and canonical on `main`. P1b is now IN PROGRESS** on `codex/originmetric-p1b-vertical-slice`.
+**P1b is TECHNICALLY COMPLETE / AWAITING USER REVIEW.** Barış should run/watch `npm run demo` and confirm the attribution semantics in practice. Do not merge P1b to `main` and do not begin P2 until that review is complete.
 
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
@@ -32,6 +34,38 @@
 **Accepted P1a review guardrails:**
 - Stored session sources are normalized facts. If source-normalization rules later change and historical sessions must change too, use an explicit migration/rebuild/re-normalization strategy; current `ops recompute` only recomputes attribution from stored session facts.
 - `test:true` revenue currently participates in acquisition semantics under the locked model. When test-data deletion/purge is implemented later, tests must prove that deleting test data cannot leave stale live attribution.
+
+## P1b result (2026-10-01)
+
+- Branch: `codex/originmetric-p1b-vertical-slice`, based on canonical `main` `a7969c09c525cf57bcd25d9970e2e52240d6b6b3`.
+- Final technical code head: `9ce12b7672141d2d42f43992c5a766f3609f59c7`.
+- CI: GitHub Actions run #38 — **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514
+- Completion report: [`docs/reports/P1B_COMPLETION_REPORT.md`](reports/P1B_COMPLETION_REPORT.md).
+- Tracker v0: automatic pageview + SPA navigation, 30-minute/campaign session rules, first-party visitor/session state, UTM/referrer/click-ID hints, `getVisitorId()`, required-consent mode, consent withdrawal clearing, GPC safe default, sendBeacon/fetch failure isolation, no browser identify.
+- Public ingestion: `POST /api/v1/e` with public site-key resolution, allowed-origin/Referer fallback, strict 8 KB schema, event dedup, session upsert, already-linked attribution recompute, uniform 202/drop behaviour and no trusted-link creation.
+- Fixtures/internal proof: consent/GPC/CSP/storage-disabled/blocked-endpoint fixtures and token-protected `/internal/projects/[id]`.
+- Full vertical slice proven: consented Google visit → stored session/source → secret-key server identify → payment → `google / attributed` → internal result page.
+- A real ingestion defect discovered by the new regression suite was fixed: an existing session's pageview update now uses the already-`FOR UPDATE`-locked row values rather than raw SQL fragments.
+
+| Check | Result |
+|---|---|
+| Vitest: **333 passed / 0 failed**, 20 files | PASS |
+| P1b ingestion integration tests: 7 | PASS |
+| Tracker-core unit tests: 9 | PASS |
+| Internal-token unit tests: 3 | PASS |
+| Playwright: **10 passed / 0 failed** | PASS |
+| Required consent: zero OriginMetric storage/network before consent; withdrawal clears state and stops sending | PASS |
+| GPC safe default + explicit `data-gpc="ignore"` | PASS |
+| Storage-disabled / blocked-endpoint host-page failure isolation | PASS |
+| Strict CSP fixture | PASS |
+| Browser identify/link poisoning prevention | PASS |
+| SPA direct continuation + campaign split | PASS |
+| Complete vertical-slice test | PASS |
+| `npm run demo` exact command in CI | PASS |
+| Tracker gzip: **2491 B / 2560 B** | PASS |
+| lint / Prettier / typecheck / migrations / Next production build / gitleaks | PASS |
+
+**Review gate:** P1b is technically complete, but the locked plan requires **Barış user review** before acceptance. P2 is not started.
 
 ## P1a result (2026-09-28)
 
@@ -128,11 +162,11 @@
 | P0-R1 | **COMPLETE / ACCEPTED** | `9703358` (+ STATUS commit) | PostgreSQL image bumped to `postgres:18.6-alpine` |
 | P0 acceptance | COMPLETE | `b99a4a9` (accepted head, CI run #4 green) | Barış + ChatGPT: APPROVE AS-IS; P0-R1 PASS; branch fast-forwarded into `main` |
 | P1a | **COMPLETE / ACCEPTED** | `760362f` (+ reviewed STATUS head `4fbe69e`) | ChatGPT technical review: APPROVE AS-IS; final reviewed CI run #8 green |
-| P1b | **IN PROGRESS** | — | Tracker + ingestion + first complete local vertical slice |
+| P1b | **TECHNICALLY COMPLETE / AWAITING USER REVIEW** | `9ce12b7` | CI run #38 green; vertical slice + exact `npm run demo` green; awaiting Barış review |
 
 ## For a fresh Claude Code session
 
 1. `CLAUDE.md` is loaded automatically. Follow its rules.
 2. Read this file.
 3. Read only the plan section(s) named in "Next step" (or the phase brief you were given).
-4. Do not implement outside the phase shown as in progress. Right now **P1b is IN PROGRESS** on `codex/originmetric-p1b-vertical-slice`.
+4. Right now **P1b is technically complete and awaiting Barış review**. Do not merge it to `main` and do not start P2 until that review is recorded.

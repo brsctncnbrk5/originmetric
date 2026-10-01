@@ -7,7 +7,7 @@ OriginMetric is a revenue-attribution micro-SaaS. It connects website traffic so
 ## Project status
 
 - Canonical plan: **MASTER DEVELOPMENT PLAN v2 R1 — APPROVED / LOCKED** — see [`docs/STATUS.md`](docs/STATUS.md) for the current phase.
-- P0 (repository & dev foundation) is accepted. P1a (core domain: schema, attribution engine, trusted server identify, Revenue API) is headless: there is no tracker, dashboard or auth yet.
+- P0 and P1a are accepted on `main`. P1b (tracker + browser ingestion + first local end-to-end slice) is technically complete on `codex/originmetric-p1b-vertical-slice` and awaits user review; P2 has not started.
 
 ## Start here
 
@@ -35,7 +35,8 @@ Checks (every script exits non-zero on failure):
 | `npm run test:e2e` | Next.js production build, then Playwright (Chromium smoke + server API against `DATABASE_URL`) |
 | `npm run test:unit` / `npm run test:db` | Vitest unit tests / tests against the real PostgreSQL in `DATABASE_URL` |
 | `npm run ops -- <command>` | ops CLI (bundled to `dist/ops.mjs` with esbuild, then run with Node) |
-| `npm run tracker:build` | builds `tracker/dist/om.js` (IIFE, ES2017) and fails above 2.5 KB gzip |
+| `npm run tracker:build` | builds `tracker/dist/om.js` + `public/js/v1/om.js` (IIFE, ES2017) and fails above 2.5 KB gzip |
+| `npm run demo` | builds the app and runs the complete P1b Playwright vertical slice |
 
 First Playwright run on a new machine: `npx playwright install chromium`.
 
@@ -70,7 +71,30 @@ curl -s -X POST http://localhost:3000/api/v1/revenue-events \
 npm run ops -- recompute --project <project_id> --all   # rebuild attribution from stored facts
 ```
 
-Without a tracker (P1b) there are no sessions, so API-created customers are correctly `unattributed`.
+The headless P1a walkthrough can still produce `unattributed` when no browser session exists. P1b adds the browser/session side of the chain.
+
+## P1b local vertical-slice demo
+
+With PostgreSQL running, migrations applied, and Playwright Chromium installed:
+
+```sh
+npm run demo
+```
+
+The demo proves the local chain with a real production build and real PostgreSQL:
+
+```text
+required-consent fixture
+→ consent granted
+→ pageview/session stored
+→ Google source normalized
+→ server identify creates trusted link
+→ Revenue API records payment
+→ attribution becomes google / attributed
+→ token-protected internal result confirms it
+```
+
+The tracker is served from `/js/v1/om.js`; browser events go to `POST /api/v1/e`. Browser code cannot create customers or trusted visitor/customer links.
 
 ## Migrations
 
@@ -79,19 +103,20 @@ Migrations: edit `src/server/db/schema.ts`, run `npm run db:generate`, review an
 ## Layout
 
 ```
-src/app/            Next.js App Router (smoke page; /api/v1/identify, /api/v1/revenue-events)
+src/app/            Next.js App Router (server APIs, browser ingestion, fixtures, internal proof page)
 src/server/db/      Drizzle client, schema, migrator
 src/server/attribution/  source normalization, pure attribute() engine, materializer
 src/server/identity/     customers, trusted links, server identify
 src/server/revenue/      Revenue API validation, idempotency, refunds
 src/server/tenancy/      projects, server API keys
 src/server/money/        in-repo ISO 4217 table, exact formatting
-src/server/http/         API handlers, error envelope
+src/server/http/         secret-key API handlers, error envelope
+src/server/ingestion/    public browser-event validation, origin gate, session/event persistence
 src/server/ops/          ops CLI (create-project, create-key, recompute)
 src/server/time/    Clock abstraction, strict RFC 3339 parser
 src/server/logging/ pino logger (redaction)
 drizzle/            committed SQL migrations (0002 is hand-written: triggers + SET NULL FKs)
-tracker/            browser tracker source (skeleton)
+tracker/            consent-aware browser tracker v0
 scripts/            tracker build + size gate
 tests/              unit, db (real PostgreSQL), e2e (Playwright)
 ```
