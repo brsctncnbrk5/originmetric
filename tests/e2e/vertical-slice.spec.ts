@@ -41,9 +41,7 @@ test("vertical slice: consented visit → identify → revenue → attribution",
   );
   const customerId = `cust_vertical_${randomUUID().slice(0, 8)}`;
 
-  const ingestion = page.waitForRequest(
-    (req) => new URL(req.url()).pathname === "/api/v1/e",
-  );
+  const ingestion = page.waitForRequest((req) => new URL(req.url()).pathname === "/api/v1/e");
   await page.goto(
     `/fixtures/required?site=${project.siteKey}&utm_source=Google&utm_medium=CPC&utm_campaign=P1B`,
   );
