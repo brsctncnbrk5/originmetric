@@ -17,7 +17,7 @@ fi
 # Build at exact SHA on the VPS; no GHCR account or paid build service required.
 docker build --pull --tag "originmetric:$APP_TAG" .
 dc run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
-dc up -d db
+dc up -d --wait --wait-timeout 120 db
 dc run --rm --no-deps app node dist/ops.mjs migrate
 rollback() {
   trap - ERR

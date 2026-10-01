@@ -82,10 +82,22 @@ try {
     [...compose, "exec", "-T", "app", "node", "--input-type=module", "-"],
     {
       encoding: "utf8",
-      input: `const r=await fetch('http://127.0.0.1:3000/internal/projects/${project}',{headers:{authorization:'Bearer '+process.env.INTERNAL_TOKEN}});if(!r.ok)process.exit(1);const h=await r.text();if(!h.includes('google')||!h.includes('attributed'))process.exit(1);console.log('internal result PASS');`,
+      input: `const r=await fetch('http://127.0.0.1:3000/internal/projects/${project}',{headers:{authorization:'Bearer '+process.env.INTERNAL_TOKEN}});if(!r.ok)process.exit(1);const h=await r.text();if(!h.includes('google')||!h.includes('attributed'))process.exit(1);const m=await fetch('http://127.0.0.1:3000/api/internal/metrics',{headers:{authorization:'Bearer '+process.env.INTERNAL_TOKEN}});const j=await m.json();if(!(j.ingestion.accepted>=1))process.exit(1);console.log('internal result PASS');`,
     },
   );
   assert.match(internal, /PASS/);
+  const logs = execFileSync("docker", [...compose, "logs", "--no-color", "app"], {
+    encoding: "utf8",
+  });
+  for (const secret of [
+    key,
+    visitor,
+    customer,
+    process.env.INGEST_PROXY_TOKEN,
+    process.env.INTERNAL_TOKEN,
+  ]) {
+    if (secret) assert.ok(!logs.includes(secret), "Sensitive value leaked into container logs");
+  }
   await page.click("#consent-no");
   assert.equal(await page.evaluate(() => window.originmetric.getVisitorId()), null);
   console.log(

@@ -3,7 +3,12 @@ source "$(dirname "$0")/common.sh"
 need git; need docker; need curl; need flock
 load_env
 export APP_TAG=${APP_TAG:-preflight}
-docker compose version >/dev/null
+OM_COMPOSE_VERSION=$(docker compose version --short)
+[[ $OM_COMPOSE_VERSION =~ ^v?([0-9]+)\.([0-9]+)\.([0-9]+) ]] || fail 'Cannot parse Compose version'
+if [[ ${OM_INGRESS:-local} == public ]]; then
+  OM_MAJOR=${BASH_REMATCH[1]}; OM_MINOR=${BASH_REMATCH[2]}; OM_PATCH=${BASH_REMATCH[3]}
+  (( OM_MAJOR > 2 || (OM_MAJOR == 2 && (OM_MINOR > 24 || (OM_MINOR == 24 && OM_PATCH >= 4))) )) || fail 'Public overlay requires Compose >= 2.24.4'
+fi
 docker info >/dev/null 2>&1 || fail 'Docker daemon unavailable'
 [[ $(git status --porcelain) == '' ]] || fail 'Working tree is not clean'
 [[ $POSTGRES_PASSWORD =~ ^[a-f0-9]{64}$ ]] || fail 'Invalid generated DB secret'

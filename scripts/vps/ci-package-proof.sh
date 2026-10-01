@@ -12,6 +12,16 @@ cleanup_ci() {
 }
 trap cleanup_ci EXIT
 bash scripts/deploy.sh "$APP_TAG"
+# Validate the optional public Caddy config with a synthetic cert, without publishing ports.
+mkdir -p secrets/cloudflare
+openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=ci.originmetric.invalid \
+  -keyout secrets/cloudflare/origin.key -out secrets/cloudflare/origin.crt >/dev/null 2>&1
+chmod 600 secrets/cloudflare/origin.key
+OM_DOMAIN=ci.originmetric.invalid INGEST_PROXY_TOKEN=$INGEST_PROXY_TOKEN docker run --rm \
+  -e OM_DOMAIN=ci.originmetric.invalid -e INGEST_PROXY_TOKEN \
+  -v "$OM_ROOT/deploy/Caddyfile.public:/etc/caddy/Caddyfile:ro" \
+  -v "$OM_ROOT/secrets/cloudflare:/certs:ro" caddy:2.11.2-alpine \
+  caddy validate --config /etc/caddy/Caddyfile
 [[ $(dc exec -T app id -u) != 0 ]] || fail 'App is root'
 for OM_SERVICE in db app; do
   OM_ID=$(dc ps -q "$OM_SERVICE")

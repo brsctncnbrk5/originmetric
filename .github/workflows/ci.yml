@@ -99,7 +99,9 @@ jobs:
         run: npm run demo
 
       - name: Production package scripts syntax
-        run: bash -n scripts/deploy.sh scripts/vps/*.sh
+        run: |
+          bash -n scripts/deploy.sh scripts/vps/*.sh deploy/init-db.sh
+          bash scripts/vps/test-deploy-control.sh
 
       - name: Production Docker package, consent dogfood and encrypted restore proof
         run: |
