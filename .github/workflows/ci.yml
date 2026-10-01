@@ -95,6 +95,9 @@ jobs:
       - name: Playwright (smoke + server API)
         run: npx playwright test
 
+      - name: P1b local demo command
+        run: npm run demo
+
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
