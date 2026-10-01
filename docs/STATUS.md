@@ -31,6 +31,8 @@ The actual VPS now runs OriginMetric from `b750a1b5262eb83d04810afc2c71c35678ecf
 
 Installation records are committed locally. Push to the assigned branch failed with GitHub 403 because the VPS credential's account lacks repository write access; securely provision an authorized credential before retrying. Existing credentials were preserved.
 
+The follow-up auth audit confirmed that global Git uses gh's sole account `brsctncnbrk3-hub`, with repository `push=false`; no usable alternative identity was found. Complete an isolated gh browser login using `.runtime/github-auth` as documented in the installation report, then push normally and verify remote HEAD. The global account and all local commits are preserved.
+
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
 
