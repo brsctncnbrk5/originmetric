@@ -69,7 +69,7 @@ export async function recordBrowserEvent(
   clock: Clock,
 ): Promise<IngestOutcome> {
   try {
-    return await db.transaction(async (tx) => {
+    return await db.transaction(async (tx): Promise<IngestOutcome> => {
       const now = clock.now();
       let [session] = await tx
         .select({ visitorId: sessions.visitorId })

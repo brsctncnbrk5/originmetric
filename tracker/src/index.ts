@@ -46,7 +46,7 @@ try {
   const queued = typeof window.originmetric === "function" ? (window.originmetric.q ?? []) : [];
 
   let enabled = !required && !gpc;
-  let landing = readCampaign();
+  let landing: (CampaignParts & { key: string }) | null = readCampaign();
   let lastUrl = "";
   let lastSentAt = 0;
 
@@ -315,7 +315,7 @@ try {
   const navigate = () => setTimeout(pageview, 0);
   for (const method of ["pushState", "replaceState"] as const) {
     const original = history[method];
-    history[method] = function (...args: Parameters<History[typeof method]>) {
+    history[method] = function (this: History, ...args: Parameters<History[typeof method]>) {
       const result = original.apply(this, args);
       navigate();
       return result;
