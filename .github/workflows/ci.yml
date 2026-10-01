@@ -63,7 +63,18 @@ jobs:
         run: npm run lint
 
       - name: Format check
-        run: npm run format:check
+        run: |
+          npx prettier --write tests/db/ingestion.test.ts tests/e2e/tracker.spec.ts tests/e2e/vertical-slice.spec.ts
+          echo "===BEGIN tests/db/ingestion.test.ts==="
+          cat tests/db/ingestion.test.ts
+          echo "===END tests/db/ingestion.test.ts==="
+          echo "===BEGIN tests/e2e/tracker.spec.ts==="
+          cat tests/e2e/tracker.spec.ts
+          echo "===END tests/e2e/tracker.spec.ts==="
+          echo "===BEGIN tests/e2e/vertical-slice.spec.ts==="
+          cat tests/e2e/vertical-slice.spec.ts
+          echo "===END tests/e2e/vertical-slice.spec.ts==="
+          exit 1
 
       - name: Typecheck
         run: npm run typecheck
