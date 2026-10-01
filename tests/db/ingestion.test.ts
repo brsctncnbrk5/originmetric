@@ -54,10 +54,7 @@ function request(
 }
 
 async function projectRows(projectId: string) {
-  const projectEvents = await tmp.db
-    .select()
-    .from(events)
-    .where(eq(events.projectId, projectId));
+  const projectEvents = await tmp.db.select().from(events).where(eq(events.projectId, projectId));
   const projectSessions = await tmp.db
     .select()
     .from(sessions)
