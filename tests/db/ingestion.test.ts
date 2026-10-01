@@ -66,7 +66,7 @@ async function projectRows(projectId: string) {
 }
 
 describe("POST /api/v1/e browser ingestion", () => {
-  it("accepts a valid event, normalizes the entry source, and updates the same session", async () => {
+  it(\n    "accepts a valid event, normalizes the entry source, and updates the same session",\n    async () => {
     const project = await createTestProject(tmp.db, clock, {
       name: `ingest-${randomUUID()}`,
       allowedDomains: ["example.com"],
