@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, isNull } from "drizzle-orm";
 import { recomputeCustomerAttribution } from "@/server/attribution/materialize";
 import { normalizeSource } from "@/server/attribution/source";
 import type { Database, Executor } from "@/server/db/client";
@@ -72,7 +72,11 @@ export async function recordBrowserEvent(
     return await db.transaction(async (tx): Promise<IngestOutcome> => {
       const now = clock.now();
       let [session] = await tx
-        .select({ visitorId: sessions.visitorId })
+        .select({
+          visitorId: sessions.visitorId,
+          lastSeenAt: sessions.lastSeenAt,
+          pageviews: sessions.pageviews,
+        })
         .from(sessions)
         .where(and(eq(sessions.projectId, project.id), eq(sessions.id, input.sessionId)))
         .for("update");
@@ -116,14 +120,22 @@ export async function recordBrowserEvent(
             landingPath: input.path,
           })
           .onConflictDoNothing({ target: [sessions.projectId, sessions.id] })
-          .returning({ visitorId: sessions.visitorId });
+          .returning({
+            visitorId: sessions.visitorId,
+            lastSeenAt: sessions.lastSeenAt,
+            pageviews: sessions.pageviews,
+          });
 
         if (inserted[0]) {
           session = inserted[0];
           createdSession = true;
         } else {
           [session] = await tx
-            .select({ visitorId: sessions.visitorId })
+            .select({
+              visitorId: sessions.visitorId,
+              lastSeenAt: sessions.lastSeenAt,
+              pageviews: sessions.pageviews,
+            })
             .from(sessions)
             .where(and(eq(sessions.projectId, project.id), eq(sessions.id, input.sessionId)))
             .for("update");
@@ -157,11 +169,14 @@ export async function recordBrowserEvent(
       if (!insertedEvent[0]) throw new IngestControl("duplicate");
 
       if (!createdSession) {
+        // The row is already locked FOR UPDATE above, so calculating the next values in
+        // application code is race-safe and avoids raw SQL parameter coercion surprises.
+        const lastSeenAt = session.lastSeenAt > now ? session.lastSeenAt : now;
         await tx
           .update(sessions)
           .set({
-            lastSeenAt: sql`greatest(${sessions.lastSeenAt}, ${now})`,
-            pageviews: sql`${sessions.pageviews} + 1`,
+            lastSeenAt,
+            pageviews: session.pageviews + 1,
           })
           .where(and(eq(sessions.projectId, project.id), eq(sessions.id, input.sessionId)));
       } else {
