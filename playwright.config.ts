@@ -2,7 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.E2E_PORT ?? 3100);
 // Optional override for environments with a pre-installed Chromium of a different revision.
-const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined;\nconst internalToken = process.env.INTERNAL_TOKEN ?? "originmetric-e2e-internal";
+const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined;
+const internalToken = process.env.INTERNAL_TOKEN ?? "originmetric-e2e-internal";
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -25,5 +26,7 @@ export default defineConfig({
     command: `npx next start -H 127.0.0.1 -p ${port}`,
     url: `http://127.0.0.1:${port}`,
     reuseExistingServer: !process.env.CI,
-    timeout: 60_000,\n    env: { INTERNAL_TOKEN: internalToken },\n  },
+    timeout: 60_000,
+    env: { INTERNAL_TOKEN: internalToken },
+  },
 });
