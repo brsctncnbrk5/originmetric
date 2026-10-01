@@ -10,8 +10,8 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "npm run tracker:build && next build",
-    "start": "next start",
+    "build": "npm run tracker:build && next build && node scripts/prepare-standalone.mjs",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint --max-warnings=0 .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

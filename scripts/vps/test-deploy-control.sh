@@ -46,10 +46,10 @@ if bash scripts/vps/init-env.sh >/dev/null 2>&1; then echo 'init overwrote exist
 printf '%s\n' "$OM_OLD_SHA" > .runtime/current-tag
 if bash scripts/deploy.sh "$OM_NEW_SHA" > .runtime/with-old.log 2>&1; then echo 'failed deploy returned success' >&2; exit 1; fi
 [[ $(cat .runtime/current-tag) == "$OM_OLD_SHA" ]]
-rg -q 'Previous app restored' .runtime/with-old.log
-rg -q "$OM_OLD_SHA.*up -d --no-deps app caddy" .runtime/mock.log
+grep -q 'Previous app restored' .runtime/with-old.log
+grep -q "$OM_OLD_SHA.*up -d --no-deps app caddy" .runtime/mock.log
 rm .runtime/current-tag
 if bash scripts/deploy.sh "$OM_NEW_SHA" > .runtime/first.log 2>&1; then echo 'first failure returned success' >&2; exit 1; fi
-rg -q 'stop app caddy' .runtime/mock.log
-rg -q 'DB preserved' .runtime/first.log
+grep -q 'stop app caddy' .runtime/mock.log
+grep -q 'DB preserved' .runtime/first.log
 printf '%s\n' 'Deploy control proof PASS: no secret overwrite, prior tag rollback + health, first-deploy stop with DB preservation.'

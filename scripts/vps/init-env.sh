@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 source "$(dirname "$0")/common.sh"
+need flock; lock_ops
 [[ ! -e .env.production ]] || fail '.env.production already exists; it was not changed'
 need openssl
 OM_DB_PASSWORD=$(openssl rand -hex 32)

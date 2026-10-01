@@ -188,3 +188,4 @@ Resmi referanslar (2026-10-02'de kontrol edildi):
 - https://developers.cloudflare.com/waf/rate-limiting-rules/
 - https://developers.cloudflare.com/use-cases/solutions/stop-account-takeover-attacks/
 - https://docs.docker.com/engine/network/packet-filtering-firewalls/
+- https://www.postgresql.org/docs/18/runtime-config-logging.html
