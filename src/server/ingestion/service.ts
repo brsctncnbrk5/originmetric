@@ -2,13 +2,7 @@ import { and, asc, eq, isNull, sql } from "drizzle-orm";
 import { recomputeCustomerAttribution } from "@/server/attribution/materialize";
 import { normalizeSource } from "@/server/attribution/source";
 import type { Database, Executor } from "@/server/db/client";
-import {
-  customerVisitors,
-  customers,
-  events,
-  projects,
-  sessions,
-} from "@/server/db/schema";
+import { customerVisitors, customers, events, projects, sessions } from "@/server/db/schema";
 import type { Clock } from "@/server/time/clock";
 import type { BrowserEventInput } from "./validation";
 
@@ -51,10 +45,7 @@ async function recomputeLinkedCustomers(
     .select({ customerId: customerVisitors.customerId })
     .from(customerVisitors)
     .where(
-      and(
-        eq(customerVisitors.projectId, projectId),
-        eq(customerVisitors.visitorId, visitorId),
-      ),
+      and(eq(customerVisitors.projectId, projectId), eq(customerVisitors.visitorId, visitorId)),
     )
     .orderBy(asc(customerVisitors.customerId));
 

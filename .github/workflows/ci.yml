@@ -63,10 +63,7 @@ jobs:
         run: npm run lint
 
       - name: Format check
-        run: |
-          npx prettier --write 'src/app/internal/projects/[id]/page.tsx' src/server/ingestion/handler.ts src/server/ingestion/service.ts tracker/src/index.ts
-          git diff -- 'src/app/internal/projects/[id]/page.tsx' src/server/ingestion/handler.ts src/server/ingestion/service.ts tracker/src/index.ts
-          exit 1
+        run: npm run format:check
 
       - name: Typecheck
         run: npm run typecheck

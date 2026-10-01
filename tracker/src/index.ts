@@ -43,7 +43,7 @@ try {
   const debug = script?.dataset.debug === "true";
   const gpc = !ignoreGpc && navigator.globalPrivacyControl === true;
   const endpoint = script?.src ? new URL("/api/v1/e", script.src).toString() : "/api/v1/e";
-  const queued = typeof window.originmetric === "function" ? window.originmetric.q ?? [] : [];
+  const queued = typeof window.originmetric === "function" ? (window.originmetric.q ?? []) : [];
 
   let enabled = !required && !gpc;
   let landing = readCampaign();

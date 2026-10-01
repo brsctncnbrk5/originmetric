@@ -57,10 +57,7 @@ function requestOrigin(request: Request, allowedDomains: readonly string[]): str
   }
 }
 
-export async function handleBrowserEvent(
-  request: Request,
-  deps: IngestionDeps,
-): Promise<Response> {
+export async function handleBrowserEvent(request: Request, deps: IngestionDeps): Promise<Response> {
   const started = performance.now();
   const fields: Record<string, unknown> = {
     route: "/api/v1/e",
