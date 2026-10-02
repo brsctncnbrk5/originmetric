@@ -118,6 +118,24 @@ Tüm maddeler kanıtlandıktan sonra `.env.production` içindeki `OM_DOMAIN`, `O
 
 ## 5. Dogfood testi
 
+### Bu VPS'deki mevcut domain/HTTPS aşaması (2026-10-02)
+
+`originmetric.app` ve `www.originmetric.app`, mevcut nginx korunarak ayrı
+`/etc/nginx/sites-available/originmetric` dosyasına bağlandı. Kaynak şablon
+`deploy/nginx.originmetric.conf`; Let's Encrypt sertifikası iki hostu kapsar.
+Sertifika yenilemesi yalnızca bu domain için `/etc/cron.d/originmetric-cert-renew`
+ile çalışır; nginx testinden sonra reload edilir. Kurulum raporu ve
+`.runtime/https-backup-path` mevcut kanıt/yedek konumunu gösterir.
+
+Bu aşamada yalnızca HTTPS root/static, health ve tracker açıktır. Internal/fixture
+rotaları 404; identify/revenue 503; ingestion nginx'te 202/drop verir. G1 geçmedi.
+`OM_INGRESS=local`, `PUBLIC_G1_READY=no` ve loopback Caddy korunur. Cloudflare
+panelinde Full (strict) ve tek rate-limit kuralı sahibi tarafından doğrulanmalıdır.
+Public veriyi açmadan önce gerçek CF istemci adresini koruyan ve özel güven
+token'ını overwrite eden nginx/Caddy yolu kurulmalı ve test edilmelidir.
+**Mevcut review Caddy sabit loopback CF adresi kullanırken nginx data-route
+engellerini kaldırma.** Ardından aşağıdaki gerçek-domain dogfood adımları uygulanır.
+
 Yalnızca controlled/synthetic trafik; public gerçek ziyaretçiye açmadan G1.
 `/fixtures/required?site=PUBLIC_SITE_KEY&utm_source=Google` kontrollü sayfası izni bekler.
 Playwright ile actual domain'de consent öncesi cookie/localStorage/network yokluğu ve consent sonrası

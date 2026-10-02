@@ -4,13 +4,13 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P2 — Deploy the slice & dogfood**: LOCAL VPS INSTALLATION VERIFIED |
+| Current phase | **P2 — Deploy the slice & dogfood**: DOMAIN / HTTPS VERIFIED; G1 PENDING |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
-| P2 | **LOCAL VPS INSTALLATION VERIFIED — PUBLIC G1 / ACCEPTANCE PENDING** |
+| P2 | **DOMAIN / HTTPS VERIFIED — PUBLIC DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
 | P2 tested code head | `a8957d872dc2597d6b2d20203e9c62bebee732f4` — [CI run #46: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/36934400786) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
@@ -27,7 +27,7 @@
 
 ## Next step
 
-The actual VPS now runs OriginMetric from `b750a1b5262eb83d04810afc2c71c35678ecfbcc` on `codex/originmetric-p2-vps-preparation`, using only `127.0.0.1:8088`. Build, migrations, DB-backed smoke, selfcheck, non-root app and unpublished app/DB ports passed; nginx and tradebot services retained their existing processes. See [`P2 VPS installation report`](reports/P2_VPS_INSTALLATION_REPORT.md). The installed SHA adds only documentation to CI #46's tested code head. Domain/dogfood host, Cloudflare and free off-VPS backup/monitoring inputs were requested together and remain pending. Continue P2 with those inputs and the installation runbook; public G1, real-domain consent/dogfood, external port checks, real off-VPS backup/restore and scheduled monitoring must pass before acceptance. Public ingress is disabled. **P3 must not start.**
+OriginMetric still runs image `b750a1b5262eb83d04810afc2c71c35678ecfbcc`; app/DB remain unpublished and Caddy stays on `127.0.0.1:8088`. The owner purchased `originmetric.app` and configured proxied apex/www DNS. A dedicated nginx site now serves HTTPS root/static assets, DB health and tracker; www redirects to the HTTPS apex. A Let's Encrypt certificate covers both hosts, expires 2026-12-30, and has a dedicated renewal cron. Existing nginx configuration files and tradebot processes were preserved. See [`P2 VPS installation report`](reports/P2_VPS_INSTALLATION_REPORT.md). Public event ingestion returns 202/drop at nginx; identify/revenue return 503; internal/fixture routes return 404. **G1 remains unpassed.** Owner must confirm Cloudflare Full (strict) and configure the single edge rate-limit rule. Before enabling data routes, replace the synthetic review proxy's fixed CF IP handling with validated real Cloudflare IP forwarding, complete scoped firewall/external IPv4/IPv6 checks, actual-domain consent/dogfood and real off-VPS backup/restore plus monitoring. **P3 must not start.**
 
 GitHub push blocker **RESOLVED** (2026-10-02): the owner completed isolated gh login in `.runtime/github-auth`; authenticated account `brsctncnbrk5` has repository `push=true`. A command-scoped credential helper pushed normally to `codex/originmetric-p2-vps-preparation`; remote SHA matched local `26eac2cd67b200c9b23af6101dc94210272e24a1`, including installation commits `9a5ca4c` and `8e6ef88`. The global account, remote URL and local history were preserved. This documentation update records the resolution; P2 acceptance remains pending and P3 has not started.
 
