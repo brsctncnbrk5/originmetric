@@ -1,7 +1,7 @@
 # OriginMetric — P2 VPS installation report
 
 Date: 2026-10-02 (Europe/Berlin; installation started 2026-10-01 UTC)
-Status: **HTTPS / PROXY / SCOPED FIREWALL VERIFIED — PUBLIC DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
+Status: **CLOUDFLARE EDGE / PROXY / EXTERNAL IPv4+IPv6 VERIFIED — PUBLIC DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
 Authorization: Barış's VPS installation instruction and D-004. **P3 not started.**
 
 ## Source verification
@@ -240,3 +240,109 @@ Set **Cache eligibility → Bypass cache**. Place it after any matching broad ca
 G1 items 1/2 (consent/GPC) retain prior automated browser evidence; item 3 validation/origin/dedup/failure and item 6 browser trust separation retain prior evidence plus current DB regressions; item 5 redaction passed current tests. **G1 item 4 remains incomplete until the single active edge rule is configured and verified.** Actual-site required-consent banner confirmation is also required before uncontrolled traffic.
 
 P2 additionally awaits independent IPv6 external evidence/shared-ingress criterion review, real required-consent dogfood and production attribution proof, encrypted off-VPS upload + owner download + one manual isolated restore, nightly backup/Healthchecks/uptime setup, and owner confirmation of secure secret preservation. Backup provider/prefix/public age recipient and monitoring inputs remain missing. **G1 not passed; P2 not accepted; P3 not started; all public data acceptance remains closed.**
+
+## Post-Cloudflare verification — 2026-10-02, 01:24–01:29 UTC
+
+This is the current acceptance evidence. It supersedes earlier statements that the edge rate-limit/cache rules were not configured/tested and that independent IPv6 evidence was missing. Other unfinished P2 items remain unfinished. Starting checkout was clean on `codex/originmetric-p2-vps-preparation`, local/remote both `c4f1601307554ec75f2763ad23b5b6f7efb3588e` after authenticated fetch. No AGENTS.md exists at `/`, `/opt` or the repository root; CLAUDE.md, STATUS, locked canonical P2/G1 sections, DECISIONS and this report were read.
+
+### Panel evidence supplied by the owner
+
+These are panel/handoff observations, **separate from the behavior tests below**. This session did not obtain Cloudflare dashboard/API access or change any rule.
+
+| Setting | Supplied evidence | Independent status in this session |
+|---|---|---|
+| `OriginMetric ingestion IP limit` | Active, Block; entered path `/api/v1/e`, IP, 60 requests/10 s, mitigation 10 s | Edge blocking/recovery independently tested; exact saved counting period, characteristics and total rate-rule inventory not read via panel/API |
+| `OriginMetric API cache bypass` | Active; Bypass cache; expression below | Covered-path response behavior independently tested; rule order/other Page Rules or cache overrides not independently inventoried |
+| Pseudo IPv4 | Off; confirmed from panel images in supplied handoff | Fresh IPv6 transport independently tested; images were not re-inspected here |
+| Remove visitor IP headers | Off; confirmed from panel images in supplied handoff | Intact client transport independently tested |
+| Workers Routes | Empty, per supplied panel handoff | No independent Worker/account inventory |
+| Full (strict) | Previously set by the owner | **UNVERIFIED independently**; valid origin certificate and working HTTPS do not prove saved SSL mode |
+
+Reported bypass expression:
+
+```text
+starts_with(http.request.uri.path, "/api/") or
+http.request.uri.path eq "/api" or
+starts_with(http.request.uri.path, "/internal") or
+starts_with(http.request.uri.path, "/fixtures")
+```
+
+### Passed live checks and edge/origin separation
+
+| Check | Result |
+|---|---|
+| HTTPS `/`, `/api/health`, `/js/v1/om.js` | PASS: 200; health body hash matches `{"status":"ok"}` |
+| HTTPS www `/probe/path?check=synthetic` | PASS: 308 → `https://originmetric.app/probe/path?check=synthetic` |
+| `/api`, `/api/`, `/api/internal/metrics`, `/internal`, `/internal/projects/test`, `/internal-probe`, `/fixtures`, `/fixtures/required`, `/fixtures-probe` | PASS: each requested twice at the same URL; 404, `Cache-Control: no-store`, `CF-Cache-Status: DYNAMIC` |
+| POST `/api/v1/e` | PASS: normal 202/drop, twice; no-store/DYNAMIC |
+| POST identify/revenue | PASS: 503, twice; no-store/DYNAMIC; data acceptance remains disabled |
+| Tracker | 200, no-store/BYPASS in this sample; static-cache policy is separate |
+| Production facts | PASS: events, sessions, customers, revenue_events, customer_visitors all zero before tests and at final read-only check |
+
+**Bounded edge test:** empty POST bodies, no site key/auth/customer identifiers; nginx's installed exact endpoint location is `return 202` with no proxy to Caddy/app. Its file matches the reviewed committed configuration exactly; the site has no 429/limit directive. No data gate or log setting was changed. Maximum 100 requests per burst, stop at the first blocked wave/request. The two actual bursts sent 76 and 61 requests, plus five recovery probes in total; low-volume route/smoke requests were separate.
+
+Initial IPv4 test (01:24 UTC) used four concurrent curl workers and took 5.919 s for 76 requests: 72×202 then 4×429. CF-Ray showed both FRA and CDG. +2/+5 s remained 429, +9 s returned 202 from CDG. **This is not mitigation-expiry proof** because the Cloudflare data center changed. Cloudflare counts include the data-center characteristic, per its [official parameter reference](https://developers.cloudflare.com/waf/rate-limiting-rules/parameters/).
+
+The follow-up pinned one IPv4 edge address and reused one TLS/HTTP connection; **all 66 requests including controls/recovery carried FRA rays**. From 01:26:28.568 to 01:26:30.610 UTC, requests 1–60 returned 202 and **request 61 returned 429**, CF-Ray `a43feb594e941dc1-FRA`, body containing Cloudflare error code **1015**. Its absent CF-Cache-Status also differed from normal DYNAMIC endpoint responses.
+
+A narrowly filtered private packet capture independently separated the rejecting layer:
+
+- The first 202 observed three CF→origin TLS payload packets and no private upstream request, consistent with nginx's drop gate.
+- Request 61 and the +2/+5/+9 s blocked probes each observed **zero CF→origin TLS payload packets and zero private upstream payload packets** during the request interval.
+- An adjacent `/api/health` control on that same connection/ray location returned 200 and observed CF→origin payload plus private nginx/Caddy/app traffic. The capture therefore had a working positive control during mitigation.
+- The 429/error-1015 response plus this transport evidence and the installed nginx endpoint gate establishes a **Cloudflare edge block**, rather than treating a 429 or `Server: cloudflare` header alone as sufficient evidence. Raw captures were deleted; only sanitized counts/rays/timings were retained. No token/IP/payload was printed or committed.
+
+Recovery on the same connection was 429 at **+2.007 / +5.006 / +9.008 s**, then 202/drop at **+11.015 s** (ray `a43feb9e1c321dc1-FRA`). Mitigation expiry is therefore bracketed between the 9-second blocked probe and the 11-second recovered probe, consistent with an entered 10 s timeout. Threshold behavior was 60 allowed then the 61st blocked in this controlled burst. **The saved 10-second counting window and exact dashboard parameters are not independently proven by a short burst**, and the test does not claim globally exact limits. Rule ID attribution through a Security Event/API and an independent inventory of exactly one rule remain unavailable.
+
+The API/internal/fixtures samples had **no HIT/STALE/UPDATING/REVALIDATED**. This proves sampled response behavior after the reported bypass deployment, not which matching Cloudflare rule produced it or that every possible override is absent. No origin cache was enabled and no cache purge was needed.
+
+### Client IP, spoofing and origin isolation
+
+PASS: fresh health probes over **both IPv4 and IPv6**, with synthetic hostile XFF/X-Real-IP/token headers, were privately inspected on nginx→Caddy and Caddy→app transport. The true VPS client address for the selected family was preserved in CF-Connecting-IP at both hops; XFF/X-Real-IP were absent and the 64-character private token replaced the forged value. Captures were deleted in cleanup and no fact-creating endpoint was forwarded.
+
+PASS: apex/www direct-origin HTTP and HTTPS health requests returned 403 both with no spoof headers and with `CF-Connecting-IP: 104.16.0.1` (synthetic attacker input belonging to a CF range), hostile XFF and forged token. TLS chain/hostname verification remained enabled (`-k` was never used). These direct-origin checks ran **from the VPS itself**, and are explicitly local behavior evidence. Unauthenticated/forged-token loopback Caddy requests also returned 403. Spoofed CF-Connecting-IP through the real edge returned 403 in both client families; **that status alone does not identify the rejecting layer**.
+
+PASS: isolated `scripts/vps/test-nginx-proxy.py` re-proved original-TCP-peer gating, trusted-peer IPv4/IPv6 forwarding, XFF stripping and token replacement. Targeted ingestion-client and logger unit suites passed **9 tests**, including refusal of absent/wrong tokens and invalid/multiple IP headers. nginx `-t`, public smoke and selfcheck passed; abuse/failure counters were empty. The first short-buffer packet attempt did not capture enough headers and was rerun with longer capture flushing; the successful assertion results above are the evidence used.
+
+### Independent external IPv4 and IPv6 port checks
+
+The [Globalping API](https://api.globalping.io/v1/spec.yaml) accepts literal IPv6 targets and provides free unauthenticated measurements. Eight TCP-ping measurements used **two probes each**, two TCP connections per probe, in **Falkenstein (DE)** and **Helsinki (FI)**. No account, credential, credit purchase or paid service was created. Actual `resolvedAddress` values matched the intended literal origin address/family in every result. These connections originated at external probes, not at the VPS which submitted the API requests.
+
+| Family | TCP port | Both independent probes | Measurement result |
+|---|---|---|---|
+| IPv4 | 22 | 2/2 connections each; positive control | [result](https://api.globalping.io/v1/measurements/2oROGB3Hcxy4SQIPT00021Evu) |
+| IPv4 | 3000 | 0/2 replies each, timeout/non-reachability | [result](https://api.globalping.io/v1/measurements/2CALAv0sb9anm7aXn00021Evu) |
+| IPv4 | 5432 | 0/2 replies each, timeout/non-reachability | [result](https://api.globalping.io/v1/measurements/2BKnOcS6rahH8gN4G00021Evu) |
+| IPv4 | 8088 | 0/2 replies each, timeout/non-reachability | [result](https://api.globalping.io/v1/measurements/2aqVoReyT8zIfKzuL00021Evu) |
+| IPv6 | 22 | 2/2 connections each; positive control | [result](https://api.globalping.io/v1/measurements/2X3hhTVFthIroQtPQ00021Evu) |
+| IPv6 | 3000 | 0/2 replies each, timeout/non-reachability | [result](https://api.globalping.io/v1/measurements/24UVDQdt9az5JIo1A00021Evu) |
+| IPv6 | 5432 | 0/2 replies each, timeout/non-reachability | [result](https://api.globalping.io/v1/measurements/2zib7VFsVlRzbIwQ500021Evu) |
+| IPv6 | 8088 | 0/2 replies each, timeout/non-reachability | [result](https://api.globalping.io/v1/measurements/2ttUPIrb5QFXPKk0R00021Evu) |
+
+Point-in-time non-reachability passes this scoped external check; it is not a comprehensive scan of all host ports. Measurement endpoints can expire; the observed results are durably summarized above and original private JSON is retained in ignored mode-600 `.runtime/p2-external-results.json`. An initial malformed IPv6 API option was rejected by input validation, corrected to a literal-target request without `ipVersion`, then all eight measurements finished. A display-only summary parser error after saving the full results was corrected during inspection; no additional measurements were required.
+
+### GitHub CI and service preservation
+
+The previously queued CI is independently verified: **run #56 completed success** on `c4f1601307554ec75f2763ad23b5b6f7efb3588e` — [GitHub run](https://github.com/brsctncnbrk5/originmetric/actions/runs/36948381417). All required job steps passed: secret scan, checks/migrations/tests, tracker/build, browser/demo and production Docker/consent/synthetic encrypted-restore proof. Another run on the same SHA (#55) was cancelled; the successful run is the acceptance evidence. CI's synthetic encrypted restore is **not** the pending real off-VPS disaster-recovery proof.
+
+No production fix/reload/redeploy, firewall/SSH change or data-route opening was needed. Pre-edit documentation copies were saved in `.runtime/docs-backup-cloudflare`; existing `.runtime/security-backup-path` and `.runtime/rollback-security.sh` remain available. nginx/SSH/tradebot main PIDs stayed 427077/427051/427132/427105 and active. App/DB port bindings remain empty; Caddy publication remains only `127.0.0.1:8088`. `.env.production` is mode 600, `OM_INGRESS=nginx`, `PUBLIC_G1_READY=no`. Installed image is still `b750a1b...`; newer repository security changes did not change application source. No other project's configuration was edited; all 15 unrelated nginx files present in the private pre-security backup were compared byte-for-byte and remained identical.
+
+Ignored proof scripts/results: `.runtime/p2-cloudflare-*`, `.runtime/p2-edge-isolation-*`, `.runtime/p2-client-ip-*`, `.runtime/p2-external-*`. Response bodies/captured tokens were not persisted in report artifacts; packet files were deleted. Only the two documentation files are changed by this handoff, with a normal commit/push on the assigned branch and full SHA equality checked at handoff.
+
+### Failed, unverified and remaining canonical acceptance items
+
+**Failed/unmet criterion:** host-wide 80/443 Cloudflare-only restriction remains **unmet**. Shared IPv4 listeners continue serving tradebot directly. The OriginMetric vhost gate is verified, but cannot silently substitute for canonical §28's transport restriction. Resolve by explicit owner/plan acceptance of the scoped design or an isolated OriginMetric ingress/IP; preserve SSH and shared projects.
+
+**Independently unverified:** saved Full (strict) mode; complete Cloudflare rule inventory/ordering, exact saved 10 s counting period/IP characteristic and exactly one rate-rule count. Supplied panel evidence and successful edge tests reduce uncertainty but do not provide account-level verification. No observed route/cache/spoof/security regression remains failed after the final checks.
+
+**Canonical G1 (§28) remains pending:**
+
+1. Items 1/2: required consent (zero storage/network before consent, grant/withdrawal clearing) and GPC retain passing browser CI evidence; consolidate a fresh checklist against the deployed build/actual intended site. The owner must confirm its required-consent banner before uncontrolled visits.
+2. Item 3: body/schema/origin/dedup/failure isolation retains green automated evidence; public drop responses intentionally do not exercise accepted production ingestion.
+3. Item 4: in-app limits/ceilings/daily cap and trusted-IP tests are green; the **edge-block/recovery portion now passes**. Preserve the remaining account-configuration evidence caveats above.
+4. Items 5/6: redaction and browser identity-poisoning tests are green in CI; fresh targeted redaction/client tests passed locally.
+5. The canonical `npm run gate:g1` deployed-build checklist command (§26) is still absent from package scripts. Existing independent checks must be consolidated into that recorded deployed-build gate before declaring G1 green; this report does not invent G1 acceptance from CI alone.
+
+**Other canonical P2 requirements still pending:** actual required-consent dogfood deployment and consented production attribution (trusted server identify, payment, renewal/refund/duplicate; revenue test from the owner's machine; token-protected internal result review); shared-ingress criterion resolution; independent Full (strict)/single-rule configuration evidence; real nightly encrypted off-VPS backup upload, owner download and one stdin-only isolated manual restore; OriginMetric-only backup scheduling, uptime/Healthchecks monitoring; owner confirmation of encrypted/password-manager preservation of production secrets. Backup provider/prefix/public age recipient and monitoring inputs are still missing. Independent external IPv6 evidence is now complete and is no longer a blocker.
+
+**G1 not passed; P2 not accepted; P3 not started.** Ingestion stays nginx 202/drop, identify/revenue 503, internal/fixtures 404. Opening those routes is not authorized by these successful preparatory tests.
