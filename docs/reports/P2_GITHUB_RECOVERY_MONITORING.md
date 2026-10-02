@@ -1,6 +1,6 @@
 # P2 — originmetric.app consent, GitHub recovery and dashboard monitoring
 
-Date: 2026-10-02. Preparation only; **no production redeploy, ingestion opening, first upload, scheduled external probe or notification**. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
+Date: 2026-10-02; transferred Cloudflare evidence update: 2026-10-03. Preparation/documentation only; **no production redeploy, ingestion opening, first upload, scheduled external probe or notification**. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
 
 ## Chosen dogfood integration
 
@@ -51,7 +51,7 @@ GitHub schedule semantics: minimum five minutes, default branch only; queue dela
 1. Confirm whether an existing offline age key is available and preserve its private key in **password manager + paper**, as canonical §24 requires. Only its public recipient belongs in the server's mode-600 `AGE_RECIPIENT`. No key/password generation or rotation is authorized by the current continuation. Confirm separately encrypted production configuration and phone-independent account recovery without revealing values. If no existing key is available, keep that prerequisite open.
 2. Decide whether to accept GitHub private Releases + dashboard/Actions as a **documented alternative to the canonical storage/lifecycle/Healthchecks/email requirements**, including their stated gaps; confirm the dedicated private repo name. Until then, no target creation/upload/retention or deploy-prerequisite bypass.
 3. Before any first Release upload or independent workflow activation, review the actual target/content or the HTTPS-check operation and possible GitHub notification destination/settings. Give explicit notification approval if applicable; account quota/no-spend settings must be verified for any private runner.
-4. Supply the missing Cloudflare panels in the single list below; existing panel evidence remains attributed to the owner. Later, confirm the actual originmetric.app banner and separately authorize any data-gate-dependent attribution test; today's instruction does not open it.
+4. **2026-10-03 update:** the requested Cloudflare panel details have been supplied as transferred evidence and recorded below; direct account/original-export review is unverified. Confirm the actual originmetric.app banner after deployment prerequisites and separately authorize any data-gate-dependent attribution test; this documentation instruction does not open it.
 
 ## Read-only continuation — 2026-10-02, 19:14–19:15 UTC
 
@@ -65,12 +65,38 @@ Recovery `--inventory` passed for all existing scoped members. Refreshed only th
 
 ### Cloudflare: tek eksik panel listesi
 
-`originmetric.app` zone'u ve kayıtlı/aktif durum görünsün; mevcut ayarları değiştirmeden, token veya hesap sırrı içermeyen ekranlar yeterli:
+**Historical request, superseded 2026-10-03:** the four requested inventory/detail groups (rate limiting, Custom Rules, Cache/Page Rules, Workers Routes) are now supplied at the user-panel evidence level, with additional Origin/transform inventories. The source distinction and remaining independent-review limits are recorded in the new section below; do not request the same missing panels again as if they were not supplied.
 
-1. **Security → Rate limiting:** tüm kural listesi + mevcut ingestion kuralının kayıtlı ayrıntıları: expression, enabled/Block, IP characteristic, 60 requests / 10 s counting period ve 10 s mitigation; tam listeyle tek kural sayısı/sıra.
-2. **Security → Custom rules:** tüm kuralların sıra/aktif durumları; varsa expression/action ve Skip istisnaları.
-3. **Rules → Cache Rules + Page Rules:** tam liste/sıra ve mevcut API bypass expression/ayarları; varsa geniş Cache Everything/TTL override ayrıntıları.
-4. **Workers Routes:** zone'a bağlı tüm route listesi (boşsa boş liste); varsa bağlı Worker ve OriginMetric için header/cache değiştiren işlemler.
+## Cloudflare transferred evidence — 2026-10-03
+
+Zone `originmetric.app`; reported panel review **3 October 2026, approximately 00:13–01:17 Europe/Istanbul** (2 October 21:13–22:17 UTC). Source: **user-provided panel screenshots, rule URLs, the fully copied expression and ChatGPT-reviewed Security Events JSON summary**, transferred here as text. This agent did not directly inspect the Cloudflare panel/API, screenshots or original JSON; those originals are not assumed present on the VPS. Literal rule URLs are absent from the transferred text, so no account links are invented. The user reports no setting change during inspection; this task changes documentation only.
+
+| Cloudflare evidence | Transferred result | Source / remaining limit |
+|---|---|---|
+| Rate limiting | One Active rule, position 1 / First; **OriginMetric ingestion IP limit**, ID `c39d94f4c043491a9e62464c46f1b949`; `(http.request.uri.path eq "/api/v1/e")`; IP; **60 requests / 10 seconds**; **Block**, mitigation **10 seconds** | User panel evidence supplies saved count/order/window/settings. Earlier VPS edge behavior is separate; no direct ruleset review. |
+| Custom / Managed list | Custom Rules **0/5**, empty; **“No Managed rules created”** | User panel evidence. Do not infer managed protection is inactive: transferred export reports 11 `firewallManaged` blocks. |
+| Cache | One Active rule, position 1 / First; **OriginMetric API cache bypass**, ID `2de21241ca0a4635b1f1b39f2ac405f2`; **Bypass cache**; no extra Browser TTL setting visible | User panel and exact copied expression below; no hidden/default TTL or static-cache policy inferred. |
+| Other rule inventories | Cache Response Rules empty; Page Rules empty **0/3**; Workers Routes empty in **Show all**; Origin Rules empty; Request and Response Header Transform Rules empty | User panel evidence closes requested visible override inventories, not independent account/Worker code review. |
+| IP / TLS | Pseudo IPv4 **Off**; Remove visitor IP headers **Off**; Overview **Current encryption mode: Full (strict)**; separate screen **Full (Strict)** selected | User panel evidence. Earlier client-IP/TLS behavior remains separately dated; successful HTTPS alone cannot prove saved mode. |
+| Security Events | Reported `firewall-events-2026-10-01T22_06_37Z-2026-10-02T22_06_37Z.json`: **22 block events**, `ratelimit` **10**, `firewallManaged` **11**, `bic` **1** | Transferred **ChatGPT JSON review summary**; original-file integrity/completeness and direct API review unverified. No HTTP status supplied. |
+| VPS behavior test | Prior 60×202/drop then request 61→429/1015; +9 blocked / +11 recovered; two supplied Ray examples found in existing VPS result files | Existing behavior-test records, separately read for correlation in this task; not a new request burst or original Security Events parsing. |
+
+Exact expression copied by the user:
+
+```text
+starts_with(http.request.uri.path, "/api/") or
+http.request.uri.path eq "/api" or
+starts_with(http.request.uri.path, "/internal") or
+starts_with(http.request.uri.path, "/fixtures")
+```
+
+The ten `ratelimit` events reportedly share Host `originmetric.app`, Method `POST`, Path `/api/v1/e`, Source `ratelimit`, Action `block`, Description `OriginMetric ingestion IP limit`, Rule ID `c39d94f4c043491a9e62464c46f1b949`, Ruleset ID `5d1f78f7f5784fd2a909593eff6f6430`. First **2026-10-02T01:24:40Z**, last **2026-10-02T01:26:39Z**; sample Rays `a43fe8a8def52608` and `a43feb919afa1dc1`. Raw client IPs are omitted. Summary supports named-rule blocks, **not HTTP 429/1015 on its own**.
+
+Both example Ray bases match ignored existing VPS behavior files: `a43fe8a8def52608-FRA` is mixed-colo burst request 76, status 429, `error1015=false`, without a stored request-level timestamp; `a43feb919afa1dc1-FRA` is the +9.008 s recovery probe at **2026-10-02T01:26:39.609984Z–01:26:39.618137Z**, status 429, `body_1015=true`, zero observed CF→origin/private upstream payload packets. The second timestamp falls in the reported last-event second. These correlations associate behavior with the supplied rule **through the transferred summary**; no exact original-event reconstruction or unmatched request-61 export match is claimed. See the [installation report's full correlation and canonical assessment](P2_VPS_INSTALLATION_REPORT.md#cloudflare-transferred-evidence-and-acceptance--2026-10-03).
+
+**Canonical assessment (§§6,20,23,28):** the single ingestion rule and saved threshold/window/order, Full (strict), IP toggles and requested conflicting-rule inventories are now supported **at the user-supplied panel evidence level**. Blocking/recovery remains independently supported by earlier VPS tests; the transferred JSON adds Rule ID support. Direct saved-ruleset inspection and original export validation remain **unverified**. API cache bypass does not prove a `/js/*` cache rule; historical HIT/BYPASS samples alone do not establish saved static-cache configuration.
+
+**Still OPEN (§§24–25/28):** real off-VPS upload/readback/download/manual restore; scheduled backup/retention/lifecycle; independent recurring uptime/dead-man/email delivery; explicit GitHub alternative/target decision; actual originmetric.app banner/required-consent/withdrawal/GPC and persisted trusted attribution/duplicate/refund tests; private age key in **password manager + paper**, separate encrypted `.env` outside the DB backup bucket and phone-independent recovery confirmation. None is inferred from Cloudflare panels or JSON. **G1 pending; P2 open; P3 not started.** `PUBLIC_G1_READY=no` and nginx 202/drop, 503 and 404 data gates remain unchanged. No key/password generation or change.
 
 ### Key preservation and phone-loss recovery remain open
 
@@ -80,9 +106,14 @@ The [phone-loss recovery instructions](../runbooks/VPS_INSTALLATION.md#telefon-k
 
 Documentation verification: `git diff --check` and local file-link target validation passed; gitleaks v8.30.1 scanned the current docs read-only with redaction and no network, **no leaks found**. Production env/nginx/private include hashes remained unchanged after edits; canonical plan and DECISIONS are unchanged. No application code changed, so the earlier CI #68 result remains historical code evidence, not a newly run test suite.
 
-**Completed independently:** accessible public/host read-only checks, scoped recovery inventory and fresh local observation/history, documented phone-loss procedure and updated handoff. **Open:** saved Cloudflare inventory/counting window; offline key preservation and separate `.env` recovery; GitHub canonical-alternative decision/private target; real upload/download/manual restore; independent scheduled monitoring/dead-man/email; actual-domain consent and persisted attribution. **Owner steps:** supply the four panels above, confirm existing phone-independent recovery without secrets, decide the already documented GitHub deviations/target, and subsequently review actual upload/check destinations and real-site steps. Until prerequisites are met, no deploy-prerequisite bypass or traffic opening. **G1 pending; P2 open; P3 not started.**
+**Historical 2026-10-02 checks completed independently:** accessible public/host read-only checks, scoped recovery inventory and fresh local observation/history, documented phone-loss procedure and updated handoff. **Open after the 2026-10-03 update:** direct Cloudflare/original-export verification (requested panel inventory/counting details now supplied); offline key preservation and separate `.env` recovery; GitHub canonical-alternative decision/private target; real upload/download/manual restore; independent scheduled monitoring/dead-man/email; actual-domain consent and persisted attribution. **Owner steps:** confirm existing phone-independent recovery without secrets, decide the already documented GitHub deviations/target, and subsequently review actual upload/check destinations and real-site steps. Until prerequisites are met, no deploy-prerequisite bypass or traffic opening. **G1 pending; P2 open; P3 not started.**
 
 
 ## Code verification / handoff
 
 Code head `fea039e51dd8eb43804b33cd281ead6353d7dc70` passed [CI #68](https://github.com/brsctncnbrk5/originmetric/actions/runs/37039757133): full-history secrets, lint/format/types, unit/real-DB/migrations, tracker budget/build, browser (including the three new checks), demo, Docker package and synthetic encrypted restore. The duplicate push workflow was cancelled by concurrency, not failed. Local/remote code SHA matched and production's five fact counts remained zero. The subsequent documentation commit records this result; no live app deployment or phase acceptance follows from it.
+
+
+## Documentation verification — 2026-10-03
+
+`git diff --check`, local file-link/new-anchor and fenced-block checks, exact-expression comparison and `npm run format:check` passed. Markdown is intentionally excluded from Prettier by the existing `.prettierignore`; its links, fences and whitespace were checked separately. Existing **gitleaks v8.30.1**, with redaction, scanned current docs and full Git history: **no leaks found**. Only `docs/STATUS.md` and the two P2 reports changed. Canonical plan, DECISIONS, production env, installed OriginMetric nginx and private proxy include hashes matched the pre-edit baseline. No application tests or live requests were rerun for this documentation-only change; CI #68 remains historical code verification, not a new acceptance result. A new commit is made on the assigned P2 branch without amend/history rewriting; actual commit/push and remote SHA verification are reported at handoff.

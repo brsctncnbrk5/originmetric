@@ -4,7 +4,7 @@ Date: 2026-10-02 (Europe/Berlin; installation started 2026-10-01 UTC)
 Status: **TRADEBOT REMOVED; CLOUDFLARE EDGE / PROXY / HOST WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
 Authorization: Barış's VPS installation instruction and D-004, with latest Tradebot removal decision D-006. **P3 not started.**
 
-The dated sections below record earlier states. The removal/cutover and CI/G1 follow-up sections are authoritative for the current host state.
+The dated sections below record earlier states. The removal/cutover and CI/G1 follow-up sections describe the current host state; the 2026-10-03 transferred-evidence section and updated Cloudflare table supersede earlier missing-panel requests. No running application or provider setting changed in this documentation update.
 
 ## Source verification
 
@@ -249,16 +249,20 @@ This is the current acceptance evidence. It supersedes earlier statements that t
 
 ### Panel evidence supplied by the owner
 
-These are panel/handoff observations, **separate from the behavior tests below**. This session did not obtain Cloudflare dashboard/API access or change any rule.
+**Updated from transferred evidence: 2026-10-03.** Zone: `originmetric.app`; panel review approximately **00:13–01:17 Europe/Istanbul** (2026-10-02 21:13–22:17 UTC). Sources are the user's panel screenshots, rule URLs, fully copied expression and Security Events JSON summary reviewed by ChatGPT, then supplied in this task as text. This agent did **not** directly inspect those screenshots, the original export or the Cloudflare panel/API. The original images/JSON are not assumed to exist on the VPS. Literal rule URLs were not included in the transferred text; IDs below are supplied identifiers, not independently opened links. No setting was changed during the reported panel review or this documentation task.
 
-| Setting | Supplied evidence | Independent status in this session |
+| Setting / evidence | User-supplied panel / transferred summary | Source and verification limit |
 |---|---|---|
-| `OriginMetric ingestion IP limit` | Active, Block; entered path `/api/v1/e`, IP, 60 requests/10 s, mitigation 10 s | Edge blocking/recovery independently tested; exact saved counting period, characteristics and total rate-rule inventory not read via panel/API |
-| `OriginMetric API cache bypass` | Active; Bypass cache; expression below | Covered-path response behavior independently tested; rule order/other Page Rules or cache overrides not independently inventoried |
-| Pseudo IPv4 | Off; confirmed from panel images in supplied handoff | Fresh IPv6 transport independently tested; images were not re-inspected here |
-| Remove visitor IP headers | Off; confirmed from panel images in supplied handoff | Intact client transport independently tested |
-| Workers Routes | Empty, per supplied panel handoff | No independent Worker/account inventory |
-| Full (strict) | New owner-supplied SSL/TLS Overview panel-image evidence: **“Current encryption mode: Full (strict)”**, reported 2026-10-02 | **Panel-image evidence supplied by the user**; no independent Cloudflare API/dashboard verification by this agent. Working HTTPS alone does not prove saved SSL mode |
+| Rate limiting inventory | Exactly **one** rule, Active, position 1 / execution **First**; `OriginMetric ingestion IP limit`; Rule ID `c39d94f4c043491a9e62464c46f1b949` | User panel evidence supplies saved count/order; no independent account inventory |
+| Rate limiting configuration | `(http.request.uri.path eq "/api/v1/e")`; characteristic **IP**; **60 requests / 10 seconds**; **Block**; mitigation **10 seconds** | User panel evidence supplies the exact saved counting period; earlier VPS behavior separately proves block/recovery |
+| Custom / Managed rules listing | Custom Rules **0/5**, empty list; panel says **“No Managed rules created”** | User panel evidence; does **not** establish managed protection is inactive: transferred export has 11 `firewallManaged` blocks |
+| Cache rule inventory | Exactly **one** rule, Active, position 1 / **First**; `OriginMetric API cache bypass`; Rule ID `2de21241ca0a4635b1f1b39f2ac405f2` | User panel evidence; no independent ruleset inventory |
+| Cache rule settings | **Bypass cache**; exact copied expression below; no additional Browser TTL setting visible | User panel + fully copied text; no invisible/default TTL value inferred |
+| Other cache / routing rules | Cache Response Rules empty; Page Rules empty **0/3**; Workers Routes empty in **Show all**; Origin Rules empty | User panel evidence closes the requested visible override inventories; not direct API inspection or Worker code review |
+| Header transforms | Request Header Transform Rules empty; Response Header Transform Rules empty | User panel evidence; preserves distinction from actual transport tests |
+| IP handling | Network → Pseudo IPv4 **Off**; Managed Transforms → Remove visitor IP headers **Off** | User panel evidence; previous IPv4/IPv6 client transport/spoof checks remain separate VPS behavior evidence |
+| TLS mode | SSL/TLS Overview: **Current encryption mode: Full (strict)**; separate encryption screen: **Full (Strict)** selected | User panel evidence satisfies saved-mode evidence at this source level; successful HTTPS alone is not mode evidence |
+| Security Events | 22 events, all `block`: `ratelimit` **10**, `firewallManaged` **11**, `bic` **1** | **Transferred JSON review summary by ChatGPT**, not this agent's original-file/API review; details and Ray correlation below |
 
 Reported bypass expression:
 
@@ -294,7 +298,7 @@ A narrowly filtered private packet capture independently separated the rejecting
 - An adjacent `/api/health` control on that same connection/ray location returned 200 and observed CF→origin payload plus private nginx/Caddy/app traffic. The capture therefore had a working positive control during mitigation.
 - The 429/error-1015 response plus this transport evidence and the installed nginx endpoint gate establishes a **Cloudflare edge block**, rather than treating a 429 or `Server: cloudflare` header alone as sufficient evidence. Raw captures were deleted; only sanitized counts/rays/timings were retained. No token/IP/payload was printed or committed.
 
-Recovery on the same connection was 429 at **+2.007 / +5.006 / +9.008 s**, then 202/drop at **+11.015 s** (ray `a43feb9e1c321dc1-FRA`). Mitigation expiry is therefore bracketed between the 9-second blocked probe and the 11-second recovered probe, consistent with an entered 10 s timeout. Threshold behavior was 60 allowed then the 61st blocked in this controlled burst. **The saved 10-second counting window and exact dashboard parameters are not independently proven by a short burst**, and the test does not claim globally exact limits. Rule ID attribution through a Security Event/API and an independent inventory of exactly one rule remain unavailable.
+Recovery on the same connection was 429 at **+2.007 / +5.006 / +9.008 s**, then 202/drop at **+11.015 s** (ray `a43feb9e1c321dc1-FRA`). Mitigation expiry is therefore bracketed between the 9-second blocked probe and the 11-second recovered probe, consistent with an entered 10 s timeout. Threshold behavior was 60 allowed then the 61st blocked in this controlled burst. **The saved 10-second counting window and exact dashboard parameters are not independently proven by a short burst**, and the test does not claim globally exact limits. At this test date, Rule ID attribution through a Security Event/API and an independent inventory of exactly one rule were unavailable. The 2026-10-03 transferred-evidence section adds user panel inventory and two Ray correlations to the transferred JSON summary; direct account/original-export review remains unavailable.
 
 The API/internal/fixtures samples had **no HIT/STALE/UPDATING/REVALIDATED**. This proves sampled response behavior after the reported bypass deployment, not which matching Cloudflare rule produced it or that every possible override is absent. No origin cache was enabled and no cache purge was needed.
 
@@ -655,7 +659,7 @@ Private results are in `.runtime/monitor-one-shot-{raw,summary}.json`. Local `ng
 | Requirement | Current evidence / blocker | Concrete information required |
 |---|---|---|
 | Actual-site consent / controlled dogfood | Fixture consent passes; actual site/banner integration is unconfirmed. Production data remains closed; no live attribution claimed. | Actual dogfood URL and how banner allow/withdraw invoke `originmetric.consent(true/false)`. Keep real traffic blocked until all G1 evidence is reviewed. |
-| Single saved Cloudflare rule | Previous external 60/429/recovery behavior remains evidence; saved rule count/order and counting period were not independently inspected. | Existing authorized panel/API access or redacted saved-rule evidence showing exactly one rule, expression/action/threshold/counting period/mitigation. Put API credentials directly in a scoped server file; do not send tokens in chat. |
+| Single saved Cloudflare rule | **2026-10-03 update:** user panel summary supplies one Active/First rule, exact expression, IP, 60/10 s and Block/10 s; transferred JSON summary supplies matching Rule ID and two Ray correlations. Existing 60/429/recovery behavior is separate evidence. | Requested panel details supplied; retain direct account/original-export review as unverified. No repeat configuration or new token required by this documentation task. |
 | Off-VPS encrypted backup | `AGE_RECIPIENT` and `BACKUP_REMOTE` empty; no root rclone configuration or existing backup objects found. No provider/account selected here. | Existing authorized provider, dedicated bucket/prefix ending `/originmetric`, config file path and **public** age recipient generated on an offline device. Server credential files root-owned mode 600; private age key stays offline. |
 | Manual restore of actual remote object | CI synthetic restore passed; actual encrypted upload/download and owner offline decrypt/stream have not occurred. | Owner downloads the uploaded encrypted object on an offline-key device, streams decrypt into `restore-check.sh` over SSH and supplies successful table/migration/count evidence. No plaintext dump saved to disk; no production DB restore. |
 | Monitoring / notifications | Live smoke/selfcheck passed; abuse/failure counters empty. `HEALTHCHECKS_URL` / `SELFCHECK_URL` empty; no backup/selfcheck cron. An on-demand selfcheck is not external uptime/alert delivery. | Existing authorized uptime and Healthchecks accounts, separate backup/selfcheck check URLs provisioned privately, and notification destination. External health/tracker checks and backup start/success/fail notification evidence are still needed. |
@@ -705,6 +709,45 @@ Fresh IPv4/IPv6 GET probes passed: root/health/tracker 200; events 202/drop; ide
 
 Official current CIDR lists (15 IPv4 / 7 IPv6) match saved lists, live firewall source sets and nginx trust entries. Installed nginx matches the repository config and syntax passes. nginx and both firewall units active; both firewall units enabled. Existing OriginMetric public certificate matches hostname and expires 2026-12-30 23:23:04 UTC. Production remains on `b750a1b`; all five fact counts are zero. No live config/reload/deploy/firewall/certificate/key/parola change occurred; prior independent external evidence is preserved, not represented as rerun here.
 
-Recovery inventory passes. Only the owned local summary/history was refreshed: health/tracker/selfcheck PASS; backup/restore/independent uptime UNKNOWN. Access and monitoring gaps are not marked complete. Check evidence: ignored mode-600 `.runtime/p2-readonly-followup-20261002.json`. See the [single missing Cloudflare panel list and current owner steps](P2_GITHUB_RECOVERY_MONITORING.md#cloudflare-tek-eksik-panel-listesi).
+Recovery inventory passes. Only the owned local summary/history was refreshed: health/tracker/selfcheck PASS; backup/restore/independent uptime UNKNOWN. Access and monitoring gaps are not marked complete. Check evidence: ignored mode-600 `.runtime/p2-readonly-followup-20261002.json`. The panel request at this audit date is superseded by the [2026-10-03 transferred Cloudflare evidence](P2_GITHUB_RECOVERY_MONITORING.md#cloudflare-transferred-evidence--2026-10-03); non-Cloudflare owner prerequisites remain open.
 
 Canonical key storage remains **OPEN**: private age key offline in **password manager + paper**, `.env` separately encrypted in the owner's password manager outside the DB backup bucket. Added the [existing-key phone-loss procedure](../runbooks/VPS_INSTALLATION.md#telefon-kaybında-mevcut-anahtarla-kurtarma), without generating/changing keys or passwords. Empty server recipient does not establish whether the owner already has a key. Owner recovery confirmation, real remote backup/manual restore, canonical GitHub-alternative decision, monitoring delivery and actual-domain dogfood remain pending. **G1/P2 unaccepted; public data routes closed; P3 not started.**
+
+
+## Cloudflare transferred evidence and acceptance — 2026-10-03
+
+The [updated panel evidence table](#panel-evidence-supplied-by-the-owner) records the user's 3 October panel review, approximately 00:13–01:17 Europe/Istanbul. It is a **transferred text evidence summary** sourced from user screenshots/rule URLs/copied expression and ChatGPT's JSON review. No original screenshot/export was opened here; no Cloudflare API/panel inspection, live configuration, secret/key/password change or deployment occurred. Only the two existing VPS behavior result files below were read for correlation.
+
+### Transferred Security Events JSON review
+
+Reported filename: `firewall-events-2026-10-01T22_06_37Z-2026-10-02T22_06_37Z.json`. The original file is **not asserted present on this VPS** and its integrity/completeness/schema were not independently checked. The supplied ChatGPT summary counts **22 events**, all action `block`: **10 ratelimit + 11 firewallManaged + 1 bic**. The panel's “No Managed rules created” wording is not evidence that managed protection is off; the summary reports managed-rule blocking during the export interval.
+
+All ten rate-limit events share Host `originmetric.app`, Method `POST`, Path `/api/v1/e`, Source `ratelimit`, Action `block`, Description `OriginMetric ingestion IP limit`, Rule ID `c39d94f4c043491a9e62464c46f1b949` and Ruleset ID `5d1f78f7f5784fd2a909593eff6f6430`. First event: **2026-10-02T01:24:40Z**; last: **2026-10-02T01:26:39Z**. Example Ray IDs: `a43fe8a8def52608` and `a43feb919afa1dc1`. No raw client IP is reproduced.
+
+The JSON summary supports that the named rule produced blocks. It contains **no HTTP response status**, so it alone proves neither HTTP 429 nor error 1015. Existing VPS response evidence supplies those observations independently:
+
+| Ray / source correlation | Existing VPS behavior record | What can be concluded |
+|---|---|---|
+| `a43fe8a8def52608` | Ignored `.runtime/p2-cloudflare-results.json`: request **76** in the mixed-FRA/CDG burst, `a43fe8a8def52608-FRA`, **429**; `error1015=false` | Exact Ray base matches the supplied JSON example in the earlier 01:24 UTC test interval; request-level timestamp not stored in this record. Do not claim 1015 for this Ray or use mixed-colo recovery for timing acceptance. |
+| `a43feb919afa1dc1` | Ignored `.runtime/p2-edge-isolation-results.json`: **2026-10-02T01:26:39.609984Z–01:26:39.618137Z**, +**9.008 s** recovery probe, `a43feb919afa1dc1-FRA`, **429**, `body_1015=true`, zero observed CF→origin and private upstream payload packets | Exact Ray base matches the supplied JSON example; timestamp falls in the last-event second. Associates this VPS block with the named rule **through the transferred summary**, not an independently parsed original event. |
+
+The separately recorded request-61 Ray `a43feb594e941dc1-FRA` proves 429/1015 in the controlled single-connection test, but is not one of the two supplied export examples; no original-event match is invented for it. Earlier 60 allowed / 61st blocked and +9 blocked / +11 recovered observations remain behavior evidence, while saved **60 requests / 10 seconds**, **10-second mitigation** and **First** come from the user's panel evidence.
+
+### Canonical acceptance assessment
+
+| Canonical requirement / evidence gap | Assessment after this update |
+|---|---|
+| §§6,20 T4/T22,23,28 G1 item 4 / P2: single ingestion edge rule | **Supplied-panel evidence satisfied:** exactly one Active/First IP rule with the specified expression/threshold/window/Block/mitigation. Prior behavior verifies actual edge blocking/recovery; transferred events support the Rule ID attribution. Direct saved-ruleset review is still unverified. |
+| §23 / P2: Full (strict), trustworthy client-IP transport | **Supplied-panel evidence satisfied:** two TLS mode views and both IP transform toggles Off; earlier valid origin TLS and IPv4/IPv6 transport/spoof tests remain independent behavior evidence. No direct API claim. |
+| Cache bypass and conflicting rule inventory review | **Requested panel evidence supplied:** exact full expression, Active/First/Bypass, visible TTL state, empty Custom/Cache Response/Page/Worker/Origin/header-transform inventories. Earlier no-store/DYNAMIC samples remain separate. `/js/*` caching configuration/performance is not established by this API bypass rule; earlier tracker HIT and later BYPASS are dated samples only. |
+| Original JSON / direct provider review | **OPEN as independent verification:** this transferred summary does not replace original-file inspection, export integrity/completeness checks or authorized direct API/panel inventory. Only two supplied Ray examples were correlated; no per-event reconstruction claimed. |
+| §28 G1 and real-domain P2 dogfood | Technical deployed-clone checks remain historical PASS; actual `originmetric.app` required-consent/banner/withdrawal/GPC and persisted session/source → trusted identify → revenue → attribution (duplicates/refunds) remain **OPEN**. |
+| §§24–25 / P2 operations and recovery | **OPEN:** real encrypted off-VPS upload/readback/download/manual isolated restore, nightly backup/retention/lifecycle and independent recurring monitoring/dead-man/email delivery. GitHub deviations/target still require an explicit canonical-alternative decision. |
+| §24 owner recovery storage | **OPEN:** private age key offline in **password manager + paper**, separate encrypted `.env` in owner's password manager **outside the DB backup bucket**, and phone-independent recovery confirmation. No user compliance inferred; no key/password generated or changed. |
+
+The requested four-panel details are now recorded; do not repeat the old panel request as if nothing was supplied. This closes those **evidence-detail gaps at the user-supplied source level**, not all canonical acceptance conditions. **G1 PENDING; P2 OPEN; P3 not started.** Preserve `PUBLIC_G1_READY=no`, events **202/drop**, identify/revenue **503**, internal/fixtures **404**. No data gate is opened by this report. Next owner steps are recovery-preservation confirmation without revealing secrets and an explicit decision on the documented GitHub recovery/monitoring deviations; real backup/manual restore and actual-domain tests follow their prerequisites.
+
+
+## Documentation verification — 2026-10-03
+
+`git diff --check`, local file-link/new-anchor and fenced-block checks, exact-expression comparison and `npm run format:check` passed. Markdown is intentionally excluded from Prettier by the existing `.prettierignore`; its links, fences and whitespace were checked separately. Existing **gitleaks v8.30.1**, with redaction, scanned current docs and full Git history: **no leaks found**. Only `docs/STATUS.md` and the two P2 reports changed. Canonical plan, DECISIONS, production env, installed OriginMetric nginx and private proxy include hashes matched the pre-edit baseline. No application tests or live requests were rerun for this documentation-only change; CI #68 remains historical code verification, not a new acceptance result. A new commit is made on the assigned P2 branch without amend/history rewriting; actual commit/push and remote SHA verification are reported at handoff.
