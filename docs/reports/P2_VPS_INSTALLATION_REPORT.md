@@ -4,7 +4,7 @@ Date: 2026-10-02 (Europe/Berlin; installation started 2026-10-01 UTC)
 Status: **TRADEBOT REMOVED; CLOUDFLARE EDGE / PROXY / HOST WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
 Authorization: Barış's VPS installation instruction and D-004, with latest Tradebot removal decision D-006. **P3 not started.**
 
-The dated sections below record earlier states. The final removal/cutover section is authoritative for the current host state.
+The dated sections below record earlier states. The removal/cutover and CI/G1 follow-up sections are authoritative for the current host state.
 
 ## Source verification
 
@@ -613,3 +613,52 @@ The timer was cancelled **only after** renewal, HTTPS/gates, all external probes
 Persistence unit syntax/order and repeat apply were verified; no production reboot was performed. Range refresh is **manual**, with drift rejected on apply. Future refresh must validate official ranges and update nginx trust plus staged firewall chains together, with another timed rollback; do not clear live chains or temporarily reopen direct web access.
 
 **Only the scoped host-web restriction criterion is now verified. G1/P2 remain pending.** Missing G1 runner/deployed evidence, actual-site consent setup, remaining Cloudflare panel inventory/counting-window review, encrypted off-VPS backup plus manual restore, monitoring and owner secret-preservation confirmation are not waived. Public data acceptance remains closed; P3 is not started. Normal assigned-branch commit/push, secret/format checks and local/remote SHA comparison are reported at handoff.
+
+
+## CI, G1, backup and monitoring follow-up — 2026-10-02
+
+The requested pending CI on `3e954fd3783b3bf1ff9c90b95260ab738f013d08` finished **successfully**: [GitHub Actions #62](https://github.com/brsctncnbrk5/originmetric/actions/runs/37023480832). All required steps passed: full-history secret scan, lint/format/types, migration/schema checks, unit/real-DB tests, tracker budget, production build, Playwright, demo and production Docker consent/encrypted restore proof. The duplicate push run `37023473297` was cancelled by concurrency; no failed CI defect needed correction. Repeating G1 did uncover an existing intermittent regression-test defect: the wrong-secret case replaced the final character with `Z`, leaving a valid key unchanged when it already ended in `Z`. The fixture now always changes that character; production authentication code is unchanged. This is repository validation, not P2 acceptance or a real off-VPS restore.
+
+### Deployed-build G1 technical evidence
+
+Added `npm run gate:g1`, using the existing installed Docker/PostgreSQL image, Playwright and Chromium; no dependency or paid service added. It takes the shared operation lock, requires production `PUBLIC_G1_READY=no`, verifies app/DB/tracker source matches the deployed SHA, and clones the running image without production credentials, volumes or database access. A unique disposable network and tmpfs PostgreSQL hold synthetic data. Both random published ports bind only loopback. Browser routes outside the fixture origin are aborted. Production fact counts are inspected SELECT-only before/after; the runner verifies both fixture containers and network are removed.
+
+| Evidence | Result |
+|---|---|
+| Deployed source SHA | `b750a1b5262eb83d04810afc2c71c35678ecfbcc`; source/tracker/migrations unchanged |
+| Running image ID | `sha256:d21b610017470121198935d78635b00a791ab2eb011b2ff8261fe6e5bc85259e` |
+| Live vs clone tracker SHA-256 | Equal: `b629914f93296cbb78d4d09e940c0e0ff78139b59f9a3008ecbae68a9eb6d7e9` |
+| Required consent | Zero event requests, cookies, visitor and tracker localStorage before consent |
+| Consent/withdrawal | Consent returns 202 in fixture; withdrawal removes state and subsequent SPA navigation sends nothing |
+| GPC default | Zero event requests and no visitor identifier |
+| Browser trust boundary | Browser identify creates no customers, visitor links or revenue |
+| Matching-source regressions | **7 files / 56 tests passed**: tracker, ingestion/origin/8 KB/schema/dedup/failure, process/project/client/daily limits, logger/handler redaction and server-only identify |
+| Production facts / cleanup | Five fact counts unchanged; disposable fixture containers/network removed |
+
+Private evidence is reachable through `.runtime/g1-latest-path` (summary and regression log, root-only directory). The normal command reports **technical PASS / overall PENDING**, exit 2. `--technical-only` exits 0 after technical PASS; it is not approval of G1 or the phase. These are tests against an exact image clone and matching source, not consented attribution on the production database or proof that the owner's actual banner is integrated. Earlier missing-runner statements remain historical.
+
+The first fixture attempt revealed Docker internal-only network port publication; it was corrected to a dedicated fixture network with loopback bindings. Handler regression environment is explicitly local for synthetic requests; cloudflare proxy-mode coverage is separately explicit in existing tests. Production proxy mode was unchanged.
+
+### Fresh external health/tracker evidence
+
+Anonymous, existing Globalping access tested both HTTPS endpoints from **Falkenstein and Helsinki** independently of the VPS; **all eight responses were HTTP 200**. No account, subscription or paid credits were started. This proves one-time external availability, not recurring monitoring or notification delivery.
+
+| Endpoint | IPv4, both nodes | IPv6, both nodes |
+|---|---|---|
+| `/api/health` | [200 / 200](https://api.globalping.io/v1/measurements/2Liv0qnkMYjgbOCao00021F9h) | [200 / 200](https://api.globalping.io/v1/measurements/2G9TEQEvjHvHuGKLB00021F9h) |
+| `/js/v1/om.js` | [200 / 200](https://api.globalping.io/v1/measurements/259p4lOhlSmBPg2x900021F9h) | [200 / 200](https://api.globalping.io/v1/measurements/2yfrcsjW6UaSOu9hf00021F9h) |
+
+Private results are in `.runtime/monitor-one-shot-{raw,summary}.json`. Local `nginx -t`, live smoke/selfcheck and SSH/nginx/firewall unit state passed. No fixture containers/networks remained after the final G1 run.
+
+### Remaining evidence and required owner input
+
+| Requirement | Current evidence / blocker | Concrete information required |
+|---|---|---|
+| Actual-site consent / controlled dogfood | Fixture consent passes; actual site/banner integration is unconfirmed. Production data remains closed; no live attribution claimed. | Actual dogfood URL and how banner allow/withdraw invoke `originmetric.consent(true/false)`. Keep real traffic blocked until all G1 evidence is reviewed. |
+| Single saved Cloudflare rule | Previous external 60/429/recovery behavior remains evidence; saved rule count/order and counting period were not independently inspected. | Existing authorized panel/API access or redacted saved-rule evidence showing exactly one rule, expression/action/threshold/counting period/mitigation. Put API credentials directly in a scoped server file; do not send tokens in chat. |
+| Off-VPS encrypted backup | `AGE_RECIPIENT` and `BACKUP_REMOTE` empty; no root rclone configuration or existing backup objects found. No provider/account selected here. | Existing authorized provider, dedicated bucket/prefix ending `/originmetric`, config file path and **public** age recipient generated on an offline device. Server credential files root-owned mode 600; private age key stays offline. |
+| Manual restore of actual remote object | CI synthetic restore passed; actual encrypted upload/download and owner offline decrypt/stream have not occurred. | Owner downloads the uploaded encrypted object on an offline-key device, streams decrypt into `restore-check.sh` over SSH and supplies successful table/migration/count evidence. No plaintext dump saved to disk; no production DB restore. |
+| Monitoring / notifications | Live smoke/selfcheck passed; abuse/failure counters empty. `HEALTHCHECKS_URL` / `SELFCHECK_URL` empty; no backup/selfcheck cron. An on-demand selfcheck is not external uptime/alert delivery. | Existing authorized uptime and Healthchecks accounts, separate backup/selfcheck check URLs provisioned privately, and notification destination. External health/tracker checks and backup start/success/fail notification evidence are still needed. |
+| Secret recovery | Server secret file protected; offline owner preservation unconfirmed. | Confirm production secrets/config and offline age private key are preserved in the owner's password manager/offline recovery store, without revealing their values. |
+
+Runbook §6 describes secure provisioning and the real backup/manual restore sequence. Nightly backup/per-period selfcheck schedules remain uninstalled until real backup/restore prerequisites pass. No fake remote, offline key on VPS, new subscription or assumed successful alert delivery was substituted. Shared tools, mixed archives and shared logs retained under D-006 were not modified or removed. No app redeploy, production schema write or ingestion opening occurred. **G1 pending; P2 open; P3 not started.**

@@ -44,7 +44,7 @@ describe("API request logging", () => {
     await callIdentify(deps, P.key, bodies[0]);
     await callIdentify(deps, P.key, bodies[0]); // duplicate
     await callIdentify(deps, P.key, bodies[1]); // 422
-    await callIdentify(deps, `${P.key.slice(0, -1)}Z`, bodies[0]); // 401 wrong secret
+    await callIdentify(deps, `${P.key.slice(0, -1)}${P.key.endsWith("Z") ? "Y" : "Z"}`, bodies[0]); // 401 wrong secret
     await callIdentify(deps, null, bodies[0], { cookie: "om_vid=" + VISITOR }); // 401 missing
     const rev = payment({ event_id: EVENT, customer_id: CUSTOMER, visitor_id: VISITOR });
     await callRevenue(deps, P.key, rev); // 201

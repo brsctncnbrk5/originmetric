@@ -203,6 +203,23 @@ yenileme/iade ve duplicate davranışı doğrulanır. Browser'a server key koyul
 Gerçek dogfood sitesinde snippet `data-consent="required"` ve consent withdrawal bağlantısıyla kurulur.
 Kontrollü test fixture'ı gerçek site banner'ı kurulmuş sayılmaz.
 
+### Mevcut G1 teknik kontrol komutu
+
+```bash
+npm run gate:g1
+# Yalnız teknik doğrulama için; gate kabulü değildir:
+npm run gate:g1 -- --technical-only
+```
+
+Komut VPS'de çalışan imajı üretim sırları/volume'leri olmadan tek kullanımlık fixture'a kopyalar.
+İzole test veritabanı tmpfs kullanır; portlar yalnız localhost'a bağlanır. Mevcut Chromium kullanılır
+(gerekirse `PLAYWRIGHT_CHROMIUM_EXECUTABLE` mevcut executable'a ayarlanır). Source/imaj/live tracker
+hash eşitliği, consent/withdrawal/GPC ve yedi dosyadaki 56 regression testi denetlenir. Üretim fact
+sayıları SELECT-only karşılaştırılır, fixture kaynakları temizlenir; kanıt `.runtime/g1-latest-path` içindedir.
+Teknik PASS, gerçek sitenin consent/banner onayı ve kayıtlı Cloudflare kural envanteri/counting period
+incelemesinin yerine geçmez. Bu engeller varken normal komut exit 2 verir; teknik hata exit 1,
+`--technical-only` teknik PASS için exit 0 verir. Hiçbir flag/route/phase kabulü değiştirilmez.
+
 ## 6. Yedek ve geri yükleme
 
 Barış off-VPS sağlayıcısını seçer; mevcut ücretsiz hesabı uygunsa kullanılır. B2/R2 hesabı veya kart/
@@ -211,6 +228,13 @@ Offline cihazda `age-keygen` ile anahtar oluşturulur. **Yalnızca public recipi
 AGE_RECIPIENT'e yazılır. Private key şifre yöneticisi/offline cihazda kalır.
 `BACKUP_REMOTE=remote:bucket/path/originmetric` özel prefix olmalı. 7 günlük / 4 haftalık / 2 aylık
 şifreli snapshot korunur; script bu prefix dışına silme yapmaz. Secrets ayrıca parola yöneticisinde.
+
+Güvenli kurulum: mevcut yetkili remote için root-owned mode 600 özel rclone config dosyası kullan;
+`.env.production` içine `RCLONE_CONFIG` ile dosya yolunu, `BACKUP_REMOTE` ile yalnız OriginMetric prefix'ini
+ve `AGE_RECIPIENT` ile public recipient'i yerel editörle yaz. Aynı dosyada `HEALTHCHECKS_URL` ve
+`SELFCHECK_URL` ayrı mevcut check'lerin URL'leri olmalı; değerleri terminal çıktısına veya sohbete koyma.
+`.env.production` mode 600 kalmalı. Başka projenin config/remote'unu değiştirme; hesap/provider yetkisi
+olmaksızın upload/retention başlatma. Sadece dosya yolu, sağlayıcı/prefix ve public recipient paylaşılabilir.
 
 ```bash
 bash scripts/vps/backup.sh
