@@ -11,7 +11,7 @@
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
 | P2 | **TRADEBOT REMOVED; WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
-| P2 last full-suite tested code head | `a64503c2a34516f1cfb460d16a7d110dfe85a2b7` — [CI run #64: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37029502463) |
+| P2 last full-suite tested code head | `fea039e51dd8eb43804b33cd281ead6353d7dc70` — [CI run #68: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37039757133) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |

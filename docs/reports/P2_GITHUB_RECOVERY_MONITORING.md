@@ -52,3 +52,8 @@ GitHub schedule semantics: minimum five minutes, default branch only; queue dela
 2. Decide whether to accept GitHub private Releases + dashboard/Actions as a **documented alternative to the canonical storage/lifecycle/Healthchecks/email requirements**, including their stated gaps; confirm the dedicated private repo name. Until then, no target creation/upload/retention or deploy-prerequisite bypass.
 3. Before any first Release upload or independent workflow activation, review the actual target/content or the HTTPS-check operation and possible GitHub notification destination/settings. Give explicit notification approval if applicable; account quota/no-spend settings must be verified for any private runner.
 4. Provide existing Cloudflare saved-rule evidence or the scoped read-only token file/Zone ID already described in the installation runbook. Exact rule inventory/counting period remains unverified. Later, confirm the actual originmetric.app banner and separately authorize any data-gate-dependent attribution test; today's instruction does not open it.
+
+
+## Code verification / handoff
+
+Code head `fea039e51dd8eb43804b33cd281ead6353d7dc70` passed [CI #68](https://github.com/brsctncnbrk5/originmetric/actions/runs/37039757133): full-history secrets, lint/format/types, unit/real-DB/migrations, tracker budget/build, browser (including the three new checks), demo, Docker package and synthetic encrypted restore. The duplicate push workflow was cancelled by concurrency, not failed. Local/remote code SHA matched and production's five fact counts remained zero. The subsequent documentation commit records this result; no live app deployment or phase acceptance follows from it.
