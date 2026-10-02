@@ -48,10 +48,39 @@ GitHub schedule semantics: minimum five minutes, default branch only; queue dela
 
 ## Concrete remaining owner actions
 
-1. On an offline device, generate/preserve the age private key and put **only the public recipient** in the server's mode-600 `AGE_RECIPIENT`. Confirm encrypted offline storage of production configuration/account recovery; never send the private key in chat.
+1. Confirm whether an existing offline age key is available and preserve its private key in **password manager + paper**, as canonical §24 requires. Only its public recipient belongs in the server's mode-600 `AGE_RECIPIENT`. No key/password generation or rotation is authorized by the current continuation. Confirm separately encrypted production configuration and phone-independent account recovery without revealing values. If no existing key is available, keep that prerequisite open.
 2. Decide whether to accept GitHub private Releases + dashboard/Actions as a **documented alternative to the canonical storage/lifecycle/Healthchecks/email requirements**, including their stated gaps; confirm the dedicated private repo name. Until then, no target creation/upload/retention or deploy-prerequisite bypass.
 3. Before any first Release upload or independent workflow activation, review the actual target/content or the HTTPS-check operation and possible GitHub notification destination/settings. Give explicit notification approval if applicable; account quota/no-spend settings must be verified for any private runner.
-4. Provide existing Cloudflare saved-rule evidence or the scoped read-only token file/Zone ID already described in the installation runbook. Exact rule inventory/counting period remains unverified. Later, confirm the actual originmetric.app banner and separately authorize any data-gate-dependent attribution test; today's instruction does not open it.
+4. Supply the missing Cloudflare panels in the single list below; existing panel evidence remains attributed to the owner. Later, confirm the actual originmetric.app banner and separately authorize any data-gate-dependent attribution test; today's instruction does not open it.
+
+## Read-only continuation — 2026-10-02, 19:14–19:15 UTC
+
+Prepared code and production settings were preserved. Current shell environment contains no Cloudflare access key names; `/etc/originmetric/secrets/cloudflare-read.curl` and standard root Wrangler config paths are absent; no callable Cloudflare connector is available. Scoped provider filenames found under `/etc/originmetric` are public CIDR lists only. No account API request was made without credentials. Saved SSL mode, rule inventory/order, exact counting period and Worker overrides were **not independently inspected**. Previously supplied Full (strict), Pseudo IPv4 Off and visitor-IP-removal Off panel evidence remains owner-supplied evidence; no repeat setting change is requested.
+
+Fresh public GET-only probes from this VPS passed via Cloudflare in both IP families: root/health/tracker 200, events 202/drop, identify/revenue 503, metrics/operations/fixture 404. All sampled API/internal/fixture responses were `no-store` + `DYNAMIC`; tracker was `no-store` + `BYPASS`. This is sampled behavior, not proof of saved cache-rule ordering. www returned 308 retaining path/query. Public A/AAAA resolved to Cloudflare ranges and NS to Cloudflare nameservers; this cannot enumerate saved DNS records or prove their exact origin target. TLS verification used curl's normal certificate checks, without `-k`; successful edge TLS does not prove saved Full (strict).
+
+The [official IPv4](https://www.cloudflare.com/ips-v4) and [IPv6](https://www.cloudflare.com/ips-v6) lists were freshly read: **15/7 ranges**, matching saved firewall files, active `OM_CF_WEB4/6` source sets and the committed/installed nginx trust config. Initial Python urllib retrieval received 403; curl retry succeeded. `nginx -t` passed; nginx/firewall units were active and both firewall units enabled. These local chain checks do not replace the earlier independent external port evidence or establish a production reboot test. Deployed tag remains `b750a1b5262eb83d04810afc2c71c35678ecfbcc`; five production fact counts are zero.
+
+Recovery `--inventory` passed for all existing scoped members. Refreshed only the owned local operations summary/history: health/tracker/selfcheck PASS, **backup/restore/independent uptime UNKNOWN**. No upload, encryption, key generation, scheduler, remote workflow dispatch or notification occurred. Public probes are one-time VPS-origin observations, not independent recurring uptime. Sanitized check details are in ignored mode-600 `.runtime/p2-readonly-followup-20261002.json`; local summary is `.runtime/operations/snapshot.json`.
+
+### Cloudflare: tek eksik panel listesi
+
+`originmetric.app` zone'u ve kayıtlı/aktif durum görünsün; mevcut ayarları değiştirmeden, token veya hesap sırrı içermeyen ekranlar yeterli:
+
+1. **Security → Rate limiting:** tüm kural listesi + mevcut ingestion kuralının kayıtlı ayrıntıları: expression, enabled/Block, IP characteristic, 60 requests / 10 s counting period ve 10 s mitigation; tam listeyle tek kural sayısı/sıra.
+2. **Security → Custom rules:** tüm kuralların sıra/aktif durumları; varsa expression/action ve Skip istisnaları.
+3. **Rules → Cache Rules + Page Rules:** tam liste/sıra ve mevcut API bypass expression/ayarları; varsa geniş Cache Everything/TTL override ayrıntıları.
+4. **Workers Routes:** zone'a bağlı tüm route listesi (boşsa boş liste); varsa bağlı Worker ve OriginMetric için header/cache değiştiren işlemler.
+
+### Key preservation and phone-loss recovery remain open
+
+Canonical §24 explicitly requires the private age key **offline, password manager + paper**, and `.env` separately encrypted in the owner's password manager **outside the DB backup bucket**. Owner confirmation and a real restore are still missing. Public `AGE_RECIPIENT`, `BACKUP_REMOTE` and both check URLs remain empty. No private key availability on the owner's devices is inferred from this server audit.
+
+The [phone-loss recovery instructions](../runbooks/VPS_INSTALLATION.md#telefon-kaybında-mevcut-anahtarla-kurtarma) explain using the existing key from the vault or its complete paper copy, existing phone-independent vault/account/2FA recovery information, then downloading/decrypting a real remote object and performing an isolated manual restore. No key/password was created or changed. A phone-only vault/2FA path is insufficient; public recipient cannot decrypt. Owner confirmation should disclose only that copies and phone-independent access exist, never their contents. GitHub ciphertext configuration does not silently satisfy the separate-secret-storage condition.
+
+Documentation verification: `git diff --check` and local file-link target validation passed; gitleaks v8.30.1 scanned the current docs read-only with redaction and no network, **no leaks found**. Production env/nginx/private include hashes remained unchanged after edits; canonical plan and DECISIONS are unchanged. No application code changed, so the earlier CI #68 result remains historical code evidence, not a newly run test suite.
+
+**Completed independently:** accessible public/host read-only checks, scoped recovery inventory and fresh local observation/history, documented phone-loss procedure and updated handoff. **Open:** saved Cloudflare inventory/counting window; offline key preservation and separate `.env` recovery; GitHub canonical-alternative decision/private target; real upload/download/manual restore; independent scheduled monitoring/dead-man/email; actual-domain consent and persisted attribution. **Owner steps:** supply the four panels above, confirm existing phone-independent recovery without secrets, decide the already documented GitHub deviations/target, and subsequently review actual upload/check destinations and real-site steps. Until prerequisites are met, no deploy-prerequisite bypass or traffic opening. **G1 pending; P2 open; P3 not started.**
 
 
 ## Code verification / handoff

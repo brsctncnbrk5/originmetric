@@ -224,8 +224,9 @@ incelemesinin yerine geçmez. Bu engeller varken normal komut exit 2 verir; tekn
 
 Barış off-VPS sağlayıcısını seçer; mevcut ücretsiz hesabı uygunsa kullanılır. B2/R2 hesabı veya kart/
 ücret gerekirse ayrıca onay alınır. Başka bir projeye ait rclone remote/config değiştirilmez.
-Offline cihazda `age-keygen` ile anahtar oluşturulur. **Yalnızca public recipient** VPS'deki
-AGE_RECIPIENT'e yazılır. Private key şifre yöneticisi/offline cihazda kalır.
+Mevcut offline age anahtarı varsa **yalnızca ona ait public recipient** VPS'deki
+AGE_RECIPIENT'e yerleştirilir. Bu devam çalışması anahtar/parola üretmez veya değiştirmez;
+mevcut anahtar yoksa anahtar hazırlığı açık kalır. Private key VPS'ye taşınmaz.
 `BACKUP_REMOTE=remote:bucket/path/originmetric` özel prefix olmalı. 7 günlük / 4 haftalık / 2 aylık
 şifreli snapshot korunur; script bu prefix dışına silme yapmaz. Secrets ayrıca parola yöneticisinde.
 
@@ -264,6 +265,29 @@ Saat host timezone'a göre; 03:15 istenen yerel/UTC saat kurulumda kaydedilir. S
 satırları eklenir; mevcut crontab değiştirilmez/silinmez. Logrotate yapılandırılır. Healthchecks URL
 backup ve selfcheck için ayrı; mevcut ücretsiz hesabı Barış seçer. Uptime check HTTPS health ve tracker.
 Selfcheck abuse/failure counter'ı restart'tan beri pozitifse uyarır (P2 conservative davranışı; P7 delta/advanced alerting).
+
+### Telefon kaybında mevcut anahtarla kurtarma
+
+Canonical §24 koşulu aynen geçerlidir: age private key Barış'ta **password manager + paper**
+olarak, VPS dışında saklanır; `.env` ayrıca şifre yöneticisinde şifreli tutulur ve DB backup
+bucket'ına konmaz. Bu koşulun sahibince yerine getirildiği henüz doğrulanmadı; **AÇIK**.
+GitHub'a şifreli configuration asset koyma önerisi bu ayrı-saklama koşulunu kendiliğinden karşılamaz.
+
+Telefon tek erişim yolu olmamalı. Mevcut private key'in eksiksiz kâğıt kopyası güvenli fiziksel
+yerde, şifre yöneticisindeki mevcut kopyası da telefondan bağımsız erişilebilir olmalı. Şifre
+yöneticisinin mevcut ana parolası/kurtarma bilgisi ile GitHub, e-posta ve gerekiyorsa VPS hesabının
+mevcut 2FA kurtarma kodları telefon dışında erişilebilir tutulmalı; erişim talimatı yalnız erişmek
+için gereken kilitli kasanın içinde bulunmamalı. Burada yeni parola, anahtar veya kurtarma kodu üretilmez.
+Sahip yalnız bu kopyaların ve telefonsuz erişimin mevcut olduğunu bildirir; içeriklerini paylaşmaz.
+
+Telefon kaybolduğunda güvenilir bilgisayardan mevcut kurtarma bilgileriyle kasaya ve yedek hesabına
+erişilir. Private age key kasadaki veya kâğıttaki **aynı anahtardır**; telefon kaybı nedeniyle yeni
+anahtar gerekmez. Gerçek off-VPS ciphertext indirilir, kayıtlı hash ile karşılaştırılır ve yukarıdaki
+komutla sahibin bilgisayarında decrypt edilip izole restore-check'e akıtılır. Ayrı şifreli `.env`
+kopyasına kasadan erişilir. Private key, parola ve kurtarma kodları VPS'ye/GitHub'a/sohbete gönderilmez.
+Public recipient şifre çözemez; private key'in erişilebilir kopyası yoksa public recipient veya
+GitHub'daki ciphertext tek başına kurtarma sağlamaz. Hash eşitliği ve anahtara erişim başarılı
+restore kanıtı değildir; gerçek remote nesnenin manual restore sonucu ayrıca kaydedilmelidir.
 
 ### P2 erişimlerini güvenli yerleştirme
 
