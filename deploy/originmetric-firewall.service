@@ -1,0 +1,14 @@
+[Unit]
+Description=OriginMetric scoped private-port and Docker ingress protection
+Requires=docker.service
+After=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/originmetric-firewall apply
+# Rules deliberately survive a unit stop. Explicit rollback uses the remove command.
+
+[Install]
+WantedBy=multi-user.target

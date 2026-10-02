@@ -57,6 +57,50 @@ describe("ingestion admission", () => {
       }),
     ).toBe("2001:db8::1");
   });
+  it("requires the private token, validates CF IP and never falls back to XFF", () => {
+    const env = {
+      NODE_ENV: "production",
+      INGEST_PROXY_MODE: "cloudflare",
+      INGEST_PROXY_TOKEN: "a".repeat(64),
+    };
+    for (const cf of ["", "invalid", "198.51.100.1, 198.51.100.2"]) {
+      const r = new Request("http://localhost", {
+        headers: {
+          "x-om-proxy-token": env.INGEST_PROXY_TOKEN,
+          "cf-connecting-ip": cf,
+          "x-forwarded-for": "198.51.100.99",
+        },
+      });
+      expect(ingestionClient(r, env)).toBeNull();
+    }
+    for (const token of ["", "b".repeat(64), "a".repeat(63)]) {
+      expect(
+        ingestionClient(
+          new Request("http://localhost", {
+            headers: {
+              "x-om-proxy-token": token,
+              "cf-connecting-ip": "198.51.100.1",
+            },
+          }),
+          env,
+        ),
+      ).toBeNull();
+    }
+    for (const ip of ["198.51.100.1", "2001:db8::1"]) {
+      expect(
+        ingestionClient(
+          new Request("http://localhost", {
+            headers: {
+              "x-om-proxy-token": env.INGEST_PROXY_TOKEN,
+              "cf-connecting-ip": ip,
+              "x-forwarded-for": "198.51.100.99",
+            },
+          }),
+          env,
+        ),
+      ).toBe(ip);
+    }
+  });
   it("stops unknown-length bodies at 8 KB and accepts the exact byte boundary", async () => {
     const r = new Request("http://localhost", { method: "POST", body: "x".repeat(8193) });
     await expect(readBoundedBody(r, 8192)).rejects.toBeInstanceOf(BodyTooLarge);

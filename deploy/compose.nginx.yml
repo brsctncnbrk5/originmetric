@@ -1,0 +1,5 @@
+# Host nginx owns TLS; all existing loopback bindings are retained.
+services:
+  caddy:
+    volumes:
+      - ./Caddyfile.nginx:/etc/caddy/Caddyfile:ro

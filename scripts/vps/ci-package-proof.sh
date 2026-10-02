@@ -12,6 +12,10 @@ cleanup_ci() {
 }
 trap cleanup_ci EXIT
 bash scripts/deploy.sh "$APP_TAG"
+# Validate the authenticated host-nginx listener without publishing ports.
+INGEST_PROXY_TOKEN=$INGEST_PROXY_TOKEN docker run --rm -e INGEST_PROXY_TOKEN \
+  -v "$OM_ROOT/deploy/Caddyfile.nginx:/etc/caddy/Caddyfile:ro" caddy:2.11.2-alpine \
+  caddy validate --config /etc/caddy/Caddyfile
 # Validate the optional public Caddy config with a synthetic cert, without publishing ports.
 mkdir -p secrets/cloudflare
 openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=ci.originmetric.invalid \

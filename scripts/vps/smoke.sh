@@ -2,7 +2,7 @@
 source "$(dirname "$0")/common.sh"
 load_env
 OM_DEFAULT_URL=http://127.0.0.1:$OM_HTTP_PORT
-if [[ ${OM_INGRESS:-local} == public ]]; then OM_DEFAULT_URL=https://$OM_DOMAIN; fi
+if [[ ${OM_INGRESS:-local} == public || ${OM_INGRESS:-local} == nginx ]]; then OM_DEFAULT_URL=https://$OM_DOMAIN; fi
 OM_URL=${1:-$OM_DEFAULT_URL}
 [[ $OM_URL == http://127.0.0.1:* || $OM_URL == https://* ]] || fail 'Smoke needs loopback HTTP or HTTPS'
 [[ $(curl -fsS --max-time 10 "$OM_URL/api/health") == '{"status":"ok"}' ]] || fail 'Health/DB check failed'

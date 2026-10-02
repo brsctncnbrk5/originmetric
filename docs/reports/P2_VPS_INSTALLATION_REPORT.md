@@ -1,7 +1,7 @@
 # OriginMetric — P2 VPS installation report
 
 Date: 2026-10-02 (Europe/Berlin; installation started 2026-10-01 UTC)
-Status: **DOMAIN / HTTPS VERIFIED — PUBLIC DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
+Status: **HTTPS / PROXY / SCOPED FIREWALL VERIFIED — PUBLIC DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
 Authorization: Barış's VPS installation instruction and D-004. **P3 not started.**
 
 ## Source verification
@@ -151,3 +151,92 @@ The first requests immediately following reload briefly returned the previous si
 Before any public event acceptance, install a validated nginx-to-Caddy proxy path that overwrites the private trust token and preserves the actual CF client header behind the Cloudflare peer gate. **Do not remove the nginx data-route gate while the review Caddy overwrites CF-Connecting-IP with loopback.** Then complete G1 evidence, the real site's required-consent banner and actual-domain attribution tests, scoped Docker-aware firewall/independent external IPv4/IPv6 checks, real encrypted off-VPS backup/download/manual isolated restore, owner secrets preservation and backup/uptime/Healthchecks scheduling. Backup account/public age recipient and monitoring inputs remain missing. P2 is not accepted; P3 has not started.
 
 Official references checked for this installation: [Cloudflare IPv4](https://www.cloudflare.com/ips-v4), [IPv6](https://www.cloudflare.com/ips-v6), [Full (strict)](https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/full-strict/), [rate-limit parameters](https://developers.cloudflare.com/waf/rate-limiting-rules/parameters/), [Certbot webroot](https://eff-certbot.readthedocs.io/en/stable/using.html#webroot).
+
+## Remaining security preparation — 2026-10-02
+
+This section supersedes the prior synthetic-upstream and pending-Full-(strict) instructions. Canonical plan §28 P2/G1 was retained. No AGENTS.md was found in the repository or its parent directories; CLAUDE.md and locked decisions were read. Starting branch was `codex/originmetric-p2-vps-preparation`, clean at `4333381`; fetch showed local/remote equality. P3 has not started.
+
+### Cloudflare status and HTTP evidence
+
+The owner states apex A → `169.58.134.223`, www CNAME → apex, both Proxied, and **Full (strict) saved**. No Cloudflare account/API access was available; the saved mode and rule inventory are **owner-reported/uninspected**, not independently verified. Successful HTTPS is compatible with that statement but cannot prove the selected mode.
+
+Repeated live requests: apex/root, DB-backed health and tracker 200; www 308 preserves path/query; `/internal`, `/internal/projects/test`, `/api/internal/metrics`, `/fixtures/required` 404; public event POST 202/drop; identify/revenue 503. Direct-origin TLS is valid without `-k`, but requests to both OriginMetric hosts return 403 even with forged CF-Connecting-IP/XFF. Public data routes were never opened.
+
+API/internal/fixture responses including nginx 202/404/503 now carry `Cache-Control: no-store`; observed edge status was DYNAMIC. Root is also no-store. Application health, ingestion, server APIs and internal metrics already set no-store; nginx now covers responses generated before the app. Neither nginx nor Caddy enables a response cache. The previously cached, unchanged tracker returned HIT (static caching is permitted); this does not mean API data is cached. Fresh proxy responses use conservative no-store headers. Actual Cloudflare Cache Rules, Page Rules, Workers and overrides remain uninspected.
+
+### Trust chain installed and tested
+
+- Official [IPv4](https://www.cloudflare.com/ips-v4) and [IPv6](https://www.cloudflare.com/ips-v6) lists were fetched again and matched the committed snapshot (15 + 7 CIDRs). No automatic unaudited list updater was installed; reverify lists before go-live and when upstream ranges change.
+- `deploy/nginx.originmetric.conf` applies `set_real_ip_from` and CF-Connecting-IP only inside the OriginMetric servers, with `real_ip_recursive off`. Peer admission uses **`$realip_remote_addr`**, the original transport peer, so a forged Cloudflare-looking client IP cannot pass the origin gate. nginx forwards the normalized `$remote_addr` as CF-Connecting-IP, removes XFF/X-Real-IP, and injects the private token from root-owned mode-600 `/etc/nginx/originmetric-proxy-token.conf`. Never print `nginx -T` after installing this private include.
+- `deploy/compose.nginx.yml` selects `Caddyfile.nginx` while preserving the loopback port. This listener refuses missing/wrong proxy tokens with 403 and preserves nginx's CF IP; it removes XFF/X-Real-IP before the app. The synthetic `Caddyfile.local` remains for isolated local/CI proof only. Production `.env.production` now uses **`OM_INGRESS=nginx`**, **`PUBLIC_G1_READY=no`**.
+- The application keeps `INGEST_PROXY_MODE=cloudflare`; `ingestionClient` requires the private timing-safe token, validates IPv4/IPv6, never trusts/falls back to XFF and fails closed on missing/malformed CF IP. There is no blanket trust-all-proxies framework setting used for ingestion.
+- Live private packet inspection of a health request proved the VPS's actual IPv6 client reached nginx → Caddy → app unchanged. Attacker XFF and token values were removed/replaced. Capture payloads were never printed or committed and the capture was deleted. This proves header transport without enabling ingestion. A forged CF header sent through the edge returned 403; the precise rejecting layer was not inferred.
+- `python3 scripts/vps/test-nginx-proxy.py` runs a separate nginx process on ephemeral loopback ports with a synthetic backend/token. Trusted-peer simulation forwards IPv4/IPv6 correctly, strips hostile XFF/X-Real-IP and replaces token; untrusted transport peers remain 403 even when the forged CF value belongs to a Cloudflare range. No live server reload is used by this test.
+- New unit cases prove missing/wrong/short token, missing/invalid/multiple CF IP refusal, and XFF cannot influence valid IPv4/IPv6 results. These tests complement the live transport proof; they do not claim a production fact was written.
+
+### Scoped network protection and external evidence
+
+Before changes, relevant nginx config, environment, Caddy config, IPv4/IPv6 rule snapshots and service identities were backed up privately under the directory identified by `.runtime/security-backup-path`. `.runtime/rollback-security.sh` restores the previous OriginMetric site/environment/Caddy and removes only the new tagged firewall rules. It validates nginx before reload and preserves DB/other services. Syntax checked; live rollback was not executed, because that would revert the verified fix. Existing deploy-control failure/rollback tests passed.
+
+No policy was changed and no chain was flushed. UFW remains inactive. `scripts/vps/originmetric-firewall.sh` adds only:
+
+1. IPv4 and IPv6 INPUT: eth0 TCP 3000/5432/8088 DROP. Audit confirmed no unrelated listeners on these ports; these ports are reserved for OriginMetric private services on this host.
+2. IPv4 and IPv6 DOCKER-USER: reject new/unrelated traffic from eth0 into **OriginMetric's two bridge networks only**, preserving established/related replies and host/loopback proxy traffic. This also protects against accidental future container port publication/Docker NAT bypass.
+
+`originmetric-firewall.service` installs these idempotently after Docker and reapplies on Docker service restart (PartOf/After). Installed script: `/usr/local/sbin/originmetric-firewall`. Re-running apply preserved rule count. Persistence is configured/enabled and currently active; no VPS reboot or Docker restart was performed. If OriginMetric networks are deleted/recreated, rerun/restart the unit to discover new bridge IDs; the audited external interface is eth0. Explicit firewall rollback: disable the unit, then invoke the script with `remove`; stopping the unit alone deliberately keeps protections.
+
+SSH 22 and shared nginx 80/443 were preserved. nginx/SSH/tradebot main PIDs and unrelated nginx file contents match the pre-change backup. App and DB bindings remain `{}`; Caddy only `127.0.0.1:8088`. Docker networks have IPv6 disabled; host has a global IPv6 address, so ip6tables protection was still installed. nginx currently listens to IPv4 80/443 only; SSH listens on IPv4/IPv6. No unrelated project's ports or config were changed.
+
+Independent TCP checks used [Check-Host's documented remote-node API](https://check-host.net/about/api), without an account or payment. Requests originated at independent remote nodes, not at the VPS. Evidence is point-in-time reachability, not a comprehensive penetration test:
+
+| IPv4 port | Independent nodes | Result | Evidence |
+|---|---|---|---|
+| 22 | de2, us3 | TCP connected (SSH control) | [report](https://check-host.net/check-report/4e82fa25kd2) |
+| 443 | ch2, ir7 | TCP connected (shared HTTPS control) | [report](https://check-host.net/check-report/4e82fa2bk62d) |
+| 3000 | in1, ir4 | Both connection timed out | [report](https://check-host.net/check-report/4e82fa30kb08) |
+| 5432 | ch2, ir5 | Both connection timed out | [report](https://check-host.net/check-report/4e82fa38k2ae) |
+| 8088 | il1, kz1 | Both connection timed out | [report](https://check-host.net/check-report/4e82fa3ck40e) |
+
+Private raw request/result JSON is retained in `.runtime/external-port-results.json`. IPv4 firewall DROP counters increased during these probes. **Independent IPv6 control is missing**: provider rejected bracketed IPv6 TCP targets as `invalid_url`; this is not a closed-port result. Host listener/network/firewall inspection is local evidence only. A separate IPv6-capable external machine must test 22 as a positive control and 3000/5432/8088 for non-reachability.
+
+**Canonical shared-port limitation:** plan says 80/443 limited to Cloudflare. These are shared with direct-IP tradebot and remain generally reachable at transport level. OriginMetric hostnames enforce a Cloudflare-only nginx peer gate, with HTTP-01 ACME exception. Host-wide Cloudflare-only 80/443 was not applied and is not claimed. P2 acceptance needs review of this compatible per-vhost design against the locked criterion or an isolated OriginMetric ingress/IP; this report does not silently redefine the plan.
+
+### Exact Cloudflare panel actions
+
+1. Keep the owner-saved **Full (strict)** and both DNS records Proxied. No need to repeat the already completed SSL change. Confirm there are no Worker routes that rewrite client IP for OriginMetric. Network → Pseudo IPv4 should be **Off** (do not use Overwrite Headers); Rules → Settings / Managed Transforms → **Remove visitor IP headers** must be off for this service. The live IPv6 proof is consistent with intact headers but does not inspect panel settings. See [Cloudflare header semantics](https://developers.cloudflare.com/fundamentals/reference/http-headers/).
+2. Security → Security rules → Create rule → Rate limiting rules (older dashboard: Security → WAF → Rate limiting rules). Use the existing single rule if one is already present; do not create a second rule or enable a paid tier:
+
+| Field | Exact value |
+|---|---|
+| Rule name | `OriginMetric ingestion IP limit` (proposed descriptive name) |
+| Match expression | `http.request.uri.path eq "/api/v1/e"` |
+| Requests / period | **60 requests / 10 seconds** |
+| Same characteristics | **IP** (`ip.src`; Cloudflare implicitly includes data center) |
+| Custom counting expression | None; count all matching requests |
+| Action | **Block**, default HTTP 429 |
+| Duration / mitigation timeout | **10 seconds**, perform action throughout duration |
+
+Canonical plan reserves exactly one rule and the endpoint; it does **not** lock the numerical threshold/name. **60/10 s is a recommendation**, retained from the preparation runbook, to absorb short/NAT bursts while the app separately limits 60/minute per client+site, 200/s per project, 500/s process-wide and 200,000/day per project. Tune later from controlled drop evidence; this recommendation is not a new owner decision. Do not add host/method/header predicates: Free supports path-based matching and IP counting, lacks custom counting/cache exclusion, and offers 10 s period and 10 s mitigation with one rule. [Official availability](https://developers.cloudflare.com/waf/rate-limiting-rules/) and [parameters](https://developers.cloudflare.com/waf/rate-limiting-rules/parameters/) were checked 2026-10-02. Limits are approximate and scoped by Cloudflare data center; in-app ceilings remain necessary.
+
+3. Rules → Cache Rules: create/update `OriginMetric private routes bypass`, custom expression:
+
+```text
+starts_with(http.request.uri.path, "/api/") or
+http.request.uri.path eq "/api" or
+starts_with(http.request.uri.path, "/internal") or
+starts_with(http.request.uri.path, "/fixtures")
+```
+
+Set **Cache eligibility → Bypass cache**. Place it after any matching broad cache rule so the bypass is the last matching cache-eligibility setting. Audit existing Cache Everything/Page Rules/Workers and remove conflicting API/internal caching or make their scope static-only. Do not set an Edge TTL that ignores origin no-store for these paths. If API/internal URLs were previously cached, purge only affected URLs. Leave tracker/static caching separate. [Official Cache Rules settings](https://developers.cloudflare.com/cache/how-to/cache-rules/settings/). This is a cache rule, not a second rate-limit rule.
+
+4. Report that the single rate-limit and bypass rules are deployed (rule settings/IDs without credentials). Then run controlled no-customer-data edge rate-limit verification while nginx still drops ingestion; save 429/security-event evidence. This session has **not** configured or tested an active Cloudflare rate-limit rule and has **not** inspected the account's cache rule inventory.
+
+### Validation and remaining gates
+
+- PASS: nginx -t before reload; Caddy nginx-listener validation; bash syntax; deploy-control rollback test; isolated nginx IPv4/IPv6 spoof proof; live HTTPS/route/cache/header proof; smoke and selfcheck (no abuse/failure counters); service/config continuity.
+- PASS: ESLint, Prettier, TypeScript; **342 tests / 22 files** against an isolated ephemeral PostgreSQL 18.6 (218 unit + 124 DB), including rate limits, daily cap, log redaction and browser identity poisoning; tracker 2491 B gzip / 2560 B. The test DB/container/network were removed; production DB was not used. The first migration attempt ran before the test DB was ready and exited; readiness was confirmed and the full sequence reran successfully.
+- No app/DB redeploy, schema change, paid service, global GitHub-account change, real customer data or public ingestion enablement. Browser/app code was unchanged; live actual-domain consent/banner/dogfood evidence remains pending. Existing browser CI evidence is historical and is not reported as a fresh browser test here.
+
+G1 items 1/2 (consent/GPC) retain prior automated browser evidence; item 3 validation/origin/dedup/failure and item 6 browser trust separation retain prior evidence plus current DB regressions; item 5 redaction passed current tests. **G1 item 4 remains incomplete until the single active edge rule is configured and verified.** Actual-site required-consent banner confirmation is also required before uncontrolled traffic.
+
+P2 additionally awaits independent IPv6 external evidence/shared-ingress criterion review, real required-consent dogfood and production attribution proof, encrypted off-VPS upload + owner download + one manual isolated restore, nightly backup/Healthchecks/uptime setup, and owner confirmation of secure secret preservation. Backup provider/prefix/public age recipient and monitoring inputs remain missing. **G1 not passed; P2 not accepted; P3 not started; all public data acceptance remains closed.**

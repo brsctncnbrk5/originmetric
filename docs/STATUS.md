@@ -4,13 +4,13 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P2 — Deploy the slice & dogfood**: DOMAIN / HTTPS VERIFIED; G1 PENDING |
+| Current phase | **P2 — Deploy the slice & dogfood**: HTTPS / PROXY / SCOPED FIREWALL VERIFIED; G1 PENDING |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
-| P2 | **DOMAIN / HTTPS VERIFIED — PUBLIC DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
+| P2 | **SECURITY PREPARATION VERIFIED — PUBLIC DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
 | P2 tested code head | `a8957d872dc2597d6b2d20203e9c62bebee732f4` — [CI run #46: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/36934400786) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
@@ -27,9 +27,13 @@
 
 ## Next step
 
-OriginMetric still runs image `b750a1b5262eb83d04810afc2c71c35678ecfbcc`; app/DB remain unpublished and Caddy stays on `127.0.0.1:8088`. The owner purchased `originmetric.app` and configured proxied apex/www DNS. A dedicated nginx site now serves HTTPS root/static assets, DB health and tracker; www redirects to the HTTPS apex. A Let's Encrypt certificate covers both hosts, expires 2026-12-30, and has a dedicated renewal cron. Existing nginx configuration files and tradebot processes were preserved. See [`P2 VPS installation report`](reports/P2_VPS_INSTALLATION_REPORT.md). Public event ingestion returns 202/drop at nginx; identify/revenue return 503; internal/fixture routes return 404. **G1 remains unpassed.** Owner must confirm Cloudflare Full (strict) and configure the single edge rate-limit rule. Before enabling data routes, replace the synthetic review proxy's fixed CF IP handling with validated real Cloudflare IP forwarding, complete scoped firewall/external IPv4/IPv6 checks, actual-domain consent/dogfood and real off-VPS backup/restore plus monitoring. **P3 must not start.**
+OriginMetric runs image `b750a1b5262eb83d04810afc2c71c35678ecfbcc`; app/DB remain unpublished. Host nginx owns shared IPv4 80/443, with an authenticated Caddy upstream on `127.0.0.1:8088` (`OM_INGRESS=nginx`). Official Cloudflare IPv4/IPv6 snapshots were reverified 2026-10-02; site-scoped real-IP handling checks the original TCP peer, strips XFF and overwrites the private proxy token. Live packet proof verified the real IPv6 client through nginx/Caddy/app; captures were deleted. SSH, tradebot and unrelated nginx files/PIDs were preserved. IPv4/IPv6 scoped host/Docker firewall rules are installed with systemd persistence. Independent Check-Host nodes could not connect to IPv4 3000/5432/8088; **independent IPv6 evidence remains missing** (provider rejected IPv6 targets). Shared 80/443 remain open for tradebot; OriginMetric's vhost rejects direct requests. This is not proof of the canonical host-wide Cloudflare-only 80/443 criterion.
 
-GitHub push blocker **RESOLVED** (2026-10-02): the owner completed isolated gh login in `.runtime/github-auth`; authenticated account `brsctncnbrk5` has repository `push=true`. A command-scoped credential helper pushed normally to `codex/originmetric-p2-vps-preparation`; remote SHA matched local `26eac2cd67b200c9b23af6101dc94210272e24a1`, including installation commits `9a5ca4c` and `8e6ef88`. The global account, remote URL and local history were preserved. This documentation update records the resolution; P2 acceptance remains pending and P3 has not started.
+HTTPS root/health/tracker and www path/query redirect passed again after the owner's Full (strict) change. **Full (strict) is owner-reported, not independently confirmed in the dashboard.** API/internal/fixture responses are `no-store` / Cloudflare `DYNAMIC`; dashboard cache rules are uninspected. Public events remain nginx 202/drop; identify/revenue 503; internal/fixtures 404; `PUBLIC_G1_READY=no`. **G1 is not passed, P2 not accepted, P3 not started.** Next: owner configures the single Free edge rate-limit rule and API cache bypass (exact instructions in the [installation report](reports/P2_VPS_INSTALLATION_REPORT.md)), confirms proxy/header settings, then controlled verification. Finish independent IPv6 checks, shared-ingress acceptance review, actual-site required-consent/dogfood proof, real encrypted off-VPS backup/download/manual restore, owner secret preservation and backup/uptime/Healthchecks setup. No real customer data was used.
+
+2026-10-02 security regression: lint/format/typecheck, **342 unit + isolated PostgreSQL tests**, tracker 2491 B gzip, synthetic IPv4/IPv6 nginx spoof tests, Caddy validation, deploy rollback-control test and live smoke/selfcheck passed. Production app/DB were not redeployed. Private configuration/firewall backups and a scoped rollback script are recorded in `.runtime/security-backup-path` and `.runtime/rollback-security.sh`.
+
+GitHub's earlier authorization blocker is resolved. Push uses the existing project-specific `.runtime/github-auth` credential helper only; the global account remains unchanged. Work continues on `codex/originmetric-p2-vps-preparation` with normal pushes and full local/remote SHA comparison at handoff.
 
 **P1a clarification (from the P1a instruction, §3.2):** a late trusted link may reveal sessions from *before* the established acquisition moment; those may recompute attribution. Sessions after the acquisition moment never move acquisition credit.
 
