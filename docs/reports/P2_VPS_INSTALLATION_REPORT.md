@@ -256,7 +256,7 @@ These are panel/handoff observations, **separate from the behavior tests below**
 | Pseudo IPv4 | Off; confirmed from panel images in supplied handoff | Fresh IPv6 transport independently tested; images were not re-inspected here |
 | Remove visitor IP headers | Off; confirmed from panel images in supplied handoff | Intact client transport independently tested |
 | Workers Routes | Empty, per supplied panel handoff | No independent Worker/account inventory |
-| Full (strict) | Previously set by the owner | **UNVERIFIED independently**; valid origin certificate and working HTTPS do not prove saved SSL mode |
+| Full (strict) | New owner-supplied SSL/TLS Overview panel-image evidence: **“Current encryption mode: Full (strict)”**, reported 2026-10-02 | **Panel-image evidence supplied by the user**; no independent Cloudflare API/dashboard verification by this agent. Working HTTPS alone does not prove saved SSL mode |
 
 Reported bypass expression:
 
@@ -333,7 +333,7 @@ Ignored proof scripts/results: `.runtime/p2-cloudflare-*`, `.runtime/p2-edge-iso
 
 **Failed/unmet criterion:** host-wide 80/443 Cloudflare-only restriction remains **unmet**. Shared IPv4 listeners continue serving tradebot directly. The OriginMetric vhost gate is verified, but cannot silently substitute for canonical §28's transport restriction. Resolve by explicit owner/plan acceptance of the scoped design or an isolated OriginMetric ingress/IP; preserve SSH and shared projects.
 
-**Independently unverified:** saved Full (strict) mode; complete Cloudflare rule inventory/ordering, exact saved 10 s counting period/IP characteristic and exactly one rate-rule count. Supplied panel evidence and successful edge tests reduce uncertainty but do not provide account-level verification. No observed route/cache/spoof/security regression remains failed after the final checks.
+**Independently unverified:** saved Full (strict) mode via API/dashboard access (now supported by user-supplied panel-image evidence); complete Cloudflare rule inventory/ordering, exact saved 10 s counting period/IP characteristic and exactly one rate-rule count. Supplied panel evidence and successful edge tests reduce uncertainty but do not provide account-level verification. No observed route/cache/spoof/security regression remains failed after the final checks.
 
 **Canonical G1 (§28) remains pending:**
 
@@ -346,3 +346,96 @@ Ignored proof scripts/results: `.runtime/p2-cloudflare-*`, `.runtime/p2-edge-iso
 **Other canonical P2 requirements still pending:** actual required-consent dogfood deployment and consented production attribution (trusted server identify, payment, renewal/refund/duplicate; revenue test from the owner's machine; token-protected internal result review); shared-ingress criterion resolution; independent Full (strict)/single-rule configuration evidence; real nightly encrypted off-VPS backup upload, owner download and one stdin-only isolated manual restore; OriginMetric-only backup scheduling, uptime/Healthchecks monitoring; owner confirmation of encrypted/password-manager preservation of production secrets. Backup provider/prefix/public age recipient and monitoring inputs are still missing. Independent external IPv6 evidence is now complete and is no longer a blocker.
 
 **G1 not passed; P2 not accepted; P3 not started.** Ingestion stays nginx 202/drop, identify/revenue 503, internal/fixtures 404. Opening those routes is not authorized by these successful preparatory tests.
+
+
+## Shared 80/443 resolution preparation — 2026-10-02
+
+**Preparation only; no live nginx/firewall/DNS/certificate/scheduler change or data-route opening.** Starting HEAD: `9c2ce800e8b41608b44cebed3cbbdad329a32b40`, assigned P2 branch, clean checkout. Its documentation CI [run 36951916150](https://github.com/brsctncnbrk5/originmetric/actions/runs/36951916150) completed success. AGENTS.md was absent at `/`, `/opt` and `/opt/originmetric`; CLAUDE.md, STATUS, DECISIONS, the canonical plan and this report were read. No new locked decision was made.
+
+### Exact locked requirement and current failure
+
+Canonical [§28 / P2 security check](../planning/MASTER_DEVELOPMENT_PLAN_v2.md#p2--deploy-the-slice--dogfood-on-a-real-site), line 976:
+
+> **Security check:** G1 checklist; DB not reachable from the internet (external port scan); 80/443 limited to Cloudflare; `.env` perms; TLS Full (strict); exactly one Cloudflare rate-limit rule configured.
+
+The firewall meaning is explicit in §20: **T17**, line 725, says “DB port unpublished, firewall (ufw) allows 22/80/443 only; 80/443 restricted to Cloudflare IP ranges”; **T19**, line 727, says “Firewall allows only Cloudflare IPs on 80/443 (this is also what makes `CF-Connecting-IP` trustworthy for rate limiting)”. §6 line 327 also bases header trust on an origin firewall accepting Cloudflare IPs only. D-001 locks this plan; later plan changes require an explicit decision entry. An IP-scoped interpretation, nginx 403, TLS Full (strict), a private proxy token or successful header tests do not silently pass this host-wide firewall criterion. The separate T17 wording about other allowed ports must also be reconciled against all unrelated listeners before full P2 acceptance; this preparation is scoped to 80/443 and does not claim a complete host firewall pass.
+
+OriginMetric's original-peer `geo $realip_remote_addr` check, site-specific real-IP trust, XFF/X-Real-IP stripping and overwritten private token protect its upstream path. They act after the TCP connection (and HTTPS handshake) reaches shared nginx. Direct peers can still reach tradebot's default vhost; OriginMetric HTTP-01 has a public path exception. Existing private-port DROP rules cover 3000/5432/8088, not 80/443. Thus those verified protections remain useful, while **the locked 80/443 requirement remains unmet**.
+
+New SSL evidence is the user's supplied panel-image observation, “Current encryption mode: Full (strict)”, under SSL/TLS Overview. It is recorded as panel evidence, without claiming this session retrieved or independently inspected the image through Cloudflare, or verified the setting via API. This resolves the previous absence of explicit panel evidence; account-level independent verification remains distinct.
+
+### Fresh read-only topology and dependencies
+
+`nginx -T` succeeded; output was parsed with only selected directives emitted and origin addresses redacted. The private token include was never printed. `ss`, `ip -j addr`, `iptables-save`, `ip6tables-save`, nft table names, Docker port bindings, systemd state and certificate renewal configuration were inspected read-only. Public origin addresses and private credentials are omitted here.
+
+| Dependency | Observed configuration | Effect of restricting shared 80/443 |
+|---|---|---|
+| Public network | `eth0`: one global IPv4 and one global IPv6; other global-scope IPv4 addresses are Docker bridges, not spare public addresses | No observed spare public IP; both families require rules even though nginx currently has no IPv6 web listener |
+| nginx | Only `originmetric` and `tradebot-dashboard` enabled; wildcard IPv4 80 and 443, tradebot `default_server` | Cannot distinguish hostnames in a TCP-source firewall; a shared restriction affects both sites |
+| OriginMetric | apex/www, Let's Encrypt SAN certificate; public health/static proxy to `127.0.0.1:8088`; event 202/drop, other data routes closed | Cloudflare traffic can continue; direct ACME validation needs a compatible renewal path |
+| tradebot-dashboard | IP-literal `server_name`, HTTP redirects to HTTPS IP; `/login`, `/api/status`, `/api/portfolio` and catch-all proxy to loopback 8786; existing certificate `tradebot-dashboard` | Direct-IP web users, clients and monitoring lose access unless migrated first; no user/client inventory is inferable from config alone |
+| tradebot-portfolio | Active systemd service under `/opt/tradebot/app`, no separate 80/443 listener observed; dashboard exposes `/api/portfolio` | Portfolio process need not restart; its browser/API consumers are affected through the dashboard. Outbound integrations were not assumed inventoried |
+| Certificate renewal | Both production certificates use webroot HTTP-01; OriginMetric cron 02:23/14:23, tradebot timer 00:00/12:00 plus randomized delay; both use `/opt/tradebot-dashboard-tools/bin/certbot` | IP-certificate HTTP-01 renewal cannot rely on proxied hostname DNS; keep its job until access migration/retirement is explicitly authorized |
+| Firewall | UFW inactive; IPv4 INPUT ACCEPT/FORWARD DROP, IPv6 INPUT/FORWARD ACCEPT; nft-backed filter/NAT tables; no Cloudflare allowlist on INPUT | Add narrowly scoped rules with the existing backend; do not enable/reset UFW or flush Docker/nft tables |
+| Existing OriginMetric rules | INPUT drops eth0 TCP 3000/5432/8088 in both families; DOCKER-USER drops new ingress to the two OriginMetric bridges | Preserve these rules and `originmetric-firewall.service`; this is separate from host web protection |
+| SSH and private upstreams | SSH wildcard IPv4/IPv6 22; Caddy loopback 8088; app/DB unpublished; dashboard loopback 8786 | Rules matching only public web ports leave SSH, loopback and unpublished services intact |
+
+nginx/SSH/dashboard/portfolio remained active with main PIDs `427077 / 427051 / 427132 / 427105`, and unchanged start times. This is topology/service evidence, not a fresh authenticated functional test of tradebot. Other project directories, application source, secrets, logs and databases were not read to discover credentials or clients.
+
+### Options and recommendation
+
+| Option | Protection and acceptance | Dependencies / effect |
+|---|---|---|
+| **A — migrate all shared web consumers to proxied domains, then host-wide Cloudflare allowlist (recommended if tradebot URL migration is acceptable)** | Meets the existing 80/443 transport requirement without changing its text, after external tests pass | Owner supplies a tradebot hostname/zone and approves client URL migration. Keep old IP access until replacement is tested; direct-IP access necessarily ends at cutover. Both projects retain functionality through tested domains; SSH unaffected |
+| B — dedicated OriginMetric public IP on this VPS | Can enforce Cloudflare-only on a destination IP while tradebot stays direct on the old IP | Requires provider address/routing availability, cost approval if applicable, explicit IP-bound nginx listeners (including default tradebot), A/AAAA changes and destination-scoped firewall. **Other host IP still exposes 80/443: not a host-wide pass.** Requires explicit owner/plan decision accepting endpoint scope before acceptance; no such decision exists |
+| C — move OriginMetric to a dedicated host with Cloudflare-only ingress | Separates the product origin completely and preserves tradebot direct access on this host; new product host can meet host-wide 80/443 restriction | Requires host/cost/access/backup migration inputs and explicit architecture decision against D-002's existing-VPS direction. No purchase/migration authorized here |
+| D — accept current per-vhost gate, add AOP/mTLS, or use Tunnel | Additional request authentication or outbound ingress can strengthen isolation | Current shared host still exposes tradebot 80/443. These do not establish the locked firewall pass; a Tunnel also changes ingress dependencies. Requires a reviewed decision if selected; not the default recommendation |
+
+**There is no same-host solution that simultaneously preserves unrestricted tradebot direct-IP 80/443 and satisfies host-wide Cloudflare-only 80/443.** Prefer A to preserve the locked requirement and existing VPS. If the owner requires the old direct-IP URL to remain, do not apply A; select B with an explicit criterion decision or C with an explicit architecture decision. Until that decision/input, keep the acceptance blocker open. Neither owner approval nor implementation is implied by this preparation.
+
+Cloudflare's [origin allowlist guidance](https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/) supports allowing its origin-facing ranges and blocking other sources. The official [IPv4 list](https://www.cloudflare.com/ips-v4) and [IPv6 list](https://www.cloudflare.com/ips-v6) were checked 2026-10-02 (15/7 ranges, matching the committed nginx list); re-fetch and validate them at implementation. These public documentation reads are **not** account/API setting verification.
+
+### Concrete proposed changes for A (not applied)
+
+1. **Tradebot replacement vhost:** owner-selected `<TRADEBOT_HOST>`; proxied A record to the existing IPv4, no origin AAAA unless an explicit IPv6 listener is added and tested. Add `/etc/nginx/sites-available/tradebot-cloudflare` and enabled symlink. Use `listen 80` and `listen 443 ssl`, `server_name <TRADEBOT_HOST>`, a hostname-valid certificate in `/etc/letsencrypt/live/<TRADEBOT_HOST>/`, HTTP 308 to `https://<TRADEBOT_HOST>$request_uri`, and the existing tradebot locations/upstream `http://127.0.0.1:8786`. Copy existing auth, proxy, timeout, security and caching directives without weakening them. Preserve location-specific protections. Confirm app Host/Origin, allowed hosts, CSRF, cookies, redirects, absolute URLs, login/session behavior and any WebSocket consumers on this hostname; no application patch assumed necessary. Do not copy OriginMetric's private token into tradebot.
+2. **Keep OriginMetric trust and data gates:** no change to its upstream/header/token directives, `OM_INGRESS=nginx`, `PUBLIC_G1_READY=no`, event 202/drop, identify/revenue 503, private/fixture 404. Remove its unauthenticated HTTP challenge location only after DNS-01 renewal succeeds; its normal HTTP peer gate then covers all paths. The new tradebot vhost must not become a bypass into OriginMetric upstreams. Use a separate fail-closed default web vhost returning 444 for unknown Host/SNI routing once the old IP site is retired; keep legitimate vhosts explicit.
+3. **Certificates before firewall:** issue hostname certificates and use automated DNS-01 for OriginMetric and the new tradebot hostname. [Let's Encrypt challenge documentation](https://letsencrypt.org/docs/challenge-types/) confirms HTTP-01 requires port 80 and DNS-01 uses TXT records. This avoids opening firewall exceptions for ACME and avoids relying on edge rules allowing challenge paths. Audit the reused Certbot environment's DNS plugin availability first; installing a plugin needs its own reviewed dependency step. Supply narrowly scoped DNS credentials only into root-owned mode-600 files, never in command arguments/repo/chat. Use separate cert names/jobs and successful dry-runs; retire tradebot's old IP-certificate renewal only when its endpoint is explicitly retired. Record exact replacement schedules. No broad `certbot renew` affecting unrelated certs.
+4. **Public web firewall:** add dedicated chains `OM_CF_WEB4` and `OM_CF_WEB6` in the existing IPv4/IPv6 filter backend. Populate reviewed ranges before attaching jumps. Proposed chain semantics below; repeat each source line for every corresponding validated range. Use `-C` checks for idempotent jumps. No global policy change, flush, NAT edit, SSH rule or Docker chain replacement.
+
+```text
+IPv4 filter:
+  -N OM_CF_WEB4
+  -A OM_CF_WEB4 -s <each official IPv4 CIDR> -j RETURN
+  -A OM_CF_WEB4 -j DROP
+  -I INPUT 1 -i eth0 -p tcp -m multiport --dports 80,443 -j OM_CF_WEB4
+IPv6 filter:
+  -N OM_CF_WEB6
+  -A OM_CF_WEB6 -s <each official IPv6 CIDR> -j RETURN
+  -A OM_CF_WEB6 -j DROP
+  -I INPUT 1 -i eth0 -p tcp -m multiport --dports 80,443 -j OM_CF_WEB6
+```
+
+This is a reviewable rule specification, **not an executable script**: placeholders must be replaced with validated lists. RETURN resumes existing INPUT evaluation, preserving other restrictions. The jumps must precede any broad ACCEPT/ESTABLISHED rules; there is deliberately no non-CF ESTABLISHED exception on these web ports. Previously established direct web connections are also blocked at cutover. Loopback does not match eth0; TCP 22 and other ports do not match. No UDP 443 listener is observed; block public UDP 80/443 in both families in the same scoped change to prevent future QUIC bypass (Caddy UDP publication stays disabled).
+
+5. **Persistence and range refresh:** a separate idempotent `/usr/local/sbin/originmetric-cf-web-firewall` with `apply/remove` and a dedicated systemd oneshot service before nginx starts (`Before=nginx.service`, enabled for boot) should restore these chains. Verify the unit ordering and startup failure behavior in staging before enabling. Keep existing private-port service intact; do not persist/restore all Docker-generated rules. Range updates require TLS download, CIDR/family validation, a nonempty reviewed list and staged replacement; keep the last known good list on fetch/validation failure. DNS credential files and firewall snapshots stay private. Include provider firewall rules if any are discovered; provider control-plane policy was not inspected here.
+
+**Blast radius:** all public eth0 web consumers in both families and certificate automation for both sites. tradebot app/portfolio services and SSH need no restart. nginx reload affects workers for both sites and is only done after `nginx -t`. No code redeploy, schema migration, DB write, backup restore or ingestion enablement is part of this cutover.
+
+### Implementation inputs, tests and rollback
+
+Required non-secret inputs: whether tradebot's direct-IP URL may retire; its replacement hostname/Cloudflare zone; list of human users, API/automation/WebSocket clients and monitors requiring URL updates; owner-approved cutover window and functional tester; DNS-01 provisioning method/plugin; provider console/recovery access; confirmation of any other external interface/provider firewall. DNS credentials/private keys must be provisioned securely on the host, never sent in chat. B additionally needs provider-assigned IPv4/IPv6, routing/interface details, budget and an explicit endpoint-scope decision. C needs an approved host and D-002 architecture decision. No response to these inputs is assumed.
+
+Future implementation sequence/tests (none claimed run now):
+
+1. Save private mode-600 nginx/cert-renewal/cron/systemd/firewall snapshots and DNS record values/TTLs; record service PIDs and hashes. Keep two SSH sessions and provider recovery console. Stage both rule families and an automatic **5-minute rollback** that removes only the new jumps before enabling the first family; never rely on a web connection for recovery.
+2. Before web restriction, owner authenticates to the new tradebot hostname: login/logout, session persistence, status/portfolio, required read-only API clients and WebSockets if used. Verify auth remains enforced, cache does not expose private responses, certificate chain/hostname and Full (strict). Complete hostname DNS-01 issue/renew dry-runs for both sites. Update consumers and prove no old direct-IP dependency remains. If any fails, leave the old site/firewall intact.
+3. Stage `nginx -t`; apply/reload only reviewed vhosts. Attach staged IPv4 and IPv6 web jumps; check ordering/counters and open a **new** external SSH connection over each family. Do not accept survival of an existing SSH session as sufficient.
+4. From at least two independent non-CF IPv4/IPv6 nodes: TCP 80/443 must not establish to every public origin address, including unknown Host/direct IP and spoofed CF headers; TCP 22 positive controls succeed; 3000/5432/8088 remain unreachable. VPS-local 403 is not a transport-pass substitute. Recheck no published Docker web port bypass and no public UDP 443 response/listener.
+5. Through the real edge: both projects' hostname HTTPS works; OriginMetric root/health/tracker 200, www path/query 308, unchanged data gates/no-store/cache behavior. Re-run private synthetic original-peer/client-IP/token-spoof proof without printing captures. Confirm production facts stay empty. Domain IPv6 client transport through Cloudflare is a separate check from direct-origin IPv6 scanning.
+6. Verify active range set, persistent service ordering, both certificate renewals and monitors. Exercise reboot/persistence in an isolated environment; a production reboot requires separately authorized maintenance. Cancel timed rollback only after both external SSH and both site functional checks pass. Record external measurements and mark only the shared-port criterion satisfied; G1/backup/dogfood/P2 acceptance remain separate.
+
+Rollback on either site's failure, certificate regression, SSH failure or unexpected listener: remove INPUT jumps with exact `iptables -w -D INPUT -i eth0 -p tcp -m multiport --dports 80,443 -j OM_CF_WEB4` and IPv6 equivalent to `OM_CF_WEB6`, plus the exact UDP jumps introduced at implementation; disable only the new persistence unit. Then delete only the now-unreferenced new chains. Do not run UFW reset, restore all nftables/iptables blindly, flush INPUT/DOCKER-USER, delete conntrack state or alter SSH. Restore changed vhosts/symlinks and renewal jobs from private backups, `nginx -t` then reload. Restore prior DNS/consumer endpoints (allow for TTL propagation) and old tradebot IP endpoint/job. Keep OriginMetric's pre-existing private-port rules, token trust and public data gates throughout. If rollback reopens shared web access, explicitly reinstate the **80/443 unmet** status; rollback is service recovery, not security acceptance.
+
+### This preparation's validation and handoff
+
+Fresh `nginx -T`/syntax, sanitized topology/firewall inspection and unchanged main service PIDs passed. Planned migrations, rule deployment, certificate dry-runs, external web-block scans and tradebot authenticated tests have **not** run. The documentation diff/format and final documentation CI are checked at handoff; final run/SHA result is supplied in the handoff message so the immutable commit is not claimed to contain its own future CI result. Canonical plan and DECISIONS remain unchanged. **G1 pending; P2 unaccepted; P3 not started; data acceptance closed.**
