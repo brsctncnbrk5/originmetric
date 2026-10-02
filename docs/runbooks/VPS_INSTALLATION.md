@@ -237,6 +237,7 @@ ve `AGE_RECIPIENT` ile public recipient'i yerel editörle yaz. Aynı dosyada `HE
 olmaksızın upload/retention başlatma. Sadece dosya yolu, sağlayıcı/prefix ve public recipient paylaşılabilir.
 
 ```bash
+# Check URL yapılandırılmışsa: harici ping/bildirim hedefi ve işlem için önce açık onay.
 bash scripts/vps/backup.sh
 ```
 
@@ -263,6 +264,49 @@ Saat host timezone'a göre; 03:15 istenen yerel/UTC saat kurulumda kaydedilir. S
 satırları eklenir; mevcut crontab değiştirilmez/silinmez. Logrotate yapılandırılır. Healthchecks URL
 backup ve selfcheck için ayrı; mevcut ücretsiz hesabı Barış seçer. Uptime check HTTPS health ve tracker.
 Selfcheck abuse/failure counter'ı restart'tan beri pozitifse uyarır (P2 conservative davranışı; P7 delta/advanced alerting).
+
+### P2 erişimlerini güvenli yerleştirme
+
+Aşağıdaki dosyalar yalnız mevcut yetkili hesaplar için sunucuda, yerel editörle hazırlanır.
+Sırları terminal çıktısına, komut argümanlarına, Git'e veya sohbete koyma. Mevcut dosyayı boşaltma;
+başka projelerin config/remote'larını kullanma/değiştirme.
+
+```bash
+sudo install -d -o root -g root -m 700 /etc/originmetric/secrets
+# Yerel editör: mevcut hesabın scoped rclone config'i (henüz upload çalıştırma).
+sudoedit /etc/originmetric/secrets/rclone.conf
+# Yalnız ilgili zone için Zone WAF Read yetkili token; aşağıdaki curl config formatı.
+sudoedit /etc/originmetric/secrets/cloudflare-read.curl
+sudo chown root:root /etc/originmetric/secrets/rclone.conf /etc/originmetric/secrets/cloudflare-read.curl
+sudo chmod 600 /etc/originmetric/secrets/rclone.conf /etc/originmetric/secrets/cloudflare-read.curl
+sudoedit /opt/originmetric/.env.production
+sudo chmod 600 /opt/originmetric/.env.production
+```
+
+Cloudflare dosyası tek yetki satırı içerir (placeholder gerçek sır değildir):
+
+```text
+header = "Authorization: Bearer TOKEN_SUNUCUDA_YEREL_EDITÖRLE_YERLEŞTİRİLİR"
+```
+
+Zone ID gizli token değildir; Cloudflare Overview'dan alınır. Onunla yalnız GET
+`/client/v4/zones/ZONE_ID/rulesets`, `/rulesets/phases/http_ratelimit/entrypoint` ve
+`/rulesets/phases/http_request_firewall_custom/entrypoint` okunur. Token curl `--config` üzerinden
+yüklenir; response mode 600 ignored kanıt dosyasına yazılır, ham içerik sohbete basılmaz. Yetki hatası,
+404 veya bilinmeyen alan geçiş kanıtı sayılmaz; kural düzenleyen POST/PUT/DELETE yapılmaz.
+Resmi kaynak: https://developers.cloudflare.com/ruleset-engine/rulesets-api/view/
+
+`.env.production` içine `RCLONE_CONFIG=/etc/originmetric/secrets/rclone.conf`, mevcut özel
+`BACKUP_REMOTE`, offline cihazdan gelen **public** `AGE_RECIPIENT` ve ayrı check URL'leri
+`HEALTHCHECKS_URL` / `SELFCHECK_URL` yerel editörle yazılır. Shell formatında değerleri uygun biçimde
+tek tırnakla quote et; `PUBLIC_G1_READY=no` kalır. Private age key offline kalır. Bildirim hedefini
+Healthchecks/uptime dashboard'unda doğrula; erişim dosyası ve hesap/check kimliği yolları bildirilir,
+sırlar bildirilmez.
+
+**URL'ler yerleştirildikten sonra `backup.sh`/`selfcheck.sh` veya cron'u hemen çalıştırma:** bu araçlar
+harici start/success/fail ping gönderebilir ve bildirim tetikleyebilir. Önce hedef (check ve alıcı),
+yapılacak işlem ve beklenen bildirim belirtilir; kullanıcının açık onayı alınır. Gerçek upload/manual
+restore ve bu onay olmadan monitoring/backup zamanlayıcıları kurulmaz. Test mesajı da aynı onaya tabidir.
 
 ## 7. Güncelleme ve rollback
 
