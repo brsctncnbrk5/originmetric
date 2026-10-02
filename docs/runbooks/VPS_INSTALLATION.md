@@ -116,9 +116,68 @@ Tüm maddeler kanıtlandıktan sonra `.env.production` içindeki `OM_DOMAIN`, `O
 `PUBLIC_G1_READY=yes` yerelde ayarlanır. Token aynı kalır. `deploy.sh` yeni konfigürasyonla tekrar çalışır.
 **Flag tek başına G1 kanıtı değildir**; gerçek kontroller ve sonuçları rapora yazılır.
 
+### Bu VPS'de doğrulanan web firewall durumu (2026-10-02)
+
+Son kullanıcı kararı D-006 ile Tradebot'un doğrulanmış özel kaynakları silindi.
+Ortak `/opt/tradebot-dashboard-tools` ortamı OriginMetric Certbot için korunur;
+bu dizini ve genel paketleri kaldırma. Güncel nginx yolu `OM_INGRESS=nginx`,
+`PUBLIC_G1_READY=no`; aşağıdaki ilk HTTPS aşaması tarihsel kayıttır.
+
+`deploy/nginx.default-deny.conf` bilinmeyen/IP hostlarını reddeder. Yalnız OriginMetric
+named vhost'u kalmıştır. Kurulu web kısıtlaması:
+
+- Kaynak: `scripts/vps/originmetric-web-firewall.sh`; kurulu yol:
+  `/usr/local/sbin/originmetric-web-firewall`.
+- Resmi CF aralıkları: root-owned 600
+  `/etc/originmetric/firewall/cloudflare-v4.txt` ve `cloudflare-v6.txt`.
+- `originmetric-web-firewall.service` enabled, nginx'ten önce çalışır.
+  `OM_CF_WEB4/6` yalnız eth0 TCP/UDP 80/443'ü eşler; TCP CF kaynaklarını geçirir,
+  diğer web trafiğini ve tüm web UDP'yi düşürür. SSH/Docker/özel port kuralları korunur.
+- Drift durumunda apply başarısız olur. Yeniden başlatma testi yapılmadı;
+  range refresh otomatik değil. Resmi listeler ve nginx trust birlikte, staged
+  zincirlerle ve yeni otomatik geri dönüş altında güncellenmeli; canlı zinciri boşaltma.
+
+Yalıtılmış politika/geri alma testi (host firewall'una dokunmaz):
+
+```bash
+cd /opt/originmetric
+sudo unshare -n python3 scripts/vps/test-web-firewall.py /etc/originmetric/firewall
+```
+
+30 paket kontrolü, geçersiz girişte değişiklik olmaması ve repeat apply/remove geçti.
+Her gelecekteki web cutover öncesinde kurulu bağımsız geri dönüşü arm et:
+
+```bash
+sudo systemd-run --collect --unit=originmetric-web-firewall-rollback \
+  --on-active=5m --timer-property=AccuracySec=1s \
+  /usr/local/sbin/originmetric-web-firewall-rollback
+```
+
+Manual geri alma aynı `/usr/local/sbin/originmetric-web-firewall-rollback` komutudur:
+sadece bu web kurallarını kaldırır ve yeni persistence servisini disable eder.
+INPUT/Docker/NAT veya SSH sıfırlanmaz. Geri alma webi tekrar doğrudan erişilebilir
+kılacağından ilgili firewall kriterini yeniden sağlanmamış olarak kaydet.
+
+Mevcut cutover'da önce sertifika dry-run, sonra arm/apply, **kısıtlama altında yeniden
+scoped dry-run**, IPv4/IPv6 edge/SSH ve bağımsız dış port probları başarılı oldu;
+ancak ardından `systemctl stop originmetric-web-firewall-rollback.timer` çalıştırıldı.
+Scoped HTTP-01 hem apex hem www için çalışır; üretim sertifikası değişmedi.
+02:23/14:23 cron'u yalnız `originmetric.app` sertifikasını yeniler. Şu an DNS-01
+anahtarı veya plugin gerekli değil.
+
+Gelecekte DNS-01 gerekirse [resmi plugin belgesine](https://certbot-dns-cloudflare.readthedocs.io/en/stable/)
+göre yalnız `originmetric.app` zone için `Zone:DNS:Edit` token kullan. Token'ı doğrudan
+sunucuda güvenli editörle root-owned 600 `/etc/letsencrypt/cloudflare-originmetric.ini`
+dosyasının `dns_cloudflare_api_token` alanına yerleştir. Dosya yoksa `umask 077` ile
+oluştur; mevcut dosyayı körlemesine ezme. Token'ı chat, shell argümanı, Git veya
+rapora koyma. Önce plugin uyumluluğunu ve scoped staging renewal'ı doğrula.
+
+Güncel kanıt ve dış ölçüm bağlantıları [P2 raporunun son bölümünde](../reports/P2_VPS_INSTALLATION_REPORT.md#tradebot-removal-and-originmetric-web-firewall--2026-10-02).
+Bu adımlar G1/P2 kabulü değildir; veri rotalarını açma ve P3'e geçme.
+
 ## 5. Dogfood testi
 
-### Bu VPS'deki mevcut domain/HTTPS aşaması (2026-10-02)
+### İlk domain/HTTPS aşaması (2026-10-02; tarihsel)
 
 `originmetric.app` ve `www.originmetric.app`, mevcut nginx korunarak ayrı
 `/etc/nginx/sites-available/originmetric` dosyasına bağlandı. Kaynak şablon

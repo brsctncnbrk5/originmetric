@@ -4,14 +4,14 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P2 — Deploy the slice & dogfood**: CLOUDFLARE EDGE / PROXY / EXTERNAL IPv4+IPv6 VERIFIED; G1 PENDING |
+| Current phase | **P2 — Deploy the slice & dogfood**: CLOUDFLARE EDGE / PROXY / HOST WEB FIREWALL VERIFIED; G1 PENDING |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
-| P2 | **EDGE BLOCK/RECOVERY VERIFIED — PUBLIC DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
-| P2 tested code head | `c4f1601307554ec75f2763ad23b5b6f7efb3588e` — [CI run #56: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/36948381417) |
+| P2 | **TRADEBOT REMOVED; WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
+| P2 last full-suite tested code head | `c4f1601307554ec75f2763ad23b5b6f7efb3588e` — [CI run #56: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/36948381417) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
@@ -26,6 +26,22 @@
 | Locked owner decisions | **U0** (D-001) · **U13** core stack (D-002) · **U2** attribution + trusted-link model (D-003) |
 
 ## Next step
+
+**2026-10-02 latest decision implemented: Tradebot removed from the VPS (D-006).** The owner revoked preservation and authorized deleting verified exclusive Tradebot resources. Portfolio/dashboard stopped cleanly; all seven unit files and their boot/timer links were removed, along with the dedicated nologin account, source/local Git worktrees, databases/research/history, auth secrets, logs, local checkpoints/bundles and dedicated certificates. No Tradebot Docker object existed. The removal manifest records 129 scoped entries; the account was removed separately. Backups created before the new deletion instruction were also removed. No new Tradebot backup was created after that instruction.
+
+No other active Tradebot/OriginMetric writer was identified after excluding the current app-server tree and checking prior thread lifecycles; the old CLI screen was not used as proof of independent work. Before stopping, the unavailable real-account access was reported: **remote exchange orders/positions remain unknown**. Running code/configuration was independently verified to enforce PAPER-only policy, public GET-only market transport and local execution; it does not manage real exchange exposure. No exchange orders were cancelled or positions closed. Final checks find no Tradebot process, 8786 listener, unit, timer, cron or nginx route.
+
+**Shared resources retained deliberately:** `/opt/tradebot-dashboard-tools` is still required by OriginMetric's scoped certificate cron. The mixed `/var/backups/tradebot-snapshot-20260926` (shared ACME/nginx/Certbot), OriginMetric host archives, shared journald/Certbot logs and ACME account state remain; these may contain historical Tradebot records and were not treated as exclusive Tradebot resources. Generic packages, shared browser caches, other projects, Docker resources, GitHub and off-VPS backups were untouched. A new default nginx vhost rejects unknown/IP hosts; `nginx -t` and OriginMetric checks pass. See the [removal inventory and limitations](reports/P2_VPS_INSTALLATION_REPORT.md#tradebot-removal-and-originmetric-web-firewall--2026-10-02).
+
+**Host web firewall criterion now verified:** dedicated `OM_CF_WEB4`/`OM_CF_WEB6` INPUT chains restrict eth0 TCP 80/443 to the current official Cloudflare ranges and drop UDP 80/443. Existing private-port/Docker rules and SSH are preserved. The enabled `originmetric-web-firewall.service` runs before nginx. Isolated packet tests passed **30 checks**, including repeat apply/remove, allowed CF transport, blocked direct transport/UDP and preserved SSH/private rules after rollback. A timed independent systemd action was exercised; the actual five-minute rollback was armed before cutover and cancelled only after all checks passed. Scoped HTTP-01 renewal succeeded both after Tradebot removal and **under the live restriction**, with the production certificate unchanged. No DNS credential/plugin was needed.
+
+Independent Falkenstein/Helsinki probes now confirm SSH 22 reachable and direct 80/443/3000/5432/8088 unreachable in **both** families. IPv4/IPv6 edge root/health/tracker return 200; event GET remains 202/drop, identify/revenue GET 503 and internal GET 404. All five production fact tables remain empty. Private evidence is located through `.runtime/p2-recovery-path`. Persistence unit ordering was validated; no production reboot or provider-console login was performed. Cloudflare range refresh is currently manual, with drift causing apply to fail rather than silently accepting different rules.
+
+**Next P2 work:** consolidate G1 against the deployed build (`npm run gate:g1` is still absent), inspect remaining Cloudflare counting-window/rule inventory, confirm the actual site's consent/banner, and obtain the authorized off-VPS encrypted backup/manual restore and monitoring/secret-preservation evidence. Controlled dogfood remains pending. **G1/P2 not accepted; public data routes closed; P3 not started.** Git handoff SHA/remote equality and current CI are reported after the normal assigned-branch push.
+
+### Earlier P2 evidence (before D-006 removal and web cutover)
+
+The shared-port domain-migration proposal below is historical and superseded by this decision; it is not the current implementation direction.
 
 OriginMetric still runs image `b750a1b5262eb83d04810afc2c71c35678ecfbcc`; app/DB remain unpublished. Shared nginx proxies to authenticated Caddy on `127.0.0.1:8088` (`OM_INGRESS=nginx`). Live IPv4 **and** IPv6 health transport now proves the true client reaches nginx/Caddy/app, hostile XFF/X-Real-IP are removed and the private proxy token is overwritten; captures were deleted. Direct-origin apex/www HTTP/HTTPS requests, including spoofed CF-range headers, return 403 (VPS-local behavior checks, not independent external scans). SSH, tradebot and unrelated nginx files/PIDs remain preserved.
 

@@ -1,8 +1,10 @@
 # OriginMetric — P2 VPS installation report
 
 Date: 2026-10-02 (Europe/Berlin; installation started 2026-10-01 UTC)
-Status: **CLOUDFLARE EDGE / PROXY / EXTERNAL IPv4+IPv6 VERIFIED — PUBLIC DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
-Authorization: Barış's VPS installation instruction and D-004. **P3 not started.**
+Status: **TRADEBOT REMOVED; CLOUDFLARE EDGE / PROXY / HOST WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
+Authorization: Barış's VPS installation instruction and D-004, with latest Tradebot removal decision D-006. **P3 not started.**
+
+The dated sections below record earlier states. The final removal/cutover section is authoritative for the current host state.
 
 ## Source verification
 
@@ -439,3 +441,175 @@ Rollback on either site's failure, certificate regression, SSH failure or unexpe
 ### This preparation's validation and handoff
 
 Fresh `nginx -T`/syntax, sanitized topology/firewall inspection and unchanged main service PIDs passed. Planned migrations, rule deployment, certificate dry-runs, external web-block scans and tradebot authenticated tests have **not** run. The documentation diff/format and final documentation CI are checked at handoff; final run/SHA result is supplied in the handoff message so the immutable commit is not claimed to contain its own future CI result. Canonical plan and DECISIONS remain unchanged. **G1 pending; P2 unaccepted; P3 not started; data acceptance closed.**
+
+## Tradebot retirement decision and open-position gate — 2026-10-02
+
+**Historical investigation, 12:09–12:18 UTC.** Its PAPER wait interpretation was subsequently superseded by explicit owner permission. Use the recovery continuation below for the current gate and next action.
+
+### Owner decision and applicable instructions
+
+Barış explicitly cancelled the Tradebot hostname migration and authorized retiring Tradebot while retaining all files, databases, history and secrets. Do not create `tradebot.originmetric.app`. The instruction requires a read-only check for active orders/positions and **waiting at the stop step if any exist**, without cancellation or position closure. This direction supersedes the domain-migration proposal above and is recorded as D-005; the locked canonical plan is unchanged.
+
+No AGENTS.md was found at `/`, `/opt`, `/opt/originmetric`, `/opt/tradebot`, or within either project tree (excluding dependency/Git directories). OriginMetric CLAUDE.md, STATUS, DECISIONS, canonical §§20/23/28 and this P2 report were read. Starting branch was `codex/originmetric-p2-vps-preparation`, clean, at `beef0347d9f94d7f01d60ee22e26add17669b028`.
+
+### Stop gate: active PAPER positions — waiting for owner direction
+
+Production SQLite was opened with URI `mode=ro` and `PRAGMA query_only=ON`; application store constructors, credentials, private auth files and account APIs were not used. Observations at 12:09–12:11 UTC:
+
+| Ledger | Open positions | Observation |
+|---|---|---|
+| Canonical portfolio | **3** | `mode=PAPER`, status RUNNING, recent observation timestamp, managed by `tradebot-portfolio` |
+| Shadow portfolios | **8** total | S04=1, S05=2, S06=2, S09=2, S10=1; the other five were empty |
+| Legacy portfolio | **0** | Managed by the same running portfolio process |
+| External-position reservations | **0** | Canonical state contained no inherited reservation |
+
+The active runner accepts only a `[paper]` policy and its transport allows only GET public market-data endpoints; its local execution updates simulation ledgers. No separate exchange-order queue exists in the inspected state schema. **This establishes the local PAPER configuration, not an independently queried exchange-account order inventory.** No account secrets were read and no exchange orders were cancelled or positions closed. Historical research/parity databases are not treated as running account state.
+
+The owner was asked whether to keep the bot running or explicitly permit stopping while retaining the open PAPER records. No answer is inferred from silence. **Tradebot shutdown, disabling automatic starts, web retirement and the dependent shared-port firewall cutover have not been applied.** Position counts are point-in-time observations and must be rechecked before a future stop.
+
+### Services, schedulers, web consumers and cancelled migration
+
+| Unit | State during investigation | Required retirement action after the stop gate |
+|---|---|---|
+| `tradebot-portfolio.service` | Active/enabled; PID 427105 | Controlled SIGTERM via systemd; runner handles stop and persists STOPPED state without a forced close command |
+| `tradebot-dashboard.service` | Active/enabled; PID 427132, Gunicorn worker 427140; loopback 8786 | Stop/disable after the gate; preserve auth/session secrets |
+| `tradebot-history.service` | Inactive/enabled | Disable automatic boot execution |
+| `tradebot-research.service` | Inactive/enabled | Disable automatic boot execution |
+| `tradebot-paper.service` | Inactive/disabled; legacy exit-only drop-in present | Keep disabled; preserve unit/drop-in; do not invoke `paper-stop` without auditing its effects |
+| `tradebot-cert-renew.timer` | Active/enabled; 00:00/12:00 + randomized delay up to 1800 s | Stop/disable when its IP web endpoint is retired |
+| `tradebot-cert-renew.service` | Inactive/static; last result success | Keep files/certificates; no blanket Certbot renewal or deletion |
+
+No additional local Tradebot cron job, systemd unit reference or detached process was found in the inspected system locations/process inventory. OriginMetric's cron references the **shared executable** `/opt/tradebot-dashboard-tools/bin/certbot`; retain this installation even after Tradebot retirement. Root crontabs and cron hourly/daily/weekly/monthly locations were checked for references. Remote schedules/accounts are not inventoried.
+
+Fresh `nginx -T`, public TCP/UDP listener ownership, Docker publications, systemd and process inspection identified nginx as the only host public IPv4 TCP 80/443 listener. Its effective configuration loads only OriginMetric and the old Tradebot IP-default site. No host IPv6 web or UDP 80/443 listener was observed. Caddy publishes only loopback 8088; its displayed container-only 443/UDP ports are not host publications. App/DB remain unpublished. Existing other project directories/services were not edited. Provider control-plane firewall and off-host dependencies were not independently inspected.
+
+No enabled/available migration vhost, migration certificate/renewal configuration or service-origin change was found. The running Tradebot origin and its Nginx route remain the original IP endpoint. Authoritative Cloudflare DNS for `tradebot.originmetric.app` returned NXDOMAIN. There is therefore **no observed started migration change to undo**, and no DNS/API account write was performed; this is not a full Cloudflare-zone inventory.
+
+### Backups, unchanged configuration and official ranges
+
+Private ignored snapshots are under `.runtime/p2-tradebot-retirement-20261002T121152Z`, located by `.runtime/p2-tradebot-retirement-path`. The directory is mode 700 and files mode 600. They include Nginx (including the private include), certificate renewal definitions, the OriginMetric certificate cron, Tradebot units/drop-in and both firewall rule sets. A later byte comparison found **all 28 archived regular configuration files unchanged**. Firewall rule definitions were also unchanged after ignoring generated timestamps/counters. Tradebot database backups are a future pre-shutdown dependency; this session only read the live databases.
+
+Official [IPv4](https://www.cloudflare.com/ips-v4) and [IPv6](https://www.cloudflare.com/ips-v6) lists were fetched with TLS validation and checked as nonempty, unique, global, strict CIDRs of the expected family. **15 IPv4 and 7 IPv6 ranges**, all matching the reviewed Nginx trust configuration:
+
+- IPv4 list SHA-256: `ec7cbcfadc91344da6b906b2c564ddd0c9f35de1054f50502762743fee07c5bf`.
+- IPv6 list SHA-256: `274414aae4cfacd1f28bf7b5fbbd8bc2c90bebad4cd7f1dfe5bb0c1e8dcbbca1`.
+
+An initial Python urllib fetch received HTTP 403; curl successfully fetched both official lists, which were validated before recording. No new firewall chain, persistence unit, refresh job or automatic rollback timer was installed/armed because the stop gate prevents cutover. Before any future mutation, re-fetch the lists, re-audit listeners, stage web-only rules and an independently tested automatic rollback. Existing private-port protection and SSH must remain intact; never flush/reset firewall or Docker rules.
+
+### Fresh validation and external evidence
+
+| Check | Result in this session |
+|---|---|
+| `nginx -T` / configuration syntax | PASS |
+| Isolated `scripts/vps/test-nginx-proxy.py` | PASS: IPv4/IPv6 forwarding, original-peer gate, XFF stripping and token overwrite |
+| IPv4 and IPv6 edge HTTPS `/`, `/api/health`, `/js/v1/om.js` | PASS: 200 with normal TLS validation; health remains DB-backed |
+| www path/query redirect | PASS: 308 to apex, preserving path/query |
+| Data-route gates, GET-only checks | Event endpoint 202/drop; identify/revenue 503; internal 404; no gate changed |
+| Production facts, SELECT-only | events/sessions/customers/revenue/customer-visitors all zero |
+| Environment, whitelisted values only | `OM_INGRESS=nginx`, `PUBLIC_G1_READY=no` |
+| OriginMetric certificate simulation | **PASS**: scoped `certbot renew --cert-name originmetric.app --dry-run --no-random-sleep-on-renew`, production certificate hash unchanged |
+| Service continuity | nginx/SSH/dashboard/portfolio main PIDs unchanged: 427077/427051/427132/427105; Tradebot timer remains active |
+
+The API/internal samples were no-store/DYNAMIC. Tracker IPv4 was BYPASS/no-store; tracker IPv6 was UPDATING without no-store, consistent with static asset caching being separate from data-route gates. No cache purge or cache-policy change was made, and no API cache-hit claim is made.
+
+Six fresh Globalping TCP measurements used two independent probes in **Falkenstein (DE)** and **Helsinki (FI)**, two attempts per probe, and literal origin addresses. Resolved addresses matched the requested family/target:
+
+| Family | Port | Observed on both probes | Measurement |
+|---|---|---|---|
+| IPv4 | 22 | 2/2 replies per probe; SSH positive control | [result](https://api.globalping.io/v1/measurements/2vq0NoX0eKZr3XG6M00021F6M) |
+| IPv4 | 80 | **2/2 replies per probe; direct transport remains open** | [result](https://api.globalping.io/v1/measurements/2ga0REwIhNMQnAfND00021F6M) |
+| IPv4 | 443 | **2/2 replies per probe; direct transport remains open** | [result](https://api.globalping.io/v1/measurements/268gNHmBLPGRJCnxS00021F6M) |
+| IPv6 | 22 | 2/2 replies per probe; SSH positive control | [result](https://api.globalping.io/v1/measurements/2I8A33w8hEGxZpJwA00021F6M) |
+| IPv6 | 80 | 0/2 replies per probe | [result](https://api.globalping.io/v1/measurements/20UYWRjHADbVP5eUc00021F6M) |
+| IPv6 | 443 | 0/2 replies per probe | [result](https://api.globalping.io/v1/measurements/2RBmDVTxSlrvoSZid00021F6M) |
+
+IPv6 non-response does not establish a source allowlist; no IPv6 web listener exists and the host INPUT policy remains ACCEPT. **Direct-origin blocking is not verified and fails on IPv4.** Existing per-hostname HTTP 403 protection cannot replace transport restriction. Original private API JSON is retained only in the ignored mode-600 snapshot directory. The first request with unsupported location strings failed before a measurement was started; it was corrected to Europe probes. A display parser expected an obsolete nested location field and failed after all measurements were saved; parsing was corrected without issuing more measurements.
+
+### Certificate compatibility and remaining implementation dependencies
+
+OriginMetric currently renews its apex/www certificate with HTTP-01 through `/var/www/originmetric-acme`, scheduled at 02:23/14:23 Europe/Berlin using the shared Certbot installation. The scoped staging renewal succeeded **before** any firewall change; no production certificate was replaced and deploy hooks were not requested for the simulation. This is not proof of renewal under the future restriction.
+
+HTTP-01 via the **proxied hostname** can be evaluated after Tradebot retirement and staged firewall restriction, keeping the challenge route reachable through Cloudflare and checking edge redirects/WAF/cache. It avoids a new DNS credential/plugin if its post-restriction renewal simulation succeeds for both SANs. It must not depend on temporarily reopening direct-origin 80 or on a Let's Encrypt IP allowlist. [Let's Encrypt challenge documentation](https://letsencrypt.org/docs/challenge-types/) explains the HTTP port-80 and DNS-TXT methods.
+
+If this cannot be validated, use automated DNS-01. The inspected Certbot environment does not have the Cloudflare DNS plugin installed. Required token permission is **`Zone:DNS:Edit`, scoped only to `originmetric.app`**, per the [plugin documentation](https://certbot-dns-cloudflare.readthedocs.io/en/stable/). Proposed secure credential path: `/etc/letsencrypt/cloudflare-originmetric.ini`, root-owned mode 600, containing the plugin's `dns_cloudflare_api_token` field; provision it directly on the server, never in chat, command arguments, Git or reports. No global API key/account-wide privilege is requested. Plugin installation/compatibility and secure credential provisioning remain unperformed; no token file was created.
+
+After an explicit owner answer to the PAPER stop gate: take consistent private backups of the state databases; audit shutdown/ExecStop behavior and stop/disable only Tradebot units/timer; unlink only its enabled Nginx site while retaining source files/certificates and the shared Certbot tools. Replace its default web routing with a reviewed fail-closed default where needed. Test nginx and reload only after a successful syntax check. Stage a tested timed rollback **before** IPv4/IPv6 TCP/UDP web-only firewall jumps, retain SSH and Docker/private-port rules, then verify new external SSH connections, edge health/tracker and scoped renewal under restriction. Cancel rollback only after the checks pass. Provider recovery access, persistence/range refresh and any newly discovered dependency must be addressed rather than assumed absent.
+
+Documentation diff/format and secret checks are performed before the normal assigned-branch commit/push; final SHA/remote equality and CI state are reported in the handoff rather than invented in this commit. **Tradebot retirement waiting; host-wide 80/443 criterion unmet; G1/P2 pending; public data acceptance closed; P3 not started.**
+
+
+## Tradebot removal and OriginMetric web firewall — 2026-10-02
+
+### Latest authorization, concurrency and exchange limitation
+
+D-006 supersedes preservation: delete verified exclusive Tradebot resources on the VPS, without new Tradebot backups, remote repository deletion or off-VPS deletion. Domain migration remains cancelled. P2 acceptance, public data opening and P3 remain unauthorized.
+
+The command process tree was traced to app-server PID **1455262** (parent PID 1). PID **1929142** is a CLI under bash **1428600**, terminal `/dev/pts/1`, `originmetric:0.0`; no independent command children/thread writer were present and its screen matched this current task. Older OriginMetric threads had completed/aborted. No other Tradebot writer was found in process cwd/commands or thread lifecycles. No Codex/tmux session was killed; unrelated project agents were not changed. The earlier conclusion based on an old `Working` screen was incorrect.
+
+**Real exchange account state is unknown.** Scoped Tradebot config keys, process environment variable names and available connectors were inspected without revealing values. No authorized account API access was found, so no authenticated order/position query could be completed. This limitation was reported before stopping. The actual portfolio runner enforces a PAPER/SPOT-only policy; both network transports have fixed public market hosts, explicit GET-only endpoint allowlists and no authentication/order endpoint. Canonical execution changes only local simulation ledgers; embedded legacy management uses `PaperSession`. The dashboard reads local state. Thus this running installation was verified not to manage real exchange exposure; no empty-account claim is made. No exchange cancellation or position closure occurred.
+
+Before D-006, authorized recovery work had created three individual online SQLite snapshots, all `integrity_check=ok`, plus host snapshots. The portfolio snapshot at **14:30:54 UTC** contained **3 canonical + 8 shadow PAPER positions** (S01=2, S04=1, S05=1, S06=2, S09=2). The supplied 13:30 report's **3 + 11** is a previous observation of a still-running simulation. Neither count blocked removal. The three new local database copies and their dedicated summaries/manifests were deleted after D-006; no new Tradebot backup was created after the instruction changed.
+
+### Verified exclusive resources removed
+
+A private removal manifest at `.runtime/p2-recovery-path` records **129 scoped entries (including two certificate lineages)**, without credential values. Operations held the existing project operation lock. Removed:
+
+- Controlled stop/disable of portfolio, dashboard, history, research, legacy paper and certificate timer; all **seven** unit files, the legacy drop-in, boot/timer symlinks and timer stamp. Portfolio handled normal termination without a close-position command.
+- `/opt/tradebot` including source/local Git history, reports and research; `/root/tradebot-worktree`; `/var/lib/tradebot` including SQLite/WAL/locks/history/cache; `/etc/tradebot` including dashboard auth secrets and their local backup.
+- Dedicated `/root/tradebot*` checkpoints, database copies, archive/hash pairs, maintenance scripts, browser evidence/venv; exclusive `/var/backups/tradebot` research/source/database backups; verified `/tmp/tradebot*` research logs, bundles/staging and audit files. Directories were checked for mounts; no parent directory was recursively removed.
+- Tradebot nginx enabled/available definitions and dedicated nginx log rotations. Source-identified dedicated nginx/certificate copies in existing OriginMetric backup directories were also removed.
+- `tradebot-dashboard` and `tradebot-dashboard-staging` certificate lineages via name-scoped Certbot deletion. The production leaf was referenced only by the removed dashboard vhost; staging had no live nginx consumer. Neither had an OriginMetric SAN; shared certificates/accounts were not deleted.
+- Dedicated locked/nologin user and group, after checking remaining UID ownership and processes. No Tradebot user cron existed.
+
+Docker inspection covered every container/image/volume/network: **no Tradebot-owned object existed**. Three containers and all named volumes were OriginMetric; networks/base images were OriginMetric or generic/shared. Nothing was pruned. No package uninstall, remote GitHub operation against Tradebot, external backup deletion or modification to Eternal Dominion occurred.
+
+### Shared or uncertain resources deliberately retained
+
+| Resource | Reason retained |
+|---|---|
+| `/opt/tradebot-dashboard-tools` | OriginMetric's certificate cron uses its Certbot executable; the complete shared virtualenv is retained, including dependencies whose exclusive ownership is unproven |
+| `/var/backups/tradebot-snapshot-20260926` | Its archive contains the now-shared ACME account private keys, nginx configuration and Certbot environment; ownership is mixed despite its name |
+| Mixed OriginMetric host archives and nginx snapshots under `.runtime` | Include OriginMetric/nginx/firewall/certificate recovery state; archived Tradebot members may remain, so deletion is not claimed complete for historical shared records |
+| system journal, Certbot logs/ACME accounts, system account backup files | Shared host/account history; selective global deletion would affect other services |
+| Generic packages and shared browser caches | Shared or uncertain ownership; no global cache cleanup |
+| OriginMetric/Eternal resources, other Docker objects, remote repositories/off-VPS backups | Explicitly out of deletion scope |
+
+The live host has no Tradebot process/cwd, 8786 listener, loaded/unit-file entry, timer, dedicated cron or nginx reference. The shared Certbot cron path is the intentional remaining runtime reference. The mixed `/var/backups/tradebot-snapshot-20260926` archive is an explicit historical exception. `/opt/tradebot-dashboard-tools` is the only matching top-level resource in the audited live roots; mixed historical evidence and shared logs may still contain the old name.
+
+Unknown/IP-host routing now uses `/etc/nginx/sites-available/originmetric-default-deny`, sourced from `deploy/nginx.default-deny.conf`: HTTP 444 and rejected unknown TLS handshake, without a new IPv6 listener. OriginMetric's named vhosts and private ingress token remained unchanged. `nginx -t` passed before reload and after deletion; nginx master **427077** and SSH master **427051** remained unchanged.
+
+### Scoped firewall, recovery and renewal evidence
+
+Official Cloudflare lists were fetched over TLS and validated as unique strict global CIDRs: **15 IPv4 / 7 IPv6**, matching the existing nginx trust lists. Dedicated `/etc/originmetric/firewall/cloudflare-v{4,6}.txt` files are root-owned mode 600. Source `scripts/vps/originmetric-web-firewall.sh` is installed at `/usr/local/sbin/originmetric-web-firewall`; `deploy/originmetric-web-firewall.service` is installed/enabled and ordered before nginx. Existing private-port service remains active/enabled.
+
+`OM_CF_WEB4` / `OM_CF_WEB6` are populated before attaching INPUT jumps. Only eth0 TCP/UDP destination 80/443 matches: TCP returns to existing INPUT evaluation for validated CF sources; all other web traffic, including UDP from CF, drops. Jumps precede broad ACCEPT/ESTABLISHED rules. SSH, other ports, existing INPUT policies, Docker/NAT and OriginMetric private-port rules are untouched. No publicly published Docker web path or UDP web listener was found. Other projects' unrelated listeners are outside this change; this is not a claim that every non-22 host port is closed.
+
+Validation before live mutation:
+
+- `bash -n` and `systemd-analyze verify` passed.
+- `unshare -n python3 scripts/vps/test-web-firewall.py <range-dir>` passed **30 actual packet checks**. Both families permit CF TCP, block direct TCP and all web UDP, retain SSH/private-port protection, and preserve those rules after repeat removal. Repeat apply creates no duplicate jumps. Invalid second-family input was rejected before either ruleset changed. Tests modify only their own network namespaces.
+- A transient three-second systemd action created its expected marker, proving independent scheduling. Its collected timer was already unloaded when cleanup attempted to stop it; the harmless cleanup error did not invalidate the executed action.
+- Scoped OriginMetric HTTP-01 staging renewal succeeded after Tradebot removal, with the production certificate unchanged. The existing cron remains 02:23/14:23 Europe/Berlin; only `originmetric.app` is renewed, using the retained shared executable and nginx syntax-check/reload hook.
+
+Before the first live jump, an independent **five-minute** `originmetric-web-firewall-rollback.timer` was armed. Its action calls `/usr/local/sbin/originmetric-web-firewall-rollback`: remove only the exact owned TCP/UDP jumps/chains and disable the new persistence service. It never restores or flushes a shared ruleset. Private pre-cutover firewall/nginx snapshots remain in the ignored evidence directory. The manual recovery command is the same installed rollback executable. Web would become unrestricted after rollback, so the firewall criterion must then be marked unmet.
+
+Under the actual restriction, scoped renewal simulation **passed again**, both certificate SANs succeeded and the production certificate hash stayed unchanged. HTTP-01 through the proxied domain therefore works with the live CF allowlist; DNS-01 credentials/plugin are not required for this setup. IPv4/IPv6 edge root/health/tracker were 200; event GET 202/drop, identify/revenue GET 503 and internal GET 404 remained unchanged. All five production fact tables were zero by SELECT-only inspection.
+
+### Independent external results and current limits
+
+Fresh TCP probes used literal origin addresses, two independent Europe nodes in **Falkenstein/Helsinki**, two packets per probe, and verified resolved targets. Each table result applies to both probes; no VPS self-scan is substituted.
+
+| Port | IPv4 | IPv6 | Measurement links |
+|---|---|---|---|
+| 22 | 2/2 replies | 2/2 replies | [IPv4](https://api.globalping.io/v1/measurements/2Riq5RhpMnyctuCJk00021F8n), [IPv6](https://api.globalping.io/v1/measurements/2JWGyVopxvXClP6mA00021F8n) |
+| 80 | 0/2 replies | 0/2 replies | [IPv4](https://api.globalping.io/v1/measurements/2hhXKAcUrYkdwl1ac00021F8n), [IPv6](https://api.globalping.io/v1/measurements/2kjlXL7u2cjhmL5aS00021F8n) |
+| 443 | 0/2 replies | 0/2 replies | [IPv4](https://api.globalping.io/v1/measurements/2csj7U6sYEoqaXUjb00021F8n), [IPv6](https://api.globalping.io/v1/measurements/20vtf66mEEDJxq6BC00021F8n) |
+| 3000 | 0/2 replies | 0/2 replies | [IPv4](https://api.globalping.io/v1/measurements/2GSYjwa3GEcWZPKd000021F8n), [IPv6](https://api.globalping.io/v1/measurements/2iSVXXGmh7tsL2lK700021F8n) |
+| 5432 | 0/2 replies | 0/2 replies | [IPv4](https://api.globalping.io/v1/measurements/2sAlUqPmDx3umaunG00021F8n), [IPv6](https://api.globalping.io/v1/measurements/2LBvjXnLQ6lRM3VFy00021F8n) |
+| 8088 | 0/2 replies | 0/2 replies | [IPv4](https://api.globalping.io/v1/measurements/2z4dl0iAIJW3Guvn300021F8n), [IPv6](https://api.globalping.io/v1/measurements/2fmWI3TlY9Jv8FoV900021F8n) |
+
+The timer was cancelled **only after** renewal, HTTPS/gates, all external probes and live rule-order/service checks passed. Validation took **29 seconds**; completed at **14:45:40 UTC**. No pending rollback or Tradebot job remains. New external TCP connections prove SSH transport reachable in both families; a new authenticated SSH login/provider recovery-console login was not performed. IPv6 has no host web listener, so its external non-response alone does not prove filtering; installed rules plus actual IPv6 namespace packet tests provide the additional policy evidence.
+
+Persistence unit syntax/order and repeat apply were verified; no production reboot was performed. Range refresh is **manual**, with drift rejected on apply. Future refresh must validate official ranges and update nginx trust plus staged firewall chains together, with another timed rollback; do not clear live chains or temporarily reopen direct web access.
+
+**Only the scoped host-web restriction criterion is now verified. G1/P2 remain pending.** Missing G1 runner/deployed evidence, actual-site consent setup, remaining Cloudflare panel inventory/counting-window review, encrypted off-VPS backup plus manual restore, monitoring and owner secret-preservation confirmation are not waived. Public data acceptance remains closed; P3 is not started. Normal assigned-branch commit/push, secret/format checks and local/remote SHA comparison are reported at handoff.
