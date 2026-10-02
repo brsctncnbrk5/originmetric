@@ -47,6 +47,7 @@ export default async function InternalProjectPage({ params }: { params: Promise<
     <main data-testid="internal-result">
       <h1>{project.name}</h1>
       <p>Internal P1b attribution proof. Not product UI.</p>
+      <a href="/internal/operations">Operations observations</a>
       <table>
         <thead>
           <tr>

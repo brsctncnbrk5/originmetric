@@ -22,6 +22,10 @@ dc() {
   elif [[ ${OM_INGRESS:-local} == nginx ]]; then
     OM_COMPOSE_ARGS+=(-f "$OM_ROOT/deploy/compose.nginx.yml")
   elif [[ ${OM_INGRESS:-local} != local ]]; then fail 'Unknown OM_INGRESS'; fi
+  if [[ -n ${OM_OPERATIONS_DIR:-} ]]; then
+    [[ $OM_OPERATIONS_DIR == "$OM_ROOT/.runtime/operations" ]] || fail 'Operations mount must be the owned summary directory'
+    OM_COMPOSE_ARGS+=(-f "$OM_ROOT/deploy/compose.operations.yml")
+  fi
   docker compose "${OM_COMPOSE_ARGS[@]}" "$@"
 }
 need() { command -v "$1" >/dev/null || fail "Missing command: $1"; }

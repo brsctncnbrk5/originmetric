@@ -30,6 +30,8 @@ export default defineConfig({
     env: {
       INTERNAL_TOKEN: internalToken,
       INGEST_PROXY_MODE: "local",
+      // Isolated browser fixture only; production must use its registered public key.
+      OM_DOGFOOD_SITE_KEY: "pk_DogfoodBrowserTest0001",
       HOSTNAME: "127.0.0.1",
       PORT: String(port),
     },

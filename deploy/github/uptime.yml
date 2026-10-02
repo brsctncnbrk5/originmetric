@@ -1,0 +1,21 @@
+# REVIEW TEMPLATE ONLY. Not installed under .github/workflows and not activated.
+# Approve exact target/operation and potential Actions notifications before dispatch.
+name: OriginMetric independent HTTPS observation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check only public HTTPS health and tracker
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Independent runner, no SSH/admin token and no event POST.
+          for path in /api/health /js/v1/om.js; do
+            curl --fail --silent --show-error --max-time 15 \
+              "https://originmetric.app$path" --output /dev/null
+          done

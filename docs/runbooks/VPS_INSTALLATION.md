@@ -334,3 +334,39 @@ Resmi referanslar (2026-10-02'de kontrol edildi):
 - https://developers.cloudflare.com/use-cases/solutions/stop-account-takeover-attacks/
 - https://docs.docker.com/engine/network/packet-filtering-firewalls/
 - https://www.postgresql.org/docs/18/runtime-config-logging.html
+
+
+## D-007: originmetric.app / GitHub / operations hazırlığı
+
+Güncel ayrıntılar: [hazırlık ve GitHub uygunluk raporu](../reports/P2_GITHUB_RECOVERY_MONITORING.md).
+Dogfood yalnız `https://originmetric.app/dogfood`; diğer siteye entegrasyon yapılmaz.
+Source hazırdır; gerçek VPS dışı yedek prerequisite'i olmadan `deploy.sh` atlanmaz.
+Registered project public key'i `OM_DOGFOOD_SITE_KEY` alanına konur; test key konmaz.
+Mevcut tracker API'si `originmetric("consent", true/false)` şeklindedir.
+
+```bash
+# Salt okunur envanter / stream ölçümü; dump veya config tar diske plaintext yazılmaz.
+bash scripts/vps/prepare-recovery.sh --inventory
+bash scripts/vps/prepare-recovery.sh --measure
+# Yalnız offline sahibin public recipient'i yerleştirildikten sonra; remote upload/ping yapmaz.
+bash scripts/vps/prepare-recovery.sh --encrypt-local
+# Yerel gözlem; notification/event POST yok. Shared logları toplamaz veya silmez.
+node scripts/vps/collect-operations.mjs
+```
+
+Private age key offline cihazda kalır. Şifreli DB/config iki ayrı local asset'tir; paketleme upload/restore
+başarısı değildir. GitHub repo/Release henüz yok; plan istisnası ve gerçek hedef/şifreli içerik önceden
+bildirilmeden ilk upload yapılmaz. Release işlemi GitHub bildirimi tetikleyebileceğinden hedef/işlem
+onayı alınır. 7 daily/4 weekly/2 monthly retention yalnız dedicated namespace içinde hazırlanır;
+plan kararı olmadan otomasyon/deletion backend kurulmaz.
+
+Operations özeti `.runtime/operations/snapshot.json` (root:1001, directory 750/file 640) olur;
+`OM_OPERATIONS_DIR=/opt/originmetric/.runtime/operations` optional read-only overlay'i seçer.
+Gerçek backed-up reviewed deploy'dan önce production env değiştirilmez. Mevcut internal bearer
+koruması ve public nginx 404 devam eder; token URL/query'ye konmaz. Operatörün mevcut private SSH/internal
+erişimi gerekir; public dashboard/account sistemi oluşturulmaz. Durumlarda source/time/staleness görünür;
+aynı-VPS PASS dış uptime değildir ve backup/restore UNKNOWN gerçek kanıt sağlanana kadar sağlıklı sayılmaz.
+
+`deploy/github/uptime.yml` review template'idir; workflow dizinine konmamış, çalıştırılmamıştır.
+Default branch/schedule/permission/billing ve olası bildirim onayı ayrıca doğrulanmadan etkinleştirme.
+No-spend şartını bypass etme; private runner kotasını bilinmiyor yerine hazır varsayma.
