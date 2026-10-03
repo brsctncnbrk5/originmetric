@@ -1,6 +1,58 @@
 # P2 — originmetric.app consent, GitHub recovery and dashboard monitoring
 
-Date: 2026-10-02; transferred Cloudflare evidence update: 2026-10-03. Local encryption/env preparation and documentation only; **no production redeploy, ingestion opening or scheduled external probe**; the authorized private draft ZIP transfer is recorded below. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
+Date: 2026-10-02; Cloudflare/owner evidence, remote ZIP readback and concrete proposal updates: 2026-10-03. Local encryption/env preparation and documentation only; **no production redeploy, ingestion opening or scheduled external probe**; the authorized private draft ZIP transfer is recorded below. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
+
+## GitHub ZIP readback ve tek önerilen yapılandırma — 2026-10-03
+
+**Gerçekleşen işlem: mevcut dosya yeniden indirildi, yeni upload yapılmadı.** Yalnız `GH_CONFIG_DIR=/opt/originmetric/.runtime/github-auth` proje girişi kullanıldı; `GH_TOKEN`/`GITHUB_TOKEN` ortam override'ları kaldırıldı. API hesabı **brsctncnbrk5**; recovery repo indirme öncesi ve sonrası **private**, mevcut Release **draft** olarak doğrulandı. Global giriş/ayarlar ve başka proje kimlikleri kullanılmadı/değiştirilmedi. Daha önceki iki commit (`c84d67a`, `c1e0e6b`) korunmuş ve önceki kullanıcı talebiyle normal push edilmiş durumda; bu işin başlangıcında yerel/uzak HEAD `c1e0e6ba80a8315ab4a92b8e9fdce1c94c76925d` eşleşti. Aşağıdaki eski 403/404 kayıtları tarihsel kanıttır; **güncel erişim engeli çözülmüştür**.
+
+| Readback kanıtı | Gerçek sonuç |
+|---|---|
+| Kontrol zamanı | **2026-10-03 01:51:17 UTC** |
+| Uzak kaynak | `brsctncnbrk5/originmetric-recovery`, Release ID **402255166**, tag `phone-recovery-20261003t011214z`, draft |
+| Yeniden indirilen asset | `originmetric-phone-recovery.zip`, asset ID **606851238**, **1863 B** |
+| SHA-256 | `a35fdf8963f58382d7cfbb8881e8c4abb524434f2ee1fb1e9d981af0793b4256` — yeni uzak indirme, eski yerel ZIP, önceki rapor kaydı ve GitHub asset digest **eşleşti** |
+| Ek bütünlük kontrolleri | ZIP CRC, tam dört beklenen member adı, iç manifestteki üç dosyanın SHA-256 kontrolü **PASS**; içerik yazdırılmadı |
+| Özel yerel kanıt | `.runtime/p2-remote-readback-20261003T015116Z/verification.json` ve yeniden indirilen ZIP; root-owned directory **700**, files **600**, Git-ignored; pointer `.runtime/p2-remote-readback-path` |
+
+Kontrol, backup aracında hazırlanmış **uzak ciphertext hash'ini yerel/reference hash ile karşılaştırma** ilkesini mevcut ZIP'e uygular. `backup.sh` çalıştırılmadı; rclone remote'unun veya GitHub DB backend'inin çalıştığı iddia edilmez. Paket DB dump içermiyor. Şifre çözme, DB restore, tam backup/restore veya telefon kaybı tatbikatı **yapılmadı**. Kullanıcının daha önce bildirdiği telefon hash/sample/env decrypt ve KeePassDX kaydı kullanıcı beyanı olarak korunur.
+
+### Tek öneri — karar bekliyor, etkin değil
+
+Bu öneri D-007'nin **GitHub-only değerlendirme / originmetric.app-only / dashboard gözlemi** yönünü korur. D-001 canonical planı ve §§24–25 koşulları değişmez. Aşağıdaki yapılandırma için kullanıcı kararı gerekir; bu dokümantasyon veya mevcut telefon ZIP izni otomasyon/DB upload izni değildir.
+
+| Konu | Önerilen somut yapılandırma |
+|---|---|
+| Private saklama hedefi | Mevcut **`brsctncnbrk5/originmetric-recovery`**, **draft Release assets**. DB snapshot'ları Git commit/LFS/Actions artifact olarak tutulmaz. Her snapshot'ta yalnız `database.dump.age` ve ciphertext `SHA256SUMS`; Release açıklamasında sır içermeyen tarih/source SHA/boyut/hash/readback durumu. Offline private age key VPS/GitHub'a gelmez. |
+| Env/config ayrılığı | Düzenli DB Release'lerine `.env` veya onu içeren `configuration.tar.age` eklenmez. Ayrı şifreli env ve secret içeren config mevcut sahibin KeePassDX kasasında, DB deposundan ayrı tutulur; config değiştiğinde sahibi günceller. Önceki tek seferlik telefon ZIP'i aynen korunur; bu görev onu silmez/yayımlamaz veya düzenli secret backup politikası saymaz. Önceki DB ile config upload önerisi bu **karar bekleyen DB-only öneriyle** daraltılmıştır. |
+| Backup sıklığı | Yetkilendirme ve eksik saklama koşulları çözüldükten sonra **her gün 03:15 UTC**, VPS host cron → consistent `pg_dump -Fc` → mevcut public recipient'e age stream → GitHub API upload/readback. Önerilen cron `15 3 * * *` ancak scheduler timezone **UTC** açıkça uygulanır; host yerel saati varsayılmaz. Hedef RPO ≤24 saat; fail/missing backup bunu bozar. |
+| Saklama sayısı ve süre | **7 günlük / 4 haftalık / 2 aylık**: günlük sınıf her gece, haftalık Pazar günkü dump, aylık ayın 1'inin dump'ı. Özel Release namespace `om-db-daily-YYYY-MM-DD`, `om-db-weekly-YYYY-Www`, `om-db-monthly-YYYY-MM`; sınıflar arasında kopya olabilir. Günlük yaklaşık 7 gün, haftalık yaklaşık 4 hafta, aylık yaklaşık 2 ay; her DB snapshot için mutlak **≤90 gün** üst sınır. Yalnız yeni upload/hash readback başarılı olduktan sonra owned namespace içinde script cleanup; `phone-recovery-*` kapsam dışı. En fazla 13 DB snapshot + manifest; gerçek encrypted boyutlar henüz ölçülmedi. |
+| Lifecycle sınırı | GitHub'da önerilen Release cleanup, provider bucket lifecycle değildir. VPS/job durursa cleanup ve ≤90 gün backstop güvencesi yoktur; sahibi **haftalık** private Releases yaş/sayı denetimi yapar. Bu manuel kontrol canonical lifecycle backstop'u yerine getirmiş sayılmaz; backend/retention kodu da henüz uygulanmadı. |
+| VPS dışı uptime | Public **`brsctncnbrk5/originmetric`** default `main` dalında, mevcut inactive template'ten hazırlanacak `uptime.yml`; standart GitHub-hosted **ubuntu-24.04**, self-hosted/VPS runner değil. Hazır `observe-public.mjs` yalnız HTTPS `/api/health` + `/js/v1/om.js` GET; token/SSH/event POST yok. **5 dakika**, saat başına yığılmayı azaltan öneri `2-57/5 * * * *`; manual dispatch de bulunur, timeout 3 dakika. Dosya şu anda workflow dizininde/default branch'te etkin değil. |
+| Telefonda dashboard | Mobil tarayıcıda [public Actions](https://github.com/brsctncnbrk5/originmetric/actions): etkinleştiğinde uptime run zamanı/başarı/başarısızlık ve iki endpoint sonucu; [private Releases](https://github.com/brsctncnbrk5/originmetric-recovery/releases): owner girişiyle backup zamanı/asset/hash ve indirme. Bunlar VPS kapalıyken GitHub erişimi varsa açılır. Şu anda Actions'ta yalnız **CI** aktiftir; gelecekteki uptime sonucu varmış gibi gösterilmez. `originmetric.app/internal/operations` public 404 kalır; hazır yerel operations view bu dashboard için deploy edilmez. |
+| Gecikme / görünür durum | 15 dakikadan eski son uptime run **STALE/UNKNOWN**, failed run **FAIL**; 26 saatten eski son gerçek DB backup **MISSING/UNKNOWN** olarak yorumlanmalı. Bu eşikler önerilen dashboard/operatör yorumudur; adapter ve otomatik stale/missing alarmı henüz yok. CI sonucu uptime sonucu değildir; mevcut telefon ZIP'i DB backup satırı değildir. |
+| Bildirim | Başarısız uptime Actions run için sahibin mevcut GitHub hesabındaki doğrulanmış e-posta bildirim ayarını kullanma önerisi. **Adres/hedef, ayar ve test işlemi önce sahibi tarafından doğrulanıp açıkça yetkilendirilir**; burada bildirim/test gönderilmedi. Bu yöntem backup start/success/fail/missing Healthchecks pingi veya kendi schedule'ının dead-man kontrolü değildir; ayrı eksik koşullar olarak kalır. |
+
+GitHub draft release'leri yalnız push erişimli kullanıcılara listeler; telefondan mevcut owner hesabı kullanılmalıdır. Releases dosya başına **<2 GiB**, Release başına **1000 asset** sınırını belgeler; belgede toplam boyut/bandwidth sınırı belirtilmemesi yedek hizmeti/lifecycle/SLA garantisi değildir. Öneri küçük ciphertext dosyaları içindir. [Release limitleri](https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases), [draft erişimi](https://docs.github.com/en/rest/releases/releases#list-releases).
+
+**Maliyet/kota:** önerilen public repodaki standart hosted runner ücretsizdir; private recovery repoda Actions çalıştırılmaz, runner/artifact/cache/LFS ücretli saklama kullanılmaz. Beş dakikalık schedule yaklaşık **288 run/gün, 8640 run/30 gün** üretir; bu sayılar dakika tüketimi değildir. Larger runner ücretlidir ve seçilmez. Private runner'a ileride geçiş bu öneriye dahil değildir: Free plan belgesindeki 2000 dakika/500 MB varsayımı hesaba uygulanamaz, API bu hesabın planını/kotasını göstermedi. Bu görev ödeme, ücretli tier veya spending ayarı açmadı; özel hesap bütçe/quota ayarları bağımsız olarak doğrulanmış değildir. [Güncel Actions ücretlendirmesi](https://docs.github.com/en/billing/concepts/product-billing/github-actions) (2026-10-03 kontrol edildi).
+
+**Gerekli izinler:** owner projede `admin/push`, recovery repoda `admin/push/private` erişimine sahip (API doğrulandı). Bugünkü readback/push yalnız verilen proje login'iyle yapılır. İleride unattended DB backend için yalnız recovery repo'ya seçilmiş, süresi sınırlı **fine-grained Contents: Read and write** credential güvenli mode-600 dosyada gerekir; bugünkü broad owner login'i cron'a kopyalanmaz. Bu izin asset/release cleanup'ı da mümkün kıldığı için repository erişim kapsamı önemlidir. Yeni token üretilmedi/istenmedi. Uptime job için `permissions: contents: read`, public checkout dışında secret gerekmez; workflow'u `main` üzerinde etkinleştirmek repo/workflow yönetim yetkisi ve owner kararı gerektirir. Public Actions run sonuçlarının okunması token gerektirmez; ileride authenticated mirror gerekirse yalnız ilgili repo için **Actions: read** yeterliliği değerlendirilir. [Release API izinleri](https://docs.github.com/en/rest/releases/releases#create-a-release), [run okuma izinleri](https://docs.github.com/en/rest/actions/workflow-runs#list-workflow-runs-for-a-repository).
+
+**Schedule sınırı:** default branch gerekir; GitHub job geciktirebilir/düşürebilir, public schedule 60 gün repo hareketsizliğinde devre dışı kalabilir. Beş dakika hedef aralıktır, garanti değildir. GitHub outage/account kaybı backup erişimi ve monitoring'i birlikte etkileyebilir; bu yapı kendi çalışmayan scheduler'ını bağımsız olarak izleyemez. [Resmî schedule koşulları](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+### Ayrı açık gereksinimler ve sıradaki kullanıcı adımı
+
+| Gereksinim | Güncel durum |
+|---|---|
+| Mevcut telefon ZIP remote readback | **PASS**, yalnız bu paketin transport bütünlüğü; real DB backup/restore değil |
+| Gerçek DB backup/manual restore | **OPEN**: authorized backend + gerçek DB ciphertext upload/readback, owner remote download/hash/offline decrypt → disposable PostgreSQL restore; tablo/migration/count sonuçları ve production değişmeme kanıtı. Synthetic CI/env decrypt yerine geçmez. |
+| Telefon dışı kasa yedeği | Kullanıcı kararıyla **ERTELENDİ**. Telefon bağımsız vault/key/account/2FA recovery **UNVERIFIED**; telefon kaybına hazırlık tamamlanmış değil. Mevcut key/paper/vault beyanı korunur. |
+| Canonical storage/lifecycle | **OPEN**: §24 rclone/object storage + bucket lifecycle ile GitHub Release cleanup farkı için açık owner kararı; ayrı secret saklama/env güncelleme ve eksik telefon dışı preservation şartı çözülmeden bağlı operasyonlar başlamaz. |
+| Monitoring/dead-man/email | **OPEN**: template hazır, hiç recurring uptime job etkin değil; backup/selfcheck start/success/fail/missing pings ve doğrulanmış e-posta delivery yok. Tek bir Actions run/telefon dashboard'u bunları tamamlamaz. |
+| Gerçek domain/G1/dogfood | **OPEN**: gerçek required-consent/banner/withdrawal/GPC ve persisted session→trusted identify→revenue→attribution/duplicate/refund kanıtı; bağımsız provider/original-export incelemesinin açık sınırları önceki raporda korunur. |
+
+**Kullanıcının sıradaki somut adımı:** yukarıdaki tek GitHub önerisini, canonical storage/lifecycle/dead-man farklarıyla birlikte kabul edip etmediğini bildirmek ve mevcut GitHub e-posta bildirim hedefi/ayarını tanımlamak. Bu bir plan kilidi/waiver veya telefon dışı ertelemenin kalktığı varsayımı değildir; gerekirse yeni açık owner kararı ayrıca kaydedilir. Kabul gelmeden DB backend/upload/cleanup/schedule/notification etkinleştirilmez. Bu görevde yeni upload, silme, Release yayınlama, DB dump/decrypt/restore, workflow dispatch, scheduler veya deploy olmadı. **G1 PENDING; P2 OPEN; P3 başlamadı; PUBLIC_G1_READY=no, events 202/drop, identify/revenue 503, internal/fixtures 404 korunur.**
 
 ## Owner-reported phone checks and independent preparation — 2026-10-03
 
@@ -80,7 +132,7 @@ Production still has no registered project. After real off-VPS backup and the re
 
 The test requiring a separately authorized data-gate change is **persisted consented pageview/session/source → server-only identify → test revenue → attributed result, duplicate/refund behavior**. A 202 from today's drop gate is not persistence evidence. The gate is not opened by this task.
 
-## GitHub feasibility and actual access
+## Historical GitHub feasibility and actual access — 2026-10-02
 
 Read-only GitHub API: authenticated owner `brsctncnbrk5`; current token has repo/workflow scopes. The visible repository list contains public `originmetric`, with admin/push access. There is no verified private recovery target. Account plan/current private Actions quota/spending controls were not exposed by that response; they are unknown, not assumed Free. A read-only billing usage request returned 404; it does not establish quota or a no-spend budget.
 
@@ -200,8 +252,13 @@ Local shell syntax, three backup-readback scenarios (valid, equal-size corruptio
 GET-only live checks: health/tracker 200, events 202/drop, identify/revenue 503, operations/metrics/fixture 404. A read-only transaction returned zero for all five production fact counts. `PUBLIC_G1_READY=no`; backup/check URLs remain unset. Canonical plan, DECISIONS, production env and installed ingress hashes, plus running container identities, match the private baseline. No production restart/deploy or data writes occurred. Markdown links/fences/whitespace and redacted task-file/full-history secret scans are checked before commit. Only task scripts/template/CI/docs are included; ciphertexts and private baselines remain ignored.
 
 
-## Commit / remote-access blocker — 2026-10-03
+## Historical commit / remote-access blocker — 2026-10-03
 
 Preparation commit `c84d67aa1b99de3a20f91ae3f35e7b7562306064` was created on the assigned branch. Push to `origin/codex/originmetric-p2-vps-preparation` returned **403: permission denied to `brsctncnbrk3-hub`**. `gh auth status` lists only that account; no authorized alternate account is available in that configuration. No other project's credentials were reused, no force push/history rewrite attempted. Remote branch still reads `e6853ba54275e97302819f6b22acbf7a7278603e`; it does **not** match the new local work. The final local documentation commit records this blocker; publication is incomplete.
 
 Immediate owner step: make the OriginMetric-authorized GitHub account available through the local secure GitHub login/credential mechanism (never post a token/key in chat). Then push the assigned branch and compare full local/remote SHAs. After access is restored, the next P2 decision remains the documented GitHub storage/lifecycle/monitoring alternative and exact notification target/operation. Off-phone preservation stays DEFERRED; no gate is opened.
+
+
+## ZIP readback / proposal documentation verification — 2026-10-03
+
+Actual remote download/reference hash comparison, ZIP CRC/exact four members and three inner manifest checks passed. New private readback directory/files are root-owned 700/600 and Git-ignored. `git diff --check`, Markdown local targets/new anchors/balanced fences and `npm run format:check` passed; Markdown remains excluded from Prettier, so its structural checks were separate. Existing gitleaks v8.30.1 with redaction/read-only mounts/network-none scanned changed docs and full Git history: no leaks found. Only STATUS and the two P2 reports changed. Canonical plan/DECISIONS/production env hashes and running container identities match the private baseline. No application suite or live uptime observer was rerun for this documentation/readback task; previous CI results remain historical. Commit/push uses only project GH_CONFIG_DIR on the assigned branch, followed by full remote SHA and clean-tree verification at handoff.
