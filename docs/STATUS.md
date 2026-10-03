@@ -27,6 +27,27 @@
 
 ## Next step
 
+**2026-10-04 local / 3 October 22:52–22:53 UTC — actual controlled G1/1 PASS
+(operator-browser scope); ingestion CLOSED AGAIN.** Owner explicitly approved
+one isolated browser/current test project, `/api/v1/e` only, maximum 600 seconds.
+Actual public-domain deny → allow → exact persistence → withdrawal test completed
+in **7.982 seconds** from activation to closed-config restoration. No requests or
+tracker state before consent/after deny; Allow produced 202 **and** one exact
+labelled production event/session; withdrawal cleared state/visitor and prevented
+new requests/facts after history navigation. Customers, links, revenue and
+attribution remain **0**. Protected resources unchanged after rollback; fresh
+public Node probe with the formerly valid cookie returned 202/drop without new
+facts. Scoped rollback timer armed before activation, then stopped after immediate
+verified closure; its expiry execution is not claimed. Actual-window sensitive
+log check PASS. Private evidence:
+`.runtime/p2-consent-window-538320244341/actual-result.json`, execution audit and
+final closure proof. [Actual result and limits](reports/P2_GITHUB_RECOVERY_MONITORING.md#actual-controlled-g11-completed-and-closed--2026-10-04-local).
+**Owner-phone storage/network unobserved; native owner GPC NOT_EXPOSED /
+NOT PASSED; formal G1 PENDING.** No full revenue chain or populated restore run.
+Existing age key/recipient unchanged; off-phone recovery DEFERRED. No further
+controlled window is open or authorized by this completed one-time test.
+**PUBLIC_G1_READY=no; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-04 local — first applicable actual G1 test PREPARED / approval pending.**
 Canonical item 1: actual-domain operator deny → consented labelled persistence →
 withdrawal, using one fresh isolated browser and the registered test project.

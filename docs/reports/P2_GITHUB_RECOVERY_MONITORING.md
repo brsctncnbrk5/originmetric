@@ -1435,3 +1435,66 @@ only establish actual-domain operator scope; it does not complete formal G1,
 waive enabled-owner GPC, start the full revenue chain or open uncontrolled traffic.
 GPC NOT_EXPOSED; phone-independent recovery DEFERRED; current age key/recipient
 unchanged; PUBLIC_G1_READY=no; G1 PENDING; P2 OPEN; P3 NOT STARTED.
+
+
+## Actual controlled G1/1 completed and closed — 2026-10-04 local
+
+Owner explicitly approved the staged isolated-browser/current-test-project scope,
+`/api/v1/e` only, at most ten minutes, with closure verification and actual evidence.
+Decision D-009 records that one-time controlled-traffic authorization; no formal
+G1 waiver or public go-live. Private explicit approval is retained as
+`.runtime/p2-consent-window-538320244341/owner-approval.json`.
+
+**Actual test PASS — ACTUAL_DOMAIN_OPERATOR_SCOPE_ONLY.** A fresh isolated existing
+Chromium visited the actual originmetric.app domain via the private one-time
+access path. No fixture app/DB, native GPC injection or owner phone observation
+was used. Exact running application/image and registered test project unchanged.
+Cookie-bearing access was restricted to POST/exact origin/dogfood referrer on
+`/api/v1/e`; other APIs remained closed and `PUBLIC_G1_READY=no` remained set.
+The active nginx file used root-only permissions to protect the temporary access
+token; rollback restored the normal closed file. No age key/recipient change.
+
+| Actual observation | Outcome |
+| --- | --- |
+| Fresh page / before consent | Zero outbound event requests, zero `om_*` cookies/localStorage, visitor absent. |
+| Reddet | Same zero state/request results. |
+| İzin ver | HTTP 202 plus exactly one independently SQL-verified event/session for the prepared campaign and p2-test/controlled source. 202 alone not used as proof. |
+| İzni geri çek | `om_*` state cleared, visitor absent; history navigation produced no new event request or production fact. |
+| Fact totals | Events 1, sessions 1; customers 0, trusted links 0, revenue 0, attribution 0. All new browser facts belong to the registered labelled test scenario; retained, not deleted/truncated. |
+| Cleanup | Isolated browser closed; exact closed nginx config restored/reloaded; protected production container/config metadata unchanged. |
+| Fresh closure probe | Node public POST with formerly valid access cookie returned 202/drop; facts unchanged. |
+| Actual-window sensitive log scan | PASS in memory: no private visitor/session/event identities, registered site key or temporary access token printed in application logs. Raw logs/values not published. |
+
+Activation **2026-10-03 22:52:58 UTC**, immediate closed restoration
+**22:53:05.982 UTC**: **7.982 seconds**, below the 600-second authorized maximum.
+Scoped systemd timer independently verified active after being armed **before**
+nginx mutation. After successful immediate rollback/closure, that exact timer was
+stopped; no claim that timer expiry executed or that scheduled recovery passed.
+Server epoch expiry remains additional defense validated in the earlier isolated
+preparation; no redundant ten-minute live wait occurred.
+
+Private actual artifacts in `.runtime/p2-consent-window-538320244341/`:
+`activation.json`, `armed-timer.log`, `actual-result.json`, `rollback-result.json`,
+`execution-audit.json`, `final-closure-proof.json`. Runner exit 0, outer rollback
+exit 0, closed config bytes match. A separate Python-client public closure probe
+received 403 and was **not** treated as 202/drop proof; the fresh Node probe and
+runner's separate Node closure probe both returned 202 with no new facts. The
+403 cause was not determined or bypassed. No secret URL/cookie/body/identity is
+in the public evidence.
+
+This actual result resolves the additional operator actual-domain G1/1 test;
+prior explicit owner banner acceptance remains at its original source level.
+Owner-phone storage/network is still unobserved and native enabled-owner GPC
+remains NOT PASSED / reference NOT_EXPOSED. Canonical G1 items 3–6 retain prior
+reviewed technical evidence/provider source limits, not fabricated new acceptance.
+No identify, payment/renewal/refund, populated encrypted backup or phone restore
+was run. Preserve the prepared campaign/test fact baseline for any separately
+authorized later chain; earlier zero-fact statements describe historical stages.
+The original zero-baseline preparation command cannot be rerun as if facts were
+still zero. No data deletion is needed for rollback.
+
+**Ingestion CLOSED AGAIN; PUBLIC_G1_READY=no; formal G1 PENDING; GPC NOT_EXPOSED;
+phone-independent recovery DEFERRED; existing age key unchanged; P2 OPEN;
+P3 NOT STARTED.** Actual execution cannot approve another window or the full
+revenue chain. Completion and post-push SHA/clean-tree audit recorded privately;
+no new full CI result inferred from this acceptance run.

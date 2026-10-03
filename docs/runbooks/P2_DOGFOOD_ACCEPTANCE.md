@@ -278,3 +278,23 @@ The local nginx mock controls and candidate syntax checks are preparation only.
 They do not prove an installed timer, actual production visit or owner acceptance.
 Keep **GPC NOT_EXPOSED, phone-independent recovery DEFERRED, G1 PENDING, P2 OPEN,
 P3 NOT STARTED** regardless of this partial test's eventual result.
+
+
+### Actual completion of this one approved window
+
+The prepared window was explicitly approved and executed on 2026-10-04 local:
+**G1/1 actual-domain operator-browser PASS**, 7.982 seconds, exact one labelled
+production event/session, zero customer/link/revenue/attribution. The isolated
+browser is closed, original closed nginx config restored/reloaded, fresh public
+cookie-bearing closure probe is 202/drop with unchanged facts, protected
+resources unchanged. The rollback timer was armed and then stopped after immediate
+closure; expiry execution is not claimed. [Actual evidence and source limits](../reports/P2_GITHUB_RECOVERY_MONITORING.md#actual-controlled-g11-completed-and-closed--2026-10-04-local).
+
+This one-time approval is consumed. Do not reactivate/reuse the window or infer
+approval for revenue/backup/phone restore. Retain the private prepared campaign
+and actual test records; no production delete/truncate. The zero-fact preparation
+command now correctly refuses the nonzero baseline. For any later separately
+authorized chain, reconcile/reuse the unique existing labelled session rather
+than inventing a new zero baseline or claiming it was the owner's phone visit.
+Formal G1 stays PENDING; native owner GPC NOT_EXPOSED / NOT PASSED, off-phone
+recovery DEFERRED, existing age identity preserved, P2 OPEN, P3 NOT STARTED.

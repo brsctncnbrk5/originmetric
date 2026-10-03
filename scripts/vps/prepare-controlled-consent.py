@@ -86,10 +86,10 @@ def safe_run(args):
         raise RuntimeError('Operation failed: ' + args[0])
 
 
-def replace_site(text):
+def replace_site(text, mode=0o644):
     temp = SITE.with_name('originmetric.p2-staged')
     temp.write_text(text)
-    temp.chmod(0o644)
+    temp.chmod(mode)
     os.replace(temp, SITE)
 
 
@@ -127,7 +127,7 @@ def activate(directory):
             (directory / 'active-sha').unlink()
             raise
         try:
-            replace_site(candidate)
+            replace_site(candidate, mode=0o600)
             safe_run(['nginx', '-t'])
             safe_run(['systemctl', 'reload', 'nginx'])
         except Exception:

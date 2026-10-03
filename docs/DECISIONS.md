@@ -80,3 +80,11 @@ Format: `D-NNN | date | decision | why | alternatives rejected | supersedes`.
 - **Scope:** Separate public `brsctncnbrk5/originmetric-monitoring` contains only required public observation code/workflow/results. Regular private DB backups contain no env/config secret files. Existing phone ZIP and unrelated releases/assets are protected. No paid service, global GitHub identity change or history rewriting.
 - **Acceptance boundary:** This authorizes these operational actions despite the owner's off-phone vault backup deferral; it does not claim complete phone-loss preparation, real restore, object-storage lifecycle backstop, email/dead-man detection, G1/P2 acceptance or data-gate opening. Canonical plan file is unchanged; its outstanding acceptance differences remain explicit.
 - **Supersedes:** D-007's preparation-only restriction for these named operational actions and the pending GitHub configuration approval. All other locked decisions, separate secret storage and production gates remain in force. Off-phone vault backup remains **DEFERRED**.
+
+
+### D-009 | 2026-10-04 local | One bounded actual-domain G1/1 controlled test
+
+- **Owner instruction:** Explicitly approve only the specified isolated test browser/current test project, `/api/v1/e` access for at most ten minutes, run G1/1, close access, verify closure and retain actual evidence.
+- **Scope:** One fresh operator browser, temporary private-cookie/POST/origin/dogfood-referrer gate; existing project and unique campaign. No uncontrolled traffic, identify/revenue events, backup, phone restore or new service/key. `PUBLIC_G1_READY=no` retained.
+- **Boundary:** Canonical §28 controlled-traffic test authorization only; formal G1 and enabled-owner GPC are not waived. D-007's closed-ingestion restriction temporarily relaxed only for this one test; route restored immediately after completion. No recurring or further window authorized.
+- **Result:** Actual G1/1 PASS in operator-browser scope; one labelled event/session, no customer/link/revenue/attribution. Immediate verified closure within 7.982 seconds. Off-phone recovery remains DEFERRED, existing age identity/recipient unchanged, P2 OPEN and P3 NOT STARTED.
