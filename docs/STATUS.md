@@ -27,6 +27,34 @@
 
 ## Next step
 
+**2026-10-04 local / 3 October 23:41–23:43 UTC — isolated full revenue chain
+ACCEPTANCE PASS; production and physical-browser acceptance remain OPEN.**
+Canonical §26/§28 controlled fixture scope: current deployed image and identical
+live tracker bytes, disposable loopback app/DB, fresh labelled test customer and
+`test=true` USD events. Consent → persisted session/campaign → trusted identify
+and retry → payment/duplicate/409 conflict → renewal → linked refund → exact
+rendered internal customer/status/source row PASS; SQL test totals **5800 payment /
+500 refund / 5300 net minor units**, acquisition unchanged. **98 tests / 9 files
+PASS**, populated in-memory fixture restore and four semantic tamper controls PASS;
+14 FKs / zero orphans. Ten production table counts and protected metadata unchanged;
+all fixture containers/network removed. Production remains **1 event / 1 session /
+0 customers, links, revenue, attribution**. This closes the **isolated full-chain
+validation** task only; actual production chain and populated encrypted phone
+restore stay open. Lint/types/format and 37 recovery/observer controls PASS.
+Read-only 23:41–23:42 UTC audit: backup fresh locally, first scheduled backup
+**NOT DUE** until **4 October 03:15 UTC**, no scheduled recovery run returned;
+latest public scheduled observation still 37154300615 (21:12 UTC). No continuous
+five-minute coverage or missing-run/backup-failure delivery inferred.
+[Evidence and current open-item reconciliation](reports/P2_GITHUB_RECOVERY_MONITORING.md#isolated-full-chain-acceptance-and-open-item-audit--2026-10-04-local).
+**Physical native GPC remains OPEN / NOT PASSED**; technical/injected results do
+not replace it. Next owner action is conditional: when a GPC-capable physical
+browser is available, report its native reference signal and browser name, then
+complete actual-site zero-storage/zero-send evidence. No repeated Chrome check or
+installation requested. **Recovery DEFERRED; existing age key unchanged; ingestion
+closed; PUBLIC_G1_READY=no; G1 PENDING; P2 OPEN; P3 NOT STARTED.**
+This entry supersedes historical next-step requests below. No deployment, access
+window, production revenue write, key operation or external notification.
+
 **2026-10-04 local / 3 October 23:30 UTC — GPC evidence reconciled;
 closed-ingestion technical controls PASS, physical-browser evidence OPEN.**
 Android Chrome's original owner-reported **DOM signal not present** means the

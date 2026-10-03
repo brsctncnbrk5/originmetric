@@ -1587,3 +1587,84 @@ traffic would require its own stated scope and authorization; D-009 was exhauste
 PUBLIC_G1_READY=no; recovery DEFERRED; current age key unchanged; P2 OPEN;
 P3 NOT STARTED.** Documentation-only publication; commit/push and remote SHA
 equality audit will be kept in `.runtime/p2-gpc-review-20261004/publication.json`.
+
+
+## Isolated full-chain acceptance and open-item audit — 2026-10-04 local
+
+Owner explicitly requested completing GPC-independent P2 work, first the full
+revenue-attribution acceptance using plan-compatible isolated test data, with no
+production customer/revenue impact. This authorizes the isolated validation below;
+it does not reuse D-009, open public routes or waive physical-browser GPC evidence.
+Canonical §26 end-to-end proof and §28 controlled/synthetic traffic are the basis.
+Locked plan, Recovery DEFERRED and current age identity/recipient remain unchanged.
+
+**Isolated full-chain acceptance PASS.** Ran
+`npm run gate:g1 -- --technical-only --rehearse-dogfood` against the current deployed
+image `e74bfc1fcc6e404be977feee059dc1d3c78d170c` cloned into a disposable app and
+PostgreSQL database, with loopback-only ports and intercepted off-origin requests.
+Live tracker SHA-256 still
+`b629914f93296cbb78d4d09e940c0e0ff78139b59f9a3008ecbae68a9eb6d7e9` matches fixture
+bytes. Fresh uniquely labelled fixture customer/subscription/events; all three
+revenue events `test=true`, USD only. Production secrets/data are not cloned.
+
+| Acceptance assertion | Verified result |
+| --- | --- |
+| Required consent → session | No request/visitor before consent; Allow 202 plus SQL exact visitor/session/campaign and p2-test/controlled source, not HTTP alone. |
+| Trusted identify | 200 linked, exact retry 200 duplicate; SQL server_identify link joins the credited session/customer. |
+| Initial payment / retry / conflict | 201 / 200 / 409; after retry/conflict one payment, one customer, one trusted link. |
+| Renewal / refund | 201 / 201; refund SQL points to original external payment event; acquisition fields unchanged. |
+| Revenue facts | Exactly 2 payments + 1 refund, test-only USD; payment 5800, refund 500, net 5300 minor units independently checked by SQL. |
+| Internal result | Missing/wrong token 404, valid token 200; rendered table has exactly one row with the exact test customer, attributed status and p2-test source. No incidental HTML word matching accepted as sole result proof. |
+| Withdrawal / logs | Visitor cleared, no new send after history navigation; fixture logs contain no checked secrets/private identities. |
+| Fixture restore | In-memory dump to network-none/tmpfs receiver; ten counts, schema/migrations, freshness, trusted identities/payload hashes and semantic attribution/totals match; 14 FKs, zero orphan rows. Four changed source/link/refund/freshness controls rejected. |
+| Production preservation / cleanup | All ten table counts and protected container/config metadata unchanged; all owned fixture app/DB/restore containers and network removed. Production event/session 1/1; customer/link/revenue/attribution 0/0/0/0. |
+
+Strengthened the existing reusable isolated runner with exact rendered row and
+independent SQL net checks, and an explicit `isolatedChainAcceptance: PASS` evidence
+field. No product code/deployment changed. Private final gate evidence:
+`.runtime/g1-1791070917346-3174806/summary.json` and `regressions.log`;
+**98 tests / 9 files PASS**, technical gate exit 0, overall **PENDING**.
+The GPC check in that run injects true and remains technical evidence only.
+
+**Other open items reconciled at 3 October 23:41–23:42 UTC:** local read-only
+watchdog reports FRESH_REMOTE_VERIFIED_BACKUP. Daily timer enabled/active with
+empty LastTrigger, service execution timestamps empty; default Result=success /
+status=0 does not prove a service execution. First real scheduled backup is
+**NOT DUE**, next **4 October 03:15 UTC** (05:15 CEST). Existing private operator
+GitHub auth successfully queried scheduled recovery Actions: empty list. Initial
+default gh auth returned 404; not interpreted as deleted repository/no runs.
+No auth/settings/schedule change or dispatch. Public monitoring still returns
+latest scheduled success [37154300615](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37154300615)
+at 21:12 UTC; sparse successful samples cannot prove uninterrupted five-minute
+monitoring. No waiting for the due time or substituting a manual backup.
+
+| P2 item after this task | Actual status / remaining evidence |
+| --- | --- |
+| Full chain in isolated deployed-image fixtures | COMPLETE / ACCEPTANCE PASS at isolated scope, including rendered internal result and USD net. |
+| Actual consented production visit → trusted revenue attribution | OPEN / NOT RUN. Existing actual-domain G1/1 event/session retained; no production customer/revenue write. Fixture acceptance cannot close canonical real-site exit criterion. |
+| Physical real GPC | OPEN / NOT PASSED; original Android Chrome NOT_EXPOSED and owner report of no alternative browser retained. Require native true plus actual-site zero identifiers/storage/event attempts after Allow/history/reload. Injected checks do not substitute. |
+| G1/1 and G1/3–6 | Prior actual-domain operator consent PASS, owner banner acceptance and matching-source technical evidence retained. Owner-phone storage/network and direct Cloudflare API/original-export limits remain explicit. G1 overall PENDING. |
+| Populated encrypted backup / actual phone restore | OPEN / NOT RUN; isolated populated restore above is additional technical evidence. Earlier actual empty phone restore remains verified. No backup/key/phone action in this task. |
+| First scheduled backup / remote expiry / freshness | OPEN: backup not yet due; no scheduled recovery run returned. Require actual trigger/service result and new remote readback; manual results and configured timers do not substitute. |
+| Alarm delivery and monitoring | Existing owner-reported monitoring failure and detector-error emails retained; actual backup-failure/missing-run delivery and GitHub-independent dead-man OPEN. No test notification sent. Continuous five-minute coverage unproven. |
+| Strict retention/lifecycle under provider/account/scheduler failure | OPEN; configured/manual tested backstop is not a strict 90-day independent lifecycle guarantee. No Release deletion in this task. |
+| Phone-independent secret/account recovery | DEFERRED by owner, not changed to PASS or re-requested; existing age key preserved, no key read/generation/rotation/transfer. |
+
+Checks: lint, typecheck, format PASS; deployed-image 98-test regression suite plus
+browser/API/SQL/restore acceptance PASS; backup policy 17, local status 4,
+retention 3, restore acceptance 6 and public observer 7 tests PASS (**37 controls**).
+Expected lock-refusal output in backup policy tests is a negative control, not an
+actual backup failure. No full new CI result is inferred from these local checks.
+Diff/secret scan and commit/push/remote SHA audit are recorded with publication
+under `.runtime/p2-chain-review-20261004/`; operational audit `audit.json` is private.
+
+**Next owner action, conditional on availability:** use a physical browser with
+real GPC enabled, report browser name and native Client-side detection at the
+existing reference page; then complete actual-site zero-storage/zero-send behavior
+proof. No immediate action on the unavailable Chrome setup, repeated banner
+confirmation, installation or general approval is required. Ingestion stays
+closed; zero-send GPC proof needs no access window. Production chain/populated
+phone drill remain separately scoped open work.
+
+**PUBLIC_G1_READY=no; G1 PENDING; physical GPC OPEN; Recovery DEFERRED; existing age
+key unchanged; P2 OPEN; P3 NOT STARTED.**

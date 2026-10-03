@@ -1,4 +1,4 @@
-// Preparation only: deployed-image clone and disposable DB, never public data routes.
+// Isolated chain acceptance: deployed-image clone and disposable DB, never public data routes.
 import assert from "node:assert/strict";
 import { execFileSync, spawnSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
@@ -178,6 +178,25 @@ export async function rehearseDogfood({ browser, base, names, env, docker, psql,
     assert.equal(authorized.status(), 200);
     const html = await authorized.text();
     assert.ok(html.includes("p2-test") && html.includes("attributed"));
+    // Verify the actual rendered result row, not incidental words in page/scripts.
+    const resultPage = await context.newPage();
+    await resultPage.route("**/*", (route) => route.abort());
+    await resultPage.setContent(html);
+    const rows = resultPage.locator('[data-testid="internal-result"] tbody tr');
+    assert.equal(await rows.count(), 1);
+    assert.deepEqual(await rows.first().locator("td").allTextContents(), [
+      label,
+      "attributed",
+      "p2-test",
+    ]);
+    await resultPage.close();
+    assert.equal(
+      psql(
+        names.db,
+        `SELECT coalesce(sum(CASE WHEN type='refund' THEN -amount_minor ELSE amount_minor END),0) FROM revenue_events WHERE ${where} AND test AND currency='USD'`,
+      ),
+      "5300",
+    );
     await page.click("#consent-no");
     assert.equal(await page.evaluate(() => window.originmetric.getVisitorId()), null);
     const after = sends;
@@ -366,6 +385,7 @@ export async function rehearseDogfood({ browser, base, names, env, docker, psql,
       );
     return {
       kind: "ISOLATED_REHEARSAL_ONLY",
+      isolatedChainAcceptance: "PASS",
       result: "PASS",
       httpCodes: codes,
       persistedSessionCampaignAndTrustedLink: true,
@@ -378,6 +398,8 @@ export async function rehearseDogfood({ browser, base, names, env, docker, psql,
       netMinor: 5300,
       acquisitionUnchanged: true,
       testOnly: true,
+      internalRenderedExactCustomerStatusSource: true,
+      netMinorVerifiedBySql: true,
       withdrawalStopsSending: true,
       restoredTenTableCountsAndFreshnessMatch: true,
       restoredSchemaAndMigrationsMatch: true,

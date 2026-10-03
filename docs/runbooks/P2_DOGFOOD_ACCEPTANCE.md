@@ -319,3 +319,16 @@ Keep owner UI, native signal and instrumented behavior evidence separate.
 Keep ingestion closed for these checks; zero-send GPC evidence needs no access
 window or persisted event. Preserve the one-event/one-session baseline, age key,
 recovery DEFERRED and P3 NOT STARTED. Do not reuse the exhausted D-009 approval.
+
+
+### Isolated full-chain validation completed — 2026-10-04 local
+
+The existing closed-ingestion command above now also checks the exact rendered
+internal customer/status/source row and independently SQL-verifies USD net.
+[Latest acceptance and open items](../reports/P2_GITHUB_RECOVERY_MONITORING.md#isolated-full-chain-acceptance-and-open-item-audit--2026-10-04-local):
+**isolated full chain PASS**, 98 regression tests PASS, test-only USD 5800/500/5300
+minor units, fixture restore PASS, all owned resources removed, production facts
+and protected metadata unchanged. This completes isolated validation only; actual
+production chain and populated encrypted phone restore remain OPEN. Physical real
+GPC is still OPEN; injected technical checks do not replace it. Recovery DEFERRED,
+existing age key unchanged, G1 PENDING, P2 OPEN, P3 NOT STARTED.
