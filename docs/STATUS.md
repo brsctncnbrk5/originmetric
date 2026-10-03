@@ -27,6 +27,25 @@
 
 ## Next step
 
+**2026-10-03 — recovery Actions scope verified; retention + remote freshness activated.**
+Owner reports account-wide **brsctncnbrk5 Actions $0 / Stop usage Yes**. Repo API
+confirms private `originmetric-recovery` belongs to that account; coverage follows
+from owner-reported account scope plus verified ownership, not direct budget API
+inspection. Retention installed **03:45 UTC**; GitHub dry-run and apply both
+SUCCESS, **0 deletions**, 2 unrelated/nonexpired records protected. Hourly **:15 UTC**
+remote backup-capture freshness checker installed; corrected hosted run SUCCESS
+with fresh verified metadata. Draft listing requires job `contents:write` although
+checker operations are GET-only. No extra secret; existing per-job token only.
+Initial hosted freshness run **37154103588 failed UNKNOWN** due draft visibility,
+not actual missing backup; corrected run **37154193166 PASS**. Historical failure
+kept. No strict 90-day guarantee, uninterrupted schedule or GitHub-outage dead-man
+PASS inferred. First scheduled backup/retention/watchdog completions remain pending.
+**Next single owner step:** check receipt of the existing `originmetric-recovery`
+**Remote backup freshness watchdog** failure email for **37154103588**, report
+received / not received. This is detector-error delivery, not actual backup-failure
+or missing-run acceptance. No additional failure control sent for this request.
+**G1 PENDING; GPC NOT_EXPOSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — new failure-control email RECEIVED / OWNER-REPORTED PASS.**
 Owner confirms the new `originmetric-monitoring` error email arrived **3 October
 23:45**, sender **notifications@github.com**. Correlated with the requested

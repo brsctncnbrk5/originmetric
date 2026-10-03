@@ -1143,3 +1143,76 @@ open; scheduled backup will be audited after its due time.
 **Formal G1 PENDING; GPC NOT_EXPOSED / enabled-owner GPC NOT PASSED; ingestion
 closed; data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.** Populated test chain
 and restore remain gated; deferred off-phone recovery is preserved.
+
+
+## Recovery budget scope and activated independent VPS checks — 2026-10-03
+
+Owner reports **brsctncnbrk5 account-wide Actions budget $0 / Stop usage Yes**.
+Budget value/enforcement is **OWNER-REPORTED**; repository API independently
+confirms active private `brsctncnbrk5/originmetric-recovery`, owned by that personal
+account. [Documented account-wide budget scope](https://docs.github.com/en/billing/how-tos/set-up-budgets)
+therefore covers this repository; this coverage conclusion is an inference from
+verified ownership and owner-reported scope, not an independent billing API read.
+No-spend prerequisite accepted at that evidence level. Existing account-wide
+settings unchanged; no new credential, secret, service or payment setting.
+
+Under existing D-008 activation authorization, installed reviewed expiry backstop
+in private recovery main and set `RETENTION_BACKSTOP_READY=true`. Public helper
+source pinned to full-suite CI-verified `2558928fa4b3f02929d66a14f17d9265c792192e`.
+**Daily 03:45 UTC**; VPS backup timer **03:15 UTC** remains unchanged.
+Three existing retention regression tests PASS. Private repository dry-run
+[37153813356](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37153813356)
+SUCCESS, then apply [37153955063](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37153955063)
+SUCCESS: **0 expired candidates, 0 deletions, 2 protected records**. Positive deletion
+and changed-asset protection are fixture-test evidence only; no real expired asset
+was available. No unrelated phone recovery or current DB snapshot deleted.
+
+Continued the next technical gap: added **Remote backup freshness watchdog** to
+same private repo, scheduled **hourly at :15 UTC**, using repository job token,
+no copied VPS/broad operator credential. Fetches bounded private release inventory,
+uses existing exact DB ownership/asset metadata parser, selects latest verified
+**capture timestamp**, and applies existing **26-hour** stale/missing policy.
+A repeated readback cannot refresh an old dump. Missing verified backup, future latest capture, or inventory request failure
+returns UNKNOWN/FAIL, not PASS. No request or write to production VPS/DB; GET-only
+release inspection, no encrypted dump/manifest download or new hash verification.
+Remote metadata integrity/readback claims remain at backup producer's recorded
+source level. Four existing status tests and six inline integration cases passed:
+fresh, stale capture despite refreshed verified_at, missing, future, pending-only,
+and wrong-private-target rejection.
+
+Initial hosted [37154103588](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37154103588)
+failed **UNKNOWN / NO_VERIFIED_BACKUP** with `contents:read`: GitHub hid draft
+releases. This is a visibility failure, **not actual backup loss or missing-run
+acceptance**. [GitHub draft release documentation](https://docs.github.com/en/rest/releases/releases#list-releases)
+requires push access for draft listings. Job-local `contents:write` fixes visibility;
+checker code still performs GETs only, checkout persists no token and Actions are
+pinned. No new PAT or account access granted. A brief initial workflow-registration
+404 was retried only after API confirmed registration; no duplicate watchdog run
+was dispatched by that failed call.
+Corrected hosted [37154193166](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37154193166)
+**SUCCESS / FRESH_REMOTE_VERIFIED_BACKUP**. Current release-count/metadata checks
+prove real remote read access from GitHub runner, not a newly scheduled backup.
+
+**Configured and manually verified technical controls**, not complete canonical
+lifecycle/dead-man acceptance. GitHub schedules/account/quotas/provider can fail;
+$0 hard stop protects spending but may block jobs after included quota. A daily
+expiry job removes >=90-day owned assets only when it runs: it cannot guarantee
+strict <=90-day deletion during scheduler/account/provider failure. No native
+storage lifecycle is established. Hourly freshness is independent of VPS execution
+but depends on GitHub; it cannot detect its own missed run/provider outage. Actual
+backup start/failure, missed-backup delivery, scheduled successful runs and all-provider
+failure behavior remain unverified. Do not mark these missing proofs PASS.
+
+**Next single owner action:** report receipt/nonreceipt of the already generated
+`originmetric-recovery` **Remote backup freshness watchdog** failure notification
+for initial run **37154103588**. This verifies detector-error notification delivery
+only; it is not a synthetic missing-backup test or actual production backup failure.
+No further control notification is sent. No address/content/screenshots requested.
+Scheduled backup evidence will be inspected after 2026-10-04 03:15 UTC; first
+scheduled expiry and freshness results likewise remain PENDING.
+
+**Formal G1 PENDING; GPC NOT_EXPOSED / enabled-owner evidence NOT PASSED;
+data collection NOT PASSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+Application/env/nginx/deploy/DB/volumes and existing age key unchanged. Deferred
+off-phone recovery unchanged. Prepared workflow copies and safe private evidence
+are retained for review; full application suite was not rerun for workflow-only work.

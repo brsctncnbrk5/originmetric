@@ -1,0 +1,91 @@
+# GitHub-hosted remote metadata check; independent of VPS execution, not GitHub outages.
+name: Remote backup freshness watchdog
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 * * * *"
+permissions:
+  contents: read
+concurrency:
+  group: recovery-remote-freshness
+  cancel-in-progress: false
+jobs:
+  freshness:
+    if: ${{ vars.RETENTION_BACKSTOP_READY == 'true' }}
+    # Draft releases are hidden without push access. The checker only performs GETs.
+    permissions:
+      contents: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: brsctncnbrk5/originmetric
+          ref: 2558928fa4b3f02929d66a14f17d9265c792192e
+          persist-credentials: false
+      - name: Check latest verified remote backup capture age
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import datetime as dt
+          import importlib.util
+          import json
+          import os
+          from pathlib import Path
+
+          def load(name, filename):
+              spec = importlib.util.spec_from_file_location(name, Path('scripts/vps') / filename)
+              module = importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              return module
+
+          def check(api, now, evaluate, metadata):
+              api.private()
+              captures = []
+              for page in range(1, 101):
+                  batch = api.request(f'repos/{api.repo}/releases?per_page=100&page={page}')
+                  for release in batch:
+                      parsed = metadata(release)
+                      if parsed and parsed[0]['state'] == 'verified':
+                          captures.append(parsed[1])
+                  if len(batch) < 100:
+                      break
+              else:
+                  raise RuntimeError('Inventory bound exceeded')
+              # Capture age, not verified_at: a re-readback must not refresh an old dump.
+              latest = max(captures) if captures else None
+              success = ({'result': 'BACKUP_CREATED_REMOTE_READBACK_VERIFIED',
+                          'state': 'verified', 'verified_at': latest.isoformat()}
+                         if latest else {})
+              return evaluate(success, {}, now)
+
+          def main():
+              now = dt.datetime.now(dt.timezone.utc)
+              result = {'status': 'UNKNOWN', 'code': 'REMOTE_CHECK_FAILED'}
+              try:
+                  expiry = load('expiry', 'recovery-retention.py')
+                  status = load('status', 'check-backup-status.py')
+                  if os.environ.get('GITHUB_REPOSITORY') != expiry.REPO:
+                      raise RuntimeError('Unexpected workflow repository')
+                  api = expiry.API()
+                  api.repo = expiry.REPO
+                  result = check(api, now, status.evaluate, expiry.policy.metadata)
+              except Exception:
+                  pass  # Credentials, release bodies and exception diagnostics stay private.
+              result.update(checked_at=now.isoformat(), source='github_hosted_remote_metadata',
+                            independent_of_vps=True, independent_of_github=False,
+                            email_receipt_verified=False)
+              print(json.dumps(result))
+              with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+                  summary.write('Remote backup freshness: ' + result['status'] +
+                                ' / ' + result['code'] + '\n\n' +
+                                'Remote verified metadata only; no new hash readback/restore. '
+                                'Native Actions email receipt is separate evidence. '
+                                'GitHub schedule or account failure can prevent this check.\n')
+              return 0 if result['status'] in ('PASS', 'WARN') else 1
+
+          if __name__ == '__main__':
+              raise SystemExit(main())
+          PY
