@@ -29,12 +29,13 @@ def run(args, data=None, stdin=None, capture=True, timeout=120):
     try:
         p = subprocess.run(args, input=data, stdin=stdin,
                            stdout=subprocess.PIPE if capture else subprocess.DEVNULL,
-                           stderr=subprocess.PIPE, timeout=timeout)
+                           stderr=subprocess.PIPE, timeout=timeout, cwd=ROOT)
     except (subprocess.TimeoutExpired, OSError) as exc:
         raise CheckError('Tool timeout or unavailable; diagnostics suppressed') from exc
     if p.returncode:
         # pg_restore/psql errors can contain sensitive row values. Never persist/print them.
-        raise CheckError('Tool returned nonzero; diagnostics suppressed')
+        raise CheckError(Path(args[0]).name + ' returned exit ' + str(p.returncode)
+                         + '; diagnostics suppressed')
     return p.stdout if capture else b''
 
 
@@ -118,7 +119,8 @@ def main():
     evidence = {'kind': 'synthetic_receiver_test' if args.self_test else 'real_phone_stream',
                 'started_at': dt.datetime.now(dt.timezone.utc).isoformat(),
                 'restore_verified': False, 'phone_decrypt_exit': 'PENDING_OWNER_RESULT',
-                'isolated_container': name, 'database_checks_verified': False}
+                'isolated_container': name, 'database_checks_verified': False,
+                'phase': 'protected_resource_baseline'}
     created = False
     before = None
 
@@ -135,6 +137,7 @@ def main():
 
     try:
         before = protected()
+        evidence['phase'] = 'snapshot_source_migrations'
         source = json.loads((ROOT / '.runtime/phone-transfer-phone-pigpm9sw.json').read_text())
         assert source['remote_hash_and_manifest_match']
         # Pin the source commit from the tested snapshot, even if a later backup runs.
@@ -143,6 +146,7 @@ def main():
         source_sha = '31a370387b9e8a6a61d92d2d156918bbb0451cc2'
         evidence.update({'snapshot': source['snapshot'], 'ciphertext_sha256': source['sha256'],
                          'source_sha': source_sha, 'production_sql_issued': False})
+        evidence['phase'] = 'isolated_container_initialization'
         run(['docker', 'run', '-d', '--pull', 'never', '--name', name, '--network', 'none',
              '--log-driver', 'none', '--memory', '512m', '--cpus', '1', '--pids-limit', '128',
              '--tmpfs', '/var/lib/postgresql:rw,size=268435456',
@@ -168,6 +172,7 @@ def main():
             raise CheckError('Isolated PostgreSQL did not become ready')
         for db in ('reference_schema', 'phone_restore'):
             run(['docker', 'exec', name, 'createdb', '-U', 'postgres', db])
+        evidence['phase'] = 'reference_schema_build'
         sql('reference_schema', 'CREATE SCHEMA drizzle; CREATE TABLE drizzle.__drizzle_migrations '
             '(id SERIAL PRIMARY KEY, hash text NOT NULL, created_at bigint);')
         expected = []
@@ -178,6 +183,7 @@ def main():
             sql('reference_schema', "INSERT INTO drizzle.__drizzle_migrations(hash,created_at) VALUES ('"
                 + h + "'," + str(entry['when']) + ');')
             expected.append({'hash': h, 'created_at': entry['when']})
+        evidence['phase'] = 'pg_restore_stream'
         restore = ['docker', 'exec', '-i', name, 'pg_restore', '-U', 'postgres', '-d',
                    'phone_restore', '--exit-on-error', '--no-owner', '--no-acl']
         if args.self_test:
@@ -193,6 +199,7 @@ def main():
         else:
             run(restore, stdin=sys.stdin.buffer, capture=False, timeout=180)
         evidence['pg_restore_exit'] = 0
+        evidence['phase'] = 'migration_schema_validation'
         actual = json.loads(sql('phone_restore', 'SELECT jsonb_agg(jsonb_build_object(\'hash\',hash,'
                                 "'created_at',created_at) ORDER BY created_at) FROM drizzle.__drizzle_migrations;"))
         if actual != expected:
@@ -211,6 +218,7 @@ def main():
                               'categories': sorted(reference_catalog)}
         evidence['row_counts'] = {t: int(sql('phone_restore', 'SELECT count(*) FROM public.'
                                             + identifier(t) + ';')) for t in TABLES}
+        evidence['phase'] = 'row_count_and_relationship_validation'
         keys = json.loads(sql('phone_restore', FK_QUERY))
         orphans = {}
         for fk in keys:
@@ -233,6 +241,7 @@ def main():
                                 'SELECT coalesce(max(received_at)::text,\'NO_REVENUE_ROWS\') FROM revenue_events;'),
                                 'note': 'Empty fact tables cannot prove real-visit/revenue freshness'}
         evidence['database_checks_verified'] = True
+        evidence['phase'] = 'database_checks_complete'
     except CheckError as exc:
         evidence['failure'] = str(exc)
     except Exception:
@@ -270,6 +279,7 @@ def main():
                           'orphan_rows': evidence.get('relational_integrity', {}).get('orphan_rows'),
                           'cleanup': evidence['isolated_resources_removed'],
                           'production_unchanged': evidence.get('protected_resources_unchanged'),
+                          'phase': evidence.get('phase'),
                           'failure': evidence.get('failure'), 'restore_verified': False}, indent=2))
         return 0 if successful else 1
 
