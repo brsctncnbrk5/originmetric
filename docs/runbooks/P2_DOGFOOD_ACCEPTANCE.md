@@ -71,8 +71,9 @@ Current step is **formal six-item G1 review**; see the
 Technical evidence is PASS. On 2026-10-03 the owner explicitly accepted the
 actual required-consent banner and Reddet / İzin ver / İzni geri çek controls;
 dated owner setup confirmation is COMPLETE. Enabled-owner GPC evidence remains
-pending. Next single owner step: report the name of an already available other
-browser that can enable GPC, or report none; no installation requested. Preserve accepted Cloudflare panel
+pending. Owner reports no other available GPC browser; no installation requested.
+Keep this evidence gap open. Next independent P2 owner step is confirmation of
+receipt/nonreceipt of the existing labelled GitHub failure-control email. Preserve accepted Cloudflare panel
 proof and its direct API/export inspection limit. Do not repeat the completed
 reference check or install a browser/extension/change flags. Data gates remain
 closed; persisted visits/trusted conversion and populated restore start only

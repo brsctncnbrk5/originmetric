@@ -941,3 +941,28 @@ depends on that answer; the prior NOT_EXPOSED result is preserved.
 **Formal G1 PENDING; data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.**
 No missing evidence waived; no production deployment/config/DB change or new
 regression run. Existing technical source applicability review remains valid.
+
+
+## No other available GPC browser / independent P2 email evidence — 2026-10-03
+
+Owner answers **“Yok.”** to whether another already available browser can enable
+GPC. Recorded **OWNER-REPORTED: no other available GPC browser**. Actual-banner
+setup stays ACCEPTED; Android Chrome result stays **NOT_EXPOSED**; enabled-owner
+GPC behavior acceptance stays **NOT PASSED**. This is neither a waiver nor new
+support/behavior evidence. No browser/extension installation or repeat reference
+test is requested. **Formal G1 remains PENDING**; data gates stay closed and the
+persisted trusted chain/populated restore cannot proceed under current acceptance.
+
+Continue independent canonical P2 §§24–25 backup/monitoring evidence. Earlier
+labelled control failures were already executed (monitoring 37132327501,
+backup-missing 37132330300, serial backup-failure 37133412117); workflow result
+proof exists, but actual owner email receipt remains unconfirmed. No new workflow
+or notification is dispatched. **Next single owner action:** check for the existing
+`originmetric-monitoring` GitHub Actions failure-control email and report only
+received / not received. No email address or contents requested. Receipt alone
+will not prove actual scheduled backup, failure/missing-run detection or independent
+dead-man coverage; those separate gaps remain open.
+
+Existing lifecycle/no-spend and deferred off-phone recovery gaps remain explicit.
+No production config/deploy/DB change, gate opening, new regression run or backup
+claim. **Data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.**

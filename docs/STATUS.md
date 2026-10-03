@@ -27,6 +27,18 @@
 
 ## Next step
 
+**2026-10-03 — no other available GPC browser (OWNER-REPORTED).**
+Owner reports **none** in response to the available-other-browser question.
+Actual-banner setup remains ACCEPTED. Android Chrome **NOT_EXPOSED** and
+**enabled-owner GPC NOT PASSED** remain open; no browser installation or repeat
+reference check requested. **Formal G1 PENDING**; persisted visit/conversion and
+populated restore remain blocked by current G1 acceptance. Continue independent
+P2 backup/monitoring acceptance without waiving that gap.
+**Next single owner step:** check receipt of the already executed labelled
+`originmetric-monitoring` GitHub Actions failure-control email and report received
+or not received. No address/message contents needed and no new notification sent.
+**Data collection NOT PASSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — owner actual-banner setup ACCEPTED (explicit written confirmation).**
 Owner confirms the existing `originmetric.app/dogfood` required-consent setup and
 **Reddet / İzin ver / İzni geri çek** controls. G1 item 1's dated owner setup
