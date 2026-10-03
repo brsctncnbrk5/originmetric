@@ -27,6 +27,19 @@
 
 ## Next step
 
+**2026-10-03 — notification account mismatch VERIFIED / prior inference corrected.**
+Owner's saved Actions email settings belong to **brsctncnbrk7-byte**. Read-only API
+reconfirms actor and triggering_actor **brsctncnbrk5** for all three existing
+manual failure controls. GitHub's triggered-run notification rule therefore targets
+**brsctncnbrk5**, subject to that account's notification settings/mail route.
+**brsctncnbrk5 settings and actual receipt are NOT CHECKED**; enabled settings and
+nonreceipt on brsctncnbrk7-byte do not verify delivery to the expected recipient.
+Earlier “No actor mismatch observed” and unscoped “setting prerequisite COMPLETE”
+claims are superseded. No email address inferred or accessed; no new notification.
+**Next single owner step:** while signed in as brsctncnbrk5, check System → Actions
+in notification settings and report whether Email is enabled/saved.
+**G1 PENDING; GPC NOT_EXPOSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — Actions email settings already enabled; delivery NOT_RECEIVED.**
 Owner reports **GitHub + Email (Failed workflows only), Saved**; setting prerequisite
 is COMPLETE / OWNER-REPORTED. Read-only GitHub API confirms all three existing

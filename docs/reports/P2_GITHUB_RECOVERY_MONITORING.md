@@ -1026,3 +1026,43 @@ Banner setup remains ACCEPTED; GPC NOT_EXPOSED / enabled-owner GPC NOT PASSED;
 **formal G1 PENDING; data collection NOT PASSED; ingestion closed; P2 OPEN;
 P3 NOT STARTED**. Scheduled backup, independent missing-run/dead-man, lifecycle
 and deferred phone-independent recovery gaps retain their earlier evidence limits.
+
+
+## Notification account mismatch verified / prior inference corrected — 2026-10-03
+
+Owner clarifies that saved **GitHub + Email (Failed workflows only)** settings
+were inspected on **brsctncnbrk7-byte**, whereas the controls were triggered by
+**brsctncnbrk5**. Read-only API recheck of runs 37132327501, 37132330300 and
+37133412117 confirms `workflow_dispatch`, completed/failure, actor and
+triggering_actor **brsctncnbrk5** for all three.
+
+[GitHub's native workflow notification rule](https://docs.github.com/en/actions/concepts/workflows-and-actions/notifications-for-workflow-runs)
+notifies the user who triggered the run when that user's notifications are
+enabled. Applying this documented rule to the verified actors, the expected
+account for these manual tests is **brsctncnbrk5**. Enabling email on
+**brsctncnbrk7-byte** does not configure brsctncnbrk5 or redirect its native
+triggered-run notification. No dedicated email-send/recipient-routing step exists
+in the reviewed workflow. This establishes the account mismatch and expected
+recipient account, not actual send/delivery or the email address used.
+
+| Evidence | Corrected scope / outcome |
+| --- | --- |
+| Saved Actions Email / failed only | OWNER-REPORTED for brsctncnbrk7-byte only. |
+| Test actor and triggering_actor | VERIFIED API: brsctncnbrk5. |
+| Expected native manual-test recipient | brsctncnbrk5, conditional on its notification settings. |
+| brsctncnbrk5 notification settings / mailbox receipt | NOT CHECKED. |
+| Owner-reported nonreceipt | NOT_RECEIVED, not evidence of nondelivery to brsctncnbrk5. |
+
+The prior entry's **“excludes actor mismatch”** and **“setting prerequisite
+COMPLETE”** conclusions are corrected: the settings-account identity had not
+been established. Historical observations are retained; their account inference
+is superseded here. Email-delivery acceptance remains **NOT PASSED**.
+
+**Next single owner step:** signed in as **brsctncnbrk5**, inspect notification
+settings → System → Actions and report whether Email is enabled/saved. No new
+notification, workflow dispatch, account-setting mutation or mailbox access.
+Scheduled-run notification routing has separate creator/cron-editor/re-enabler
+rules and is not inferred from these manual-test actors.
+
+**Formal G1 PENDING; GPC NOT_EXPOSED; data collection NOT PASSED; ingestion closed;
+P2 OPEN; P3 NOT STARTED.** No production application/config/DB changes.
