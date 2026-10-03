@@ -308,4 +308,31 @@ Actual remote download/reference hash comparison, ZIP CRC/exact four members and
 
 Final local checks PASS: 14 GitHub backup/policy/failure/lock/credential tests, 7 observer tests, existing rclone corruption/read-failure proof and deploy-control proof, shell syntax, systemd service/timer syntax and explicit UTC calendar, lint/format/typecheck, Markdown targets/new anchors/fences, `git diff --check`. Existing gitleaks v8.30.1 redacted/read-only/network-none scanned task files, full OriginMetric history and isolated public monitoring history: no leaks found. Public three-file source mirror equals the pushed monitoring repo. No full DB/browser/application rebuild suite was rerun; no new G1 acceptance or real restore is inferred.
 
-Protected canonical plan/production env/installed nginx hashes and production container IDs/start/restart counts match the private baseline. Existing phone Release/ZIP ID, size and API digest remain unchanged. Exact initial remote snapshot/readback evidence is saved privately at `.runtime/github-db/last-backup.json`; no ciphertext/credential/baseline enters Git. Separate monitoring `main` is clean with local/remote SHA `0a63e43c9494ae0e75de657473f59469b4b9deba`; workflow active, initial manual run success; no scheduled-run success is asserted in this handoff. Backup timer remains inactive/disabled with no next elapse, pending only the explicit scoped credential procedure. Final task commit/push on the assigned OriginMetric branch and full SHA comparison are reported at handoff; prior commits are preserved.
+Protected canonical plan/production env/installed nginx hashes and production container IDs/start/restart counts match the private baseline. Existing phone Release/ZIP ID, size and API digest remain unchanged. Exact initial remote snapshot/readback evidence is saved privately at `.runtime/github-db/last-backup.json`; no ciphertext/credential/baseline enters Git. Separate monitoring `main` is clean with local/remote SHA `0a63e43c9494ae0e75de657473f59469b4b9deba`; workflow active, initial manual run success; no scheduled-run success is asserted in this handoff. At that initial handoff the backup timer remained inactive/disabled with no next elapse, pending the explicit scoped credential procedure; the activation evidence below supersedes this historical blocker. Final task commit/push on the assigned OriginMetric branch and full SHA comparison are reported at handoff; prior commits are preserved.
+
+
+## Scoped backup identity and daily timer activation — 2026-10-03
+
+Following the owner's secure SSH setup completion, independently verified the credential file metadata without displaying its contents: `/opt/originmetric/.runtime/github-auth/backup-token` is a regular root:root file, mode **600**; `.runtime` and `.runtime/github-auth` are real root:root directories, mode **700**. `git check-ignore` confirms the token path is ignored; `git ls-files` confirms it is untracked. No token was requested in chat or placed in arguments, output, documentation or Git.
+
+`python3 scripts/vps/github-backup.py --check-credential` **PASS**, using the scoped credential rather than `--operator-once`: API account `brsctncnbrk5`, authorized active **private** `brsctncnbrk5/originmetric-recovery`. The API check does not introspect the token's full selected-repository scope; the owner's fine-grained setup declaration remains the scope source. Installed service uses `LoadCredential=backup-token:/opt/originmetric/.runtime/github-auth/backup-token`; the script supplies the token only to child `gh` environments and suppresses API error bodies/stderr.
+
+Ran the installed `originmetric-github-backup.service` once before timer activation. Consistent DB dump → age encryption → private draft Release upload → remote ciphertext and manifest download/SHA-256/size comparisons → verified metadata → owned retention completed successfully. The job exited successfully and its fresh root-owned mode-600 `.runtime/github-db/last-backup.json` records:
+
+| Evidence | Result |
+|---|---|
+| Snapshot | `om-db-v1-20261003T130037Z-eeab03ba` |
+| Captured | `2026-10-03 13:00:37 UTC` |
+| Remote verified | `2026-10-03 13:00:45.757787 UTC` |
+| Private Release ID | `402515437` |
+| Ciphertext bytes | `32381` |
+| Ciphertext SHA-256 | `278b0ca3ff038e2e5a07256b0e135e428a988894cec33b47f93123a57d876592` |
+| Job result | `BACKUP_CREATED_REMOTE_READBACK_VERIFIED` |
+| Owned retention | One eligible prior snapshot pruned after verification |
+| Manual restore | `restore_verified=false`; **UNVERIFIED** |
+
+Only after the successful fresh remote readback, ran `systemctl enable --now originmetric-github-backup.timer`. At **2026-10-03 13:01:21 UTC**, systemd reported **enabled / active / waiting**, `OnCalendar=*-*-* 03:15:00 UTC`, next elapse **2026-10-04 03:15:00 UTC** (Türkiye **06:15**). Installed timer has `Persistent=true` and `RandomizedDelaySec=0`. This proves timer activation and the next planned execution, not a completed scheduled run.
+
+This resolves the scoped unattended-identity and backup-timer blocker. Actual decryption/manual isolated restore, provider lifecycle backstop, email/dead-man delivery, off-phone recovery (DEFERRED), real-domain consent/attribution acceptance and G1/P2 acceptance remain separate open items. No application deployment or gate opening was part of this task. Credential and runtime evidence stay outside Git; only sanitized STATUS/report changes are task commit files.
+
+Documentation verification: `git diff --check`, balanced Markdown fences and the new STATUS link target/anchor passed. Existing gitleaks v8.30.1 scanned current docs with `--redact`, read-only mount and `--network none`: **no leaks found**. No application code changed; the real scoped-credential service run and remote readback are the operational validation for this task.
