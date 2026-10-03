@@ -536,8 +536,8 @@ recorded here or transferred to the VPS.
   7/4/2 and <=90-day policy remains unchanged. Prepared separate provider-side
   expiry script with exact ownership, private-repo and changed-target guards;
   three tests pass. `deploy/github/recovery-retention.yml` is **a review template,
-  not installed or active**. Private Actions no-spend budget and reviewed source
-  pin must be verified before activation. GitHub draft Releases have no confirmed
+  not installed or active**. Private Actions no-spend budget must be verified
+  before activation; source pin is now full-suite CI-verified. GitHub draft Releases have no confirmed
   native lifecycle backstop here; failed VPS/account/provider scenarios remain
   acceptance gaps. No retention gap is silently waived by D-008.
 - Installed only the `/js/` origin cache-header change; `nginx -t`, reload and
@@ -625,3 +625,14 @@ createdb. Both isolated receivers now wait for final TCP readiness **inside** th
 network-none container; timeout stops explicitly. The basic receiver also
 suppresses row-level pg_restore diagnostics. This failed synthetic CI restore
 does not invalidate the earlier independently verified real phone restore.
+
+**Final code CI VERIFIED:**
+[run 37135062561](https://github.com/brsctncnbrk5/originmetric/actions/runs/37135062561)
+completed **success** at code SHA `2558928fa4b3f02929d66a14f17d9265c792192e`.
+All stages passed, including real-DB tests/migrations, Playwright, portable
+backup controls and the Docker synthetic consent → trusted identify → labelled
+test payment → attribution → encrypted backup → isolated restore/failure proof.
+Retention review template pins that exact source. The final documentation/template
+commit sits above this tested code; no application/receiver change follows it.
+This CI evidence is not an actual-domain or populated production snapshot restore
+result. G1 pending, P2 open, P3 not started; first scheduled backup remains pending.

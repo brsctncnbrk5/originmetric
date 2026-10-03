@@ -24,8 +24,8 @@ jobs:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
         with:
           repository: brsctncnbrk5/originmetric
-          # Replace with final reviewed commit containing the companion expiry script.
-          ref: REQUIRED_REVIEWED_FULL_SHA
+          # Companion script at the full-suite CI-verified P2 source commit.
+          ref: 2558928fa4b3f02929d66a14f17d9265c792192e
           persist-credentials: false
       - name: Expire only owned age-encrypted DB assets, protect phone recovery
         env:

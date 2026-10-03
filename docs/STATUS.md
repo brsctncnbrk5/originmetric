@@ -11,7 +11,7 @@
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
 | P2 | **TRADEBOT REMOVED; WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
-| P2 last full-suite tested code head | `fea039e51dd8eb43804b33cd281ead6353d7dc70` — [CI run #68: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37039757133) |
+| P2 last full-suite tested code head | `2558928fa4b3f02929d66a14f17d9265c792192e` — [CI continuation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37135062561) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
@@ -33,7 +33,7 @@ completed (expected failures; no production outage). Actual email receipt and
 independent missing-run monitoring remain unverified. Backup ±50% size warnings,
 local freshness/failure watchdog and guarded predeploy GitHub adapter tested.
 Retention dry-run deleted nothing; independent 90-day backstop prepared but
-**not activated** pending private Actions no-spend verification/source pin.
+**not activated** pending private Actions no-spend verification; source pinned to full-suite CI-verified code.
 Tracker origin `/js/` cache headers installed and edge **MISS/HIT/HIT** observed;
 Cloudflare browser TTL still **14400 seconds**, saved override review pending.
 Production DB/app/volumes unchanged; only the documented nginx cache-header
