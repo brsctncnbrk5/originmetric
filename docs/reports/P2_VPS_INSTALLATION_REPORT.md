@@ -4,7 +4,44 @@ Date: 2026-10-02 (Europe/Berlin; installation started 2026-10-01 UTC)
 Status: **TRADEBOT REMOVED; CLOUDFLARE EDGE / PROXY / HOST WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; G1 / P2 ACCEPTANCE PENDING**
 Authorization: Barış's VPS installation instruction and D-004, with latest Tradebot removal decision D-006. **P3 not started.**
 
-The dated sections below record earlier states. The removal/cutover and CI/G1 follow-up sections describe the current host state; the 2026-10-03 transferred-evidence section and updated Cloudflare table supersede earlier missing-panel requests. No running application or provider setting changed in this documentation update.
+The dated sections below record earlier states. The removal/cutover and CI/G1 follow-up sections describe the current host state; the 2026-10-03 transferred-evidence section and updated Cloudflare table supersede earlier missing-panel requests. The age-recipient section records the subsequent scoped env change; no running application or provider setting changed.
+
+## Age recipient and separate env recovery preparation — 2026-10-03
+
+**Completed on the VPS:** age 1.1.1 accepted the supplied public recipient by successfully encrypting harmless known text (exit 0). This validates the recipient encoding/checksum and server encryption path; it does **not** prove possession of the matching private key, decryption or restore.
+
+Public recipient: `age13urytsrv03lfjsex87hhvnj3pa6lglhd9f2yklnjths3jzz2p4uszmjfs2`.
+
+Only `AGE_RECIPIENT` was populated in the existing `.env.production`; a byte comparison verified all other values were preserved, including `BACKUP_REMOTE` and `PUBLIC_G1_READY`. Ownership/mode verified **root:root / 600**. No env content or secret value was printed. Canonical §24, the runbook and `backup.sh` were reviewed: pg_dump streams to age, rclone requires an authorized dedicated remote, and backup/check scripts can send notifications. Neither `backup.sh` nor the DB/config packager was executed; no DB backup, remote upload, scheduler or notification occurred.
+
+Separate recovery artifacts are local only, in ignored root-owned mode-700 directory `/opt/originmetric/.runtime/p2-age-recipient-20261003T010139Z` (pointer: `.runtime/p2-age-recipient-path`):
+
+| File | Actual content / result |
+|---|---|
+| `recipient-check.txt` | Harmless known test text, no production data |
+| `recipient-check.txt.age` | That test text encrypted to the supplied recipient |
+| `env.production.age` | Only the updated production env, encrypted directly from memory; no extra plaintext recovery file |
+| `SHA256SUMS` | SHA256 of the three files above; transport integrity reference, not restore evidence |
+
+Ciphertexts are nonempty and root-owned mode 600. All artifacts and `.env.production` are Git-ignored; none is staged, committed or uploaded. Existing recipient encryption needs **no additional password**. Existing KeePassDX vault credentials stay local; no password/key was generated or requested. The local encrypted env file is prepared, but canonical **encrypted env in the owner's password manager outside the DB backup bucket remains OPEN** until owner transfer/storage is confirmed. This ciphertext stays separate from any DB archive/bucket.
+
+**User declaration, not independent verification:** the private age key was created in Debian on the phone, saved in a KeePassDX vault, and a paper copy was prepared. These statements supersede the earlier absence of owner confirmation; they do not establish a vault backup outside the phone, complete/readable paper recovery, phone-independent vault/key/account/2FA access, or successful decryption. The private key was not supplied to or transferred onto the VPS.
+
+**Next verification on the phone:** download the four named files over authenticated SSH into a private local directory (the server has not uploaded them). Verify `SHA256SUMS`, then use the existing private key only in the phone's Debian environment:
+
+```bash
+# Phone only; replace the path with the existing local private-key file.
+# Keep key contents, vault passwords and decrypted env out of terminal/chat output.
+set -o pipefail
+sha256sum -c SHA256SUMS
+age -d -i /local/path/existing-age-key.txt recipient-check.txt.age | cmp - recipient-check.txt
+# Optional separate env decryption authentication check, without printing plaintext:
+age -d -i /local/path/existing-age-key.txt env.production.age > /dev/null
+```
+
+A successful `cmp` exit status proves this harmless sample decrypts with that local key; env decrypt exit 0 proves only that ciphertext decrypts. Neither is a database restore. Store `env.production.age` as an attachment in the existing KeePassDX vault, outside the DB backup bucket. Separately preserve/access the vault backup and existing recovery information from a trusted device **without the phone**, and test that path; none of these owner steps has been executed or verified here. Report only outcomes, never secret contents.
+
+**Still OPEN:** off-phone vault/secret backup, phone-independent private-key and account recovery, decryption, real off-VPS DB upload/readback/download/manual isolated restore, canonical storage/lifecycle/GitHub decision, backup schedule and independent recurring monitoring/dead-man/email, actual-domain consent and persisted attribution. **G1 pending; P2 open; P3 not started.** Application container IDs/start times/restart counts and canonical plan/DECISIONS/installed ingress config hashes matched the pre-change baseline. No app restart, deployment or gate change occurred; current routes remain gated.
 
 ## Source verification
 
@@ -751,3 +788,7 @@ The requested four-panel details are now recorded; do not repeat the old panel r
 ## Documentation verification — 2026-10-03
 
 `git diff --check`, local file-link/new-anchor and fenced-block checks, exact-expression comparison and `npm run format:check` passed. Markdown is intentionally excluded from Prettier by the existing `.prettierignore`; its links, fences and whitespace were checked separately. Existing **gitleaks v8.30.1**, with redaction, scanned current docs and full Git history: **no leaks found**. Only `docs/STATUS.md` and the two P2 reports changed. Canonical plan, DECISIONS, production env, installed OriginMetric nginx and private proxy include hashes matched the pre-edit baseline. No application tests or live requests were rerun for this documentation-only change; CI #68 remains historical code verification, not a new acceptance result. A new commit is made on the assigned P2 branch without amend/history rewriting; actual commit/push and remote SHA verification are reported at handoff.
+
+## Age preparation documentation verification — 2026-10-03
+
+`git diff --check`, local Markdown file-target/new-anchor and balanced-fence checks, and `npm run format:check` passed. Markdown remains excluded by the existing Prettier configuration; links/fences/whitespace were checked separately. Existing Docker image **gitleaks v8.30.1**, read-only mounts, `--redact` and `--network none`, scanned current docs and Git history: **no leaks found**. Only STATUS and the two current P2 reports are task commit files; encrypted recovery artifacts remain ignored/local. The permitted env change was verified to affect only `AGE_RECIPIENT`; root ownership/mode 600 and unchanged application runtime/protected files were checked. No application suite was rerun for this scoped config/documentation preparation; earlier CI results remain historical, not decryption/restore or phase acceptance. Commit/push and remote SHA comparison are reported at handoff.
