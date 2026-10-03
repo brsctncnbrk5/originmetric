@@ -802,3 +802,17 @@ The requested four-panel details are now recorded; do not repeat the old panel r
 ## Age preparation documentation verification — 2026-10-03
 
 `git diff --check`, local Markdown file-target/new-anchor and balanced-fence checks, and `npm run format:check` passed. Markdown remains excluded by the existing Prettier configuration; links/fences/whitespace were checked separately. Existing Docker image **gitleaks v8.30.1**, read-only mounts, `--redact` and `--network none`, scanned current docs and Git history: **no leaks found**. Only STATUS and the two current P2 reports are task commit files; encrypted recovery artifacts remain ignored/local. The permitted env change was verified to affect only `AGE_RECIPIENT`; root ownership/mode 600 and unchanged application runtime/protected files were checked. No application suite was rerun for this scoped config/documentation preparation; earlier CI results remain historical, not decryption/restore or phase acceptance. Commit/push and remote SHA comparison are reported at handoff.
+
+
+## Owner-reported phone checks and independent P2 preparation — 2026-10-03
+
+The [current recovery report](P2_GITHUB_RECOVERY_MONITORING.md#owner-reported-phone-checks-and-independent-preparation--2026-10-03) records the user's new SHA256SUMS OK results for all three files, harmless-sample decrypt/compare, undisplayed real-env decrypt check and saved KeePassDX ciphertext attachment as **user-supplied declarations**. No independent phone/vault inspection, real DB restore or full recovery is claimed. Off-phone vault backup is explicitly **DEFERRED**; phone-independent recovery remains open and phone-loss readiness incomplete. Historical pending phone-check requests above are superseded at this source level.
+
+Existing preparation was reused. Canonical rclone backup now compares remote-readback SHA-256 before per-class retention/final success; the inactive GitHub template has bounded semantic public health/tracker checks. No upload, notification, workflow dispatch, scheduler, deployment, key change or ingestion opening occurred. Current GitHub identity cannot reverify the earlier private recovery repo (404, not proof of absence); earlier transfer evidence is retained. The locked plan is unchanged. **G1 pending; P2 open; P3 not started; current data gates remain closed.**
+
+
+## Independent preparation verification — 2026-10-03
+
+Local shell syntax, three backup-readback scenarios (valid, equal-size corruption, failed read), seven public-observer tests, existing deploy-control proof, lint, format and typecheck passed. These are isolated preparation tests, not real remote backup/restore or independent uptime. New tests are wired into existing CI; the push-triggered full suite is not represented as already passed.
+
+GET-only live checks: health/tracker 200, events 202/drop, identify/revenue 503, operations/metrics/fixture 404. A read-only transaction returned zero for all five production fact counts. `PUBLIC_G1_READY=no`; backup/check URLs remain unset. Canonical plan, DECISIONS, production env and installed ingress hashes, plus running container identities, match the private baseline. No production restart/deploy or data writes occurred. Markdown links/fences/whitespace and redacted task-file/full-history secret scans are checked before commit. Only task scripts/template/CI/docs are included; ciphertexts and private baselines remain ignored.

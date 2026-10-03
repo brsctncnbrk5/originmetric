@@ -246,6 +246,7 @@ Gerçek encrypted object off-VPS'ten offline cihaza indirildikten sonra:
 
 ```bash
 # Offline bilgisayarda: plaintext dump diske/VPS'ye dosya olarak yazılmaz.
+set -o pipefail
 age -d -i OFFLINE_PRIVATE_KEY ENCRYPTED_BACKUP.dump.age | \
   ssh VPS_HOST 'cd /opt/originmetric && bash scripts/vps/restore-check.sh'
 ```
@@ -379,8 +380,8 @@ node scripts/vps/collect-operations.mjs
 ```
 
 Private age key offline cihazda kalır. Şifreli DB/config iki ayrı local asset'tir; paketleme upload/restore
-başarısı değildir. GitHub repo/Release henüz yok; plan istisnası ve gerçek hedef/şifreli içerik önceden
-bildirilmeden ilk upload yapılmaz. Release işlemi GitHub bildirimi tetikleyebileceğinden hedef/işlem
+başarısı değildir. Telefon transferi için private repo/draft Release hazırlanmıştır; bu DB backup yetkisi değildir.
+Güncel erişim/privacy, plan istisnası ve gerçek hedef/şifreli içerik doğrulanmadan DB upload yapılmaz. Release işlemi GitHub bildirimi tetikleyebileceğinden hedef/işlem
 onayı alınır. 7 daily/4 weekly/2 monthly retention yalnız dedicated namespace içinde hazırlanır;
 plan kararı olmadan otomasyon/deletion backend kurulmaz.
 
@@ -394,3 +395,32 @@ aynı-VPS PASS dış uptime değildir ve backup/restore UNKNOWN gerçek kanıt s
 `deploy/github/uptime.yml` review template'idir; workflow dizinine konmamış, çalıştırılmamıştır.
 Default branch/schedule/permission/billing ve olası bildirim onayı ayrıca doğrulanmadan etkinleştirme.
 No-spend şartını bypass etme; private runner kotasını bilinmiyor yerine hazır varsayma.
+
+
+### P2: hazırlıktan gerçek off-VPS manual restore kanıtına
+
+3 Ekim kullanıcı beyanında telefon hash/sample/env decrypt ve KeePassDX attachment kaydı tamamdır;
+telefon dışı kasa yedeği **ERTELENDİ**. Bu beyan restore veya telefon kaybına hazırlık kabulü değildir.
+Güncel [kanıt/engeller](../reports/P2_GITHUB_RECOVERY_MONITORING.md#owner-reported-phone-checks-and-independent-preparation--2026-10-03)
+eski telefon kontrol isteğinin yerini alır. Eksik saklama şartı çözülmeden upload/deploy gate aşılmaz.
+
+Gerçek remote ve saklama/onay şartları karşılandığında mevcut araçlar için kanıt sırası:
+
+1. Hedef hesabı, private visibility veya dedicated canonical remote/prefix, ciphertext adları/boyutları/hash,
+   ayrı secret saklama ve lifecycle/retention şartlarını doğrula. GitHub DB backend henüz uygulanmadı;
+   mevcut rclone backup'ı GitHub URL'sine retarget etme. Bildirim hedefi/işlemi onayı olmadan ping gönderme.
+2. Yetkili gerçek upload sonrası ciphertext'i remote'dan geri oku; SHA-256 yerel ciphertext ile eşleşsin.
+   Backup scripti bunu retention/success öncesi yapar. Eşit boyut tek başına yeterli değildir.
+3. Sahip gerçek remote nesnesini offline-key cihazına indirip hash'i karşılaştırsın; önceki telefon env
+   ZIP'i DB dump değildir. Yukarıdaki `set -o pipefail` pipeline ile offline decrypt çıktısını mevcut
+   `restore-check.sh` aracına akıtsın. Private key/plaintext dosya VPS'ye taşınmasın.
+4. Tarih/source/remote nesne adı/ciphertext hash, her iki pipeline exit sonucu, 10 tablo/migration
+   kontrolü ve row counts sonuçlarını sır içermeden kaydet. Üretim fact count değişmemeli ve disposable
+   restore container temizlenmeli. Yalnız bu gerçek nesne testi manual restore kanıtıdır; synthetic CI
+   veya env decrypt sonucu yerine geçmez. Empty controlled DB için gerçek ziyaret freshness kanıtı yoktur.
+
+Bağımsız gözlem hazırlığı: `node scripts/vps/observe-public.mjs` yalnız iki public GET yapar ve sır
+olmayan JSON sonucu verir; başarısız kontrolde exit 1. VPS'de çalıştırma bağımsız uptime değildir.
+`deploy/github/uptime.yml` inactive kalır; authorized runner/notification/no-spend kontrolü ve açık
+etkinleştirme kararı sonrası bağımsız run kanıtı alınır. Bir run recurring monitoring/dead-man/email
+kanıtı değildir. Missing-run ve e-posta delivery şartları ayrıca açık kalır.
