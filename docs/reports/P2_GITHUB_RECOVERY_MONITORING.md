@@ -1094,3 +1094,52 @@ verified GitHub rule; actual dispatch/delivery by the mail system is not asserte
 **G1 PENDING; GPC NOT_EXPOSED; ingestion closed; data collection NOT PASSED;
 P2 OPEN; P3 NOT STARTED.** Independent dead-man/missing-run and scheduled-backup,
 lifecycle and deferred off-phone recovery gaps remain open even if receipt passes.
+
+
+## Correct-account test email received / remaining operational evidence — 2026-10-03
+
+Owner reports **“Geldi”**, the `originmetric-monitoring` failure notification
+arrived **3 October 2026 23:45**, sender **notifications@github.com**. Correlated
+with the explicitly requested new [control run 37152667292](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37152667292):
+actor/triggering_actor brsctncnbrk5, expected failure, completion **20:45:27 UTC**.
+Correlation uses the owner's direct response identifying this new control's email;
+no message run-ID/header or mailbox was independently inspected. Owner timestamp
+has **no supplied timezone**; 23:45 would match the run minute at UTC+03:00, which
+is not assumed. Environment timezone Europe/Berlin is not substituted for the
+owner's email clock. Sender is owner-reported, not authenticated-header proof.
+
+**Email delivery for this controlled monitoring failure: PASS / OWNER-REPORTED.**
+Correct-account enabled settings and actual receipt are now complete at their
+reported source level. Earlier cross-account nonreceipt and pending retest files
+are preserved; new `owner-receipt.json` records the superseding receipt. This does
+not prove actual backup failure/missing-run alerts, independent dead-man coverage,
+uninterrupted five-minute monitoring or delivery for every later run.
+
+Read-only operational follow-up: local watchdog **FRESH_REMOTE_VERIFIED_BACKUP /
+PASS**, independent missing-run monitor false. Its `email_delivery_verified=false`
+field describes the local backup watchdog, not this independently reported GitHub
+monitoring email. Backup timer **enabled/active**, LastTrigger empty, next
+**2026-10-04 03:15 UTC**. First scheduled backup **PENDING**; inactive backup service
+with no service execution timestamps is not scheduled-success evidence.
+
+Next actionable independent item is the prepared **retention backstop no-spend
+prerequisite** (§24/D-008). Existing private Actions review template remains
+unactivated. Earlier account billing API access lacks required scope; current
+[budget REST documentation](https://docs.github.com/en/rest/billing/budgets)
+provides organization budget endpoints, not evidence for this personal account.
+No new token/scope requested. [GitHub budget guidance](https://docs.github.com/en/billing/concepts/budgets-and-alerts)
+and [setup instructions](https://docs.github.com/en/billing/how-tos/set-up-budgets)
+confirm that Actions hard-stop budget enforcement requires Stop usage enabled;
+alerts alone do not stop spending.
+
+**Single owner step:** signed in as brsctncnbrk5, inspect Billing → Budgets and
+alerts and report whether an **Actions $0 budget with Stop usage enabled** applies
+to **originmetric-recovery** (account-wide or exact-repo coverage), or report absent.
+This is a scoped existing-setting check, not permission to change global settings.
+No private workflow activated, retention deletion, new alert/control, production
+config/deploy/DB change or backup rerun. Independent dead-man remains separately
+open; scheduled backup will be audited after its due time.
+
+**Formal G1 PENDING; GPC NOT_EXPOSED / enabled-owner GPC NOT PASSED; ingestion
+closed; data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.** Populated test chain
+and restore remain gated; deferred off-phone recovery is preserved.

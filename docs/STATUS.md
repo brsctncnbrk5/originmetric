@@ -27,6 +27,23 @@
 
 ## Next step
 
+**2026-10-03 — new failure-control email RECEIVED / OWNER-REPORTED PASS.**
+Owner confirms the new `originmetric-monitoring` error email arrived **3 October
+23:45**, sender **notifications@github.com**. Correlated with the requested
+[run 37152667292](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37152667292),
+completed **20:45:27 UTC** as brsctncnbrk5. Reported timezone unspecified; 23:45
+matches the UTC run minute if UTC+03, not assumed. This is explicit owner receipt
+for this controlled monitoring failure, not independent mailbox inspection or
+actual backup-failure/missing-run/dead-man delivery. Receipt gap for this control
+is COMPLETE. Local watchdog remains fresh/PASS; first scheduled backup has no
+LastTrigger yet, next **2026-10-04 03:15 UTC**; independent dead-man remains open.
+**Next actionable independent P2 item:** retention backstop no-spend prerequisite.
+Single owner step: in brsctncnbrk5 Billing → Budgets and alerts, report whether an
+Actions **$0 budget with Stop usage enabled covers originmetric-recovery**, or absent.
+Existing billing access is insufficient; no new credential/scope requested and no
+private Actions schedule activated before that prerequisite is established.
+**G1 PENDING; GPC NOT_EXPOSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 20:45 UTC — correct-account notification retest completed.**
 Owner confirms **brsctncnbrk5 Actions Email enabled / Failed workflows only**.
 Explicitly requested single `monitoring-failure-control` dispatched as
