@@ -48,13 +48,13 @@ for OM_TEST_MODE in corrupt readfail valid; do
   if bash scripts/vps/backup.sh > .runtime/result 2>&1; then
     [[ $OM_TEST_MODE == valid ]]
     [[ -f .runtime/last-backup-size ]]
-    [[ $(rg -c '^cat$' "$OM_TEST_LOG") == 3 ]]
-    rg -q '^deletefile$' "$OM_TEST_LOG"
+    [[ $(grep -c '^cat$' "$OM_TEST_LOG") == 3 ]]
+    grep -q '^deletefile$' "$OM_TEST_LOG"
   else
     [[ $OM_TEST_MODE != valid ]]
     [[ ! -e .runtime/last-backup-size ]]
-    ! rg -q '^(lsf|deletefile)$' "$OM_TEST_LOG"
-    ! rg -q 'backup CREATED' .runtime/result
+    ! grep -Eq '^(lsf|deletefile)$' "$OM_TEST_LOG"
+    ! grep -q 'backup CREATED' .runtime/result
   fi
 done
 printf '%s\n' 'Backup readback PASS: equal-size corruption/read failure block success and retention; three valid class readbacks pass.'

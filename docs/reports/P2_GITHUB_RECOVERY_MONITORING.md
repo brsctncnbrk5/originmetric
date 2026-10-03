@@ -610,3 +610,10 @@ checks pass. No full real-DB suite against production was run. Full-suite CI #68
 remains historical evidence; this continuation must receive its own CI result.
 Task sources/docs and both Git histories are secret-scanned before handoff;
 assigned-branch normal push and full local/remote SHA equality are checked.
+
+CI continuation: run 37134345049 passed unit/real-DB migrations/tests, build,
+Playwright and the demo, then exposed a portability error in the existing backup
+readback test (`rg` absent on the runner). Assertions now use portable grep, with
+the same corruption/read-failure/retention expectations; isolated local readback
+proof passes. This failed CI run is not labelled successful; final corrected
+commit CI must be checked separately.

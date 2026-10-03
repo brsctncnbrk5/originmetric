@@ -7,10 +7,11 @@ on the phone. Daily backup remains **03:15 UTC**.
 
 ## Before the owner's browser visit
 
-1. Review the six canonical G1 items (§28) and preserve a dated owner confirmation
-   of the chosen required-consent page. Run the deployed-build `npm run gate:g1`;
-   retain its safe evidence, source SHA and pending external checks. Local browser
-   fixtures alone cannot pass the real-domain gate.
+1. Review the six canonical G1 items (§28) and preserve the intended
+   required-consent setup. Keep actual-domain checks pending until the closed
+   preview is deployed below. The deployed-build gate must use that reviewed
+   source, not the old running image. Local browser fixtures alone cannot pass
+   the real-domain gate.
 2. Resolve the saved `/js/*` Cloudflare cache rule and browser TTL. Existing API
    bypass, rate rule and Full (strict) panel evidence remain accepted at their
    recorded source level. Do not repeat the previous inventory/attachment steps.
@@ -32,7 +33,9 @@ on the phone. Daily backup remains **03:15 UTC**.
    Before consent: no `om_*` storage and no `/api/v1/e` request. Withdrawal clears
    tracker state and stops requests; GPC suppresses both even after Allow. Record
    counts/booleans only; no HAR, cookie, IP, visitor ID or screenshots of secrets.
-   Record all six G1 outcomes before opening the ingestion gate. A browser 202 is
+   Run the deployed-build `npm run gate:g1`, retain its safe evidence/source SHA
+   and dated owner confirmation, and record all six G1 outcomes before opening
+   the ingestion gate. A browser 202 is
    insufficient: closed ingress also returns 202 while dropping events.
 
 ## Visit → conversion → revenue → attribution
