@@ -27,6 +27,21 @@
 
 ## Next step
 
+**2026-10-03 — owner DENY check COMPLETE / server persistence unchanged:** owner
+clicked **Reddet**, saw **Reddedildi**, and has **not** clicked Allow. At 17:03 UTC,
+all ten production table counts match the pre-owner baseline: workspace/project/
+API key 1 each; events/sessions/customers/links/revenue/attribution/ingestion_daily
+0. Private application ingestion counters are empty. At 17:05 UTC a labelled
+controlled empty POST returned 202 with no application counter change, confirming
+the active proxy drop path. This proves no application ingestion/persistence;
+server-only evidence cannot prove zero outbound phone requests (access logs are
+disabled). Earlier independent live page deny test observed zero analytics requests.
+**Next owner check only:** in the same private tab click **İzin ver**, report the
+visible status text. Ingestion stays closed during banner acceptance; withdrawal/
+GPC review, formal G1, controlled persisted attribution and populated restore are
+still pending. **P2 OPEN; P3 NOT STARTED.** Daily 03:15 UTC timer remains enabled/
+active; first scheduled result still pending. No credential/key/record body shown.
+
 **2026-10-03 — tracker browser TTL VERIFIED:** owner saved Cloudflare Browser
 Cache TTL = Respect Existing Headers. At 16:37 UTC, three public tracker GETs
 returned 200 and `public, max-age=300, s-maxage=3600`, with MISS → REVALIDATED →
@@ -45,8 +60,8 @@ sessions, customers, links, revenue and attribution counts remain 0.
 DB/Caddy container identities/starts and every existing mount are unchanged;
 app was intentionally recreated at the reviewed source above. New predeploy
 encrypted snapshot readback verified at 16:43 UTC. No populated fact restore yet.
-**Next owner step:** open `/dogfood` in a private tab, click **Reddet**, report only
-whether **Reddedildi** appears. Allow/withdraw/GPC steps follow separately.
+The deny owner step is now complete as recorded above. Allow/withdraw/GPC steps
+follow separately; no current request repeats the completed deny step.
 Existing age recipient and daily 03:15 UTC timer are unchanged. **P2 OPEN; P3 NOT STARTED.**
 
 **2026-10-03 — P2 technical acceptance continuation; G1/P2 still PENDING/OPEN:**

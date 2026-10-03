@@ -708,3 +708,39 @@ resolved; provider API/export source limit remains explicit. Earlier vault/env
 attachment and empty manual restore remain complete. **Next owner step only:**
 private tab → `/dogfood` → **Reddet** → report **Reddedildi** visible yes/no.
 **P2 OPEN; P3 NOT STARTED.**
+
+## Owner deny acceptance and server verification — 2026-10-03
+
+Owner reports **Reddet clicked / Reddedildi visible / Allow not clicked**. This
+completes the owner deny UI check; no repeat is requested. Read-only server audit
+at **17:03:37 UTC** found all ten production table counts identical to the
+16:52 UTC pre-owner baseline: workspace/project/API key 1 each (test configuration),
+events/sessions/customers/customer_visitors/revenue/customer_attribution/
+ingestion_daily **0**. Private in-container authenticated metrics returned 200,
+ingestion counters **{}** (accepted and other outcomes absent/zero). Installed
+nginx configuration matches reviewed source; exact events route returns 202
+without any upstream proxy.
+
+At **17:05:13 UTC**, one explicitly labelled operator control POST with empty
+`{}` returned **202**, with ingestion counters still **{}**. This is a drop-path
+control, **not the owner's request**. It confirms the active route prevents
+application ingestion; no credential/header/request body or record contents were
+logged or shown. Safe evidence is under `.runtime/p2-deny-20261003T170337Z/`:
+`server-deny-audit.json`, `application-metrics.json`, `active-drop-control.json`.
+
+**Evidence limit:** server persistence/counters and closed ingress prove no
+application analytics acceptance/write; they cannot prove that the phone sent
+zero outbound requests. Access logs are intentionally disabled, and no raw IP,
+visitor/customer ID, cookie or per-user request log was collected. Earlier live
+page automated deny/pre-consent test independently observed zero analytics
+requests, but is not a network capture of this owner's phone. Deny UI acceptance
+is owner-reported; server checks are independently observed. No inference is
+promoted to a phone traffic observation or full G1 PASS.
+
+Next single owner step is **Allow UI**, on the same private tab: click **İzin ver**
+and report only the status message. Required-consent withdrawal and GPC checks
+then follow individually. Ingestion remains **closed** until formal G1 acceptance;
+no persisted real-visit/test-payment attribution or new populated restore is
+claimed. Existing key decision/vault evidence stand. Timer enabled/active, daily
+**03:15 UTC**, first scheduled result **PENDING**; no production config/deploy/DB
+write or volume change in this deny verification. **P2 OPEN; P3 NOT STARTED.**

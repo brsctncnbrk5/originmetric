@@ -40,11 +40,19 @@ on the phone. Daily backup remains **03:15 UTC**.
    the ingestion gate. A browser 202 is
    insufficient: closed ingress also returns 202 while dropping events.
 
-Current next owner check is **only deny**: open `/dogfood` in a private tab, do
-not grant consent, click **Reddet**, and report whether **Reddedildi** appears.
+Owner deny check is now **COMPLETE**: owner clicked **Reddet**, saw **Reddedildi**,
+and explicitly has not clicked Allow. Production facts remain zero and application
+ingestion counters empty; a labelled operator empty POST confirmed the active
+202/drop path without application ingestion. This does not observe the owner's
+phone outbound requests; proxy access logs are disabled.
+
+Current next owner check is **only allow UI**: in the same private tab click
+**İzin ver**, and report the visible status text. Normally **İzin verildi** appears;
+GPC may instead show the browser privacy preference blocking statistics. No ID,
+cookie, key, token or screenshot is requested.
 Live automated pre-consent/deny check already observed no analytics request,
 visitor identifier, tracker cookie or tracker local storage. Owner confirmation
-is still pending; allow/withdraw/GPC checks follow individually. Data gates remain
+for allow/withdraw/GPC is still pending; those checks follow individually. Data gates remain
 closed throughout the banner acceptance checks.
 
 ## Visit → conversion → revenue → attribution
