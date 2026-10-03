@@ -107,6 +107,86 @@ SELECT coalesce(jsonb_agg(jsonb_build_object('name',k.conname,'child',c.relname,
 """
 
 
+def acceptance_metrics_query(project, campaign):
+    """Fixed read-only query for the labelled P2 chain; no caller-supplied SQL."""
+    if (not re.fullmatch(r'[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}', project or '')
+            or not re.fullmatch(r'p2_acceptance_[a-z0-9_]{1,96}', campaign or '')):
+        raise CheckError('Invalid private acceptance project or campaign')
+    return f"""
+    WITH s AS (SELECT * FROM sessions WHERE project_id='{project}' AND campaign='{campaign}'),
+    c AS (SELECT * FROM customers WHERE project_id='{project}' AND external_id='{campaign}'),
+    l AS (SELECT v.* FROM customer_visitors v JOIN c ON c.project_id=v.project_id AND c.id=v.customer_id),
+    a AS (SELECT t.* FROM customer_attribution t JOIN c ON c.project_id=t.project_id AND c.id=t.customer_id),
+    r AS (SELECT e.* FROM revenue_events e JOIN c ON c.project_id=e.project_id AND c.id=e.customer_id)
+    SELECT jsonb_build_object(
+      'sessions',(SELECT count(*) FROM s),'customers',(SELECT count(*) FROM c),
+      'links',(SELECT count(*) FROM l),'attributions',(SELECT count(*) FROM a),
+      'payments',(SELECT count(*) FROM r WHERE type='payment'),
+      'refunds',(SELECT count(*) FROM r WHERE type='refund'),
+      'payments_minor',(SELECT coalesce(sum(amount_minor),0) FROM r WHERE type='payment'),
+      'refunds_minor',(SELECT coalesce(sum(amount_minor),0) FROM r WHERE type='refund'),
+      'non_test',(SELECT count(*) FROM r WHERE NOT test),
+      'other_currency',(SELECT count(*) FROM r WHERE currency<>'USD'),
+      'payment_details_match',(SELECT count(*)=2 FROM r WHERE type='payment'
+        AND amount_minor=2900 AND billing_interval='month' AND subscription_id='{campaign}_sub'
+        AND event_id IN ('{campaign}_payment','{campaign}_renewal')),
+      'refund_details_match',(SELECT count(*)=1 FROM r WHERE type='refund'
+        AND amount_minor=500 AND event_id='{campaign}_refund'),
+      'trusted_session_match',(SELECT count(*)=1 FROM l JOIN s ON s.project_id=l.project_id
+        AND s.visitor_id=l.visitor_id WHERE l.method='server_identify'),
+      'refund_link_match',(SELECT count(*)=1 FROM r refund JOIN r payment
+        ON payment.project_id=refund.project_id AND payment.id=refund.refund_of_id
+        WHERE refund.type='refund' AND payment.type='payment'
+        AND payment.event_id='{campaign}_payment'),
+      'status',(SELECT status FROM a),'source',(SELECT credited_source FROM a),
+      'medium',(SELECT credited_medium FROM a),'campaign',(SELECT credited_campaign FROM a),
+      'first_touch_source',(SELECT first_touch_source FROM a),
+      'acquired_at',(SELECT acquired_at::text FROM a),
+      'credited_session_id',(SELECT credited_session_id::text FROM a),
+      'first_touch_session_id',(SELECT first_touch_session_id::text FROM a),
+      'visitor_id',(SELECT visitor_id::text FROM s),
+      'customer_id',(SELECT id::text FROM c),
+      'payload_hashes',(SELECT jsonb_agg(payload_hash ORDER BY event_id) FROM r),
+      'latest_received_at',(SELECT max(received_at)::text FROM r));
+    """
+
+
+def verify_acceptance_metrics(actual, assertions):
+    expected = assertions.get('expected_metrics')
+    campaign = assertions.get('campaign')
+    acceptance_metrics_query(assertions.get('project_id'), campaign)
+    required = dict(sessions=1, customers=1, links=1, attributions=1,
+                    payments=2, refunds=1, payments_minor=5800, refunds_minor=500,
+                    non_test=0, other_currency=0, trusted_session_match=True,
+                    refund_link_match=True, payment_details_match=True, refund_details_match=True,
+                    status='attributed', source='p2-test',
+                    medium='controlled', campaign=campaign, first_touch_source='p2-test')
+    private_fields = {'acquired_at', 'credited_session_id', 'first_touch_session_id',
+                      'latest_received_at', 'visitor_id', 'customer_id', 'payload_hashes'}
+    if not isinstance(expected, dict) or set(expected) != set(required) | private_fields:
+        raise CheckError('Missing exact pre-backup acceptance metrics')
+    for field, value in required.items():
+        if type(expected[field]) is not type(value) or expected[field] != value:
+            raise CheckError('Pre-backup metrics do not meet labelled P2 acceptance')
+    for field in ('credited_session_id', 'first_touch_session_id', 'visitor_id', 'customer_id'):
+        if not re.fullmatch(r'[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}', expected[field] or ''):
+            raise CheckError('Missing private pre-backup session identity')
+    if (not isinstance(expected['payload_hashes'], list) or len(expected['payload_hashes']) != 3
+            or any(not re.fullmatch(r'[a-f0-9]{64}', h) for h in expected['payload_hashes'])):
+        raise CheckError('Missing exact pre-backup semantic payload digests')
+    for field in ('acquired_at', 'latest_received_at'):
+        try:
+            stamp = dt.datetime.fromisoformat(expected[field])
+            if stamp.utcoffset() != dt.timedelta(0):
+                raise ValueError('UTC required')
+        except (TypeError, ValueError):
+            raise CheckError('Missing UTC pre-backup acceptance timestamp') from None
+    if (not isinstance(actual, dict) or set(actual) != set(expected)
+            or any(type(actual[k]) is not type(expected[k]) for k in expected)
+            or actual != expected):
+        raise CheckError('Restored P2 attribution/trusted-link/totals/freshness differ from snapshot')
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--self-test', action='store_true', help='Synthetic only; never real restore evidence')
@@ -265,6 +345,13 @@ def main():
                 raise CheckError('Populated acceptance requires nonempty chain and exact counts')
             if int(sql('phone_restore', 'SELECT count(*) FROM revenue_events WHERE NOT test;')):
                 raise CheckError('Acceptance dump includes revenue not labelled test')
+            assertions = source.get('acceptance_assertions')
+            if not isinstance(assertions, dict):
+                raise CheckError('Populated acceptance requires private pre-backup semantic assertions')
+            metrics = json.loads(sql('phone_restore', acceptance_metrics_query(
+                assertions.get('project_id'), assertions.get('campaign'))))
+            verify_acceptance_metrics(metrics, assertions)
+            evidence['populated_attribution_totals_and_freshness_match'] = True
             evidence['populated_test_restore_checks'] = True
         evidence['database_checks_verified'] = True
         evidence['phase'] = 'database_checks_complete'

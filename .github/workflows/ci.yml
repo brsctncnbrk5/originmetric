@@ -107,6 +107,7 @@ jobs:
           python3 scripts/vps/test-github-backup.py
           python3 scripts/vps/test-backup-status.py
           python3 scripts/vps/test-recovery-retention.py
+          python3 scripts/vps/test-restore-acceptance.py
 
       - name: Production Docker package, consent dogfood and encrypted restore proof
         run: |

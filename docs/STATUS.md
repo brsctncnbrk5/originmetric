@@ -27,6 +27,29 @@
 
 ## Next step
 
+**2026-10-03 — closed-ingestion G1 and end-to-end preparation COMPLETE / technical PASS.**
+Extended deployed-image G1 with `--rehearse-dogfood`: **98 tests / 9 files PASS**;
+trusted identify/retry, test payment/duplicate/conflict, renewal/refund, exact
+campaign/session link, immutable acquisition and USD **5800/500/5300 minor-unit**
+totals verified in isolated fixtures. Internal missing/wrong token 404, valid 200.
+Populated in-memory fixture restore matches ten counts, schema/migrations,
+14 FKs with zero orphans, private identities/payload hashes and semantic baseline;
+four tampered metrics rejected. All owned fixtures removed; production ten-table
+counts and protected container/config metadata unchanged. **Preparation only**:
+no real visit/revenue, encrypted populated backup or phone restore acceptance.
+Private read-only scenario preparation and quiescent pre/post snapshot-evidence
+capture tools are ready; empty production correctly cannot produce populated
+acceptance evidence. Restore receiver now refuses counts-only populated PASS.
+Banner confirmation is consumed from existing explicit owner evidence rather
+than requested again. **Owner GPC NOT_EXPOSED / enabled-owner NOT PASSED**;
+**off-phone recovery DEFERRED**, existing age identity/recipient unchanged.
+[Preparation commands and staged actual test](runbooks/P2_DOGFOOD_ACCEPTANCE.md#closed-ingestion-preparation-and-isolated-rehearsal).
+[Current evidence and remaining acceptance](reports/P2_GITHUB_RECOVERY_MONITORING.md#closed-ingestion-g1-and-end-to-end-preparation--2026-10-03).
+**Formal G1 PENDING; data collection NOT PASSED; ingestion closed; P2 OPEN;
+P3 NOT STARTED.** No new owner decision is needed for completed preparation.
+Scheduled and actual production proofs remain separate; do not infer PASS from
+these fixtures or from the installed schedules. CI result tracked with task publication.
+
 **2026-10-03 UTC / owner 4 October — recovery detector-error email RECEIVED.**
 Owner reports **4 October 00:09**, subject **Run failed: Remote backup freshness
 watchdog - main (5f0b38a)**. API independently matches full commit, workflow,

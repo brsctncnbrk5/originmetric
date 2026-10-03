@@ -72,12 +72,47 @@ Technical evidence is PASS. On 2026-10-03 the owner explicitly accepted the
 actual required-consent banner and Reddet / İzin ver / İzni geri çek controls;
 dated owner setup confirmation is COMPLETE. Enabled-owner GPC evidence remains
 pending. Owner reports no other available GPC browser; no installation requested.
-Keep this evidence gap open. Next independent P2 owner step is confirmation of
-receipt/nonreceipt of the existing labelled GitHub failure-control email. Preserve accepted Cloudflare panel
+Keep this evidence gap open. The monitoring and detector-error email receipts
+are now owner-confirmed; actual missing-backup/failure delivery remains open. Preserve accepted Cloudflare panel
 proof and its direct API/export inspection limit. Do not repeat the completed
 reference check or install a browser/extension/change flags. Data gates remain
 closed; persisted visits/trusted conversion and populated restore start only
 after formal G1 completion.
+
+## Closed-ingestion preparation and isolated rehearsal
+
+Run from `/opt/originmetric` while ingestion remains closed:
+
+```bash
+node scripts/vps/prepare-p2-acceptance.mjs
+npm run gate:g1 -- --technical-only --rehearse-dogfood
+```
+
+The first command checks the zero-fact baseline and existing owner evidence,
+then creates a new mode-600 private plan under `.runtime/p2-prepared-*/plan.json`.
+No execution/approval override flag exists; `productionWritesAllowed=false`.
+Keep its label for the eventual owner visit and every customer/payment/refund.
+It does not create a key, rotate the age identity or approve a gate change.
+
+The second command uses the current deployed image/tracker and disposable
+loopback-only app/DB fixtures. It proves consented persistence → trusted identify
+and retry → payment and exact duplicate → conflicting retry with no extra facts
+→ renewal → linked refund. SQL checks exact campaign/trusted session, immutable
+acquisition, test-only USD totals **5800 / 500 / 5300 minor units**. Missing/wrong
+internal token is 404, valid fixture token 200. A populated fixture dump is streamed
+in memory into a network-none/tmpfs PostgreSQL container. Ten-table counts, exact
+schema/migrations, fourteen FKs, private visitor/customer/session identities,
+payload digests, source, individual payment/refund details, totals and freshness
+must match. Four tampered semantic controls must fail. This is **ISOLATED REHEARSAL**,
+not a real owner visit, encrypted off-VPS backup, phone decrypt or production restore.
+No private age key is generated/read/transferred; all owned fixtures are removed.
+Production ten-table counts and protected container/config metadata must be unchanged.
+
+The gate consumes `.runtime/p2-current-owner-evidence.json` generated from existing
+explicit owner records. Banner setup is ACCEPTED at its original source level;
+owner GPC stays NOT_EXPOSED / enabled-owner acceptance NOT PASSED. Provider API/export
+limits remain explicit. Technical-only exit 0 is not formal G1 acceptance;
+without `--technical-only`, overall pending returns 2.
 
 ## Visit → conversion → revenue → attribution
 
@@ -142,7 +177,10 @@ Never print record bodies. Do not delete or truncate production data for cleanup
    compare the restored test project's source/status, immutable acquisition,
    trusted link, duplicate/refund/renewal counts and per-currency test totals to
    the private pre-backup acceptance assertions. Counts/FKs alone cannot prove
-   attribution or freshness. The receiver does not fabricate phone exit evidence.
+   attribution or freshness. The receiver now enforces the private semantic
+   baseline as well as counts/FKs; missing baseline, changed trusted identity,
+   source, payload digest, individual payment/refund details, totals/acquisition
+   or freshness cannot PASS. The receiver does not fabricate phone exit evidence.
 6. Confirm isolated network/ports/tmpfs and exact test container deletion; compare
    production container/config metadata before/after this restore. Remove only
    this test's temporary resources. Preserve safe evidence, record results in
@@ -152,3 +190,31 @@ The previously verified **empty** manual restore remains valid and must not be
 repeated as a prerequisite. This populated drill is a separate acceptance proof.
 Missing email/dead-man, lifecycle backstop, first scheduled success, independent
 phone-loss recovery or G1 evidence keeps P2 open even if this drill succeeds.
+
+### Read-only populated snapshot evidence capture (future actual test only)
+
+After formal G1, separately reviewed gate work and the actual labelled owner chain
+have completed, stop owner traffic. Use the **exact private plan path** printed
+by preparation:
+
+```bash
+python3 scripts/vps/capture-p2-acceptance.py --plan <private-plan.json>
+```
+
+It selects the registered originmetric.app project privately, requires the exact
+labelled chain and records all ten counts plus the receiver's fixed semantic
+metrics in a new mode-600 pre-backup JSON. It refuses empty/unlabelled/incomplete
+chains and cannot write application data. Record its printed private evidence path.
+Run the existing scoped backup/readback with the current age recipient, then:
+
+```bash
+python3 scripts/vps/capture-p2-acceptance.py --plan <private-plan.json> --before <private-pre-backup.json>
+```
+
+The existing last-backup metadata must show remote readback verified **inside**
+the UTC pre/post capture window; counts, deployed source and semantic metrics
+must remain identical. Snapshot application/schema source must match deployed
+source. Only then does the tool create a new private `snapshot-evidence-*.json`
+for `restore-phone.py --snapshot-evidence`. It never manufactures a restore,
+phone exit or actual visit result. These commands are prepared; no populated
+production snapshot or phone restore has been run during closed-ingestion work.

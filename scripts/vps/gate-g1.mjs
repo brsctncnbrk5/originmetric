@@ -5,14 +5,22 @@ import { createHash, randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { chromium } from "@playwright/test";
+import { rehearseDogfood } from "./rehearse-dogfood.mjs";
 
 const root = resolve(import.meta.dirname, "../..");
 process.chdir(root);
-assert.ok(process.argv.slice(2).every((arg) => arg === "--technical-only"));
+assert.ok(
+  process.argv.slice(2).every((arg) => ["--technical-only", "--rehearse-dogfood"].includes(arg)),
+);
 const out = resolve(".runtime", `g1-${Date.now()}-${process.pid}`);
 mkdirSync(out, { recursive: true, mode: 0o700 });
 const prefix = `originmetric-g1-${process.pid}-${randomBytes(3).toString("hex")}`;
-const names = { db: `${prefix}-db`, app: `${prefix}-app`, network: `${prefix}-net` };
+const names = {
+  db: `${prefix}-db`,
+  app: `${prefix}-app`,
+  restore: `${prefix}-restore`,
+  network: `${prefix}-net`,
+};
 const hex = () => randomBytes(32).toString("hex");
 const env = {
   ...process.env,
@@ -29,16 +37,16 @@ const run = (command, args, options = {}) => {
   try {
     return execFileSync(command, args, { encoding: "utf8", env, stdio: "pipe", ...options }).trim();
   } catch (error) {
-    let detail = String(error.stderr ?? "");
-    for (const key of [
-      "POSTGRES_PASSWORD",
-      "APP_DB_PASSWORD",
-      "INTERNAL_TOKEN",
-      "INGEST_PROXY_TOKEN",
-    ])
-      detail = detail.replaceAll(env[key], "[redacted]");
-    detail = detail.replace(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g, "[address]");
-    writeFileSync(`${out}/subprocess-error.log`, detail, { mode: 0o600 });
+    // SQL/CLI/test diagnostics may contain generated IDs or keys unknown to this wrapper.
+    writeFileSync(
+      `${out}/subprocess-error.log`,
+      JSON.stringify({
+        tool: command,
+        exitStatus: error.status ?? null,
+        failureClass: error.constructor.name,
+      }) + "\n",
+      { mode: 0o600 },
+    );
     throw error;
   }
 };
@@ -55,7 +63,7 @@ const facts = () =>
     "-d",
     "originmetric",
     "-Atc",
-    "SELECT json_build_array((SELECT count(*) FROM events),(SELECT count(*) FROM sessions),(SELECT count(*) FROM customers),(SELECT count(*) FROM revenue_events),(SELECT count(*) FROM customer_visitors));",
+    "SELECT json_build_array((SELECT count(*) FROM workspaces),(SELECT count(*) FROM projects),(SELECT count(*) FROM api_keys),(SELECT count(*) FROM events),(SELECT count(*) FROM sessions),(SELECT count(*) FROM customers),(SELECT count(*) FROM revenue_events),(SELECT count(*) FROM customer_visitors),(SELECT count(*) FROM customer_attribution),(SELECT count(*) FROM ingestion_daily));",
   ]);
 const wait = (ms) => new Promise((done) => setTimeout(done, ms));
 const hash = (bytes) => createHash("sha256").update(bytes).digest("hex");
@@ -66,7 +74,13 @@ const summary = {
   productionFactsUnchanged: false,
 };
 let before;
+let protectedBefore;
 let browser;
+const protectedResources = () =>
+  run("python3", [
+    "-c",
+    "import importlib.util,json,sys;sys.dont_write_bytecode=True;s=importlib.util.spec_from_file_location('r','scripts/vps/restore-phone.py');r=importlib.util.module_from_spec(s);s.loader.exec_module(r);print(json.dumps(r.protected(),sort_keys=True))",
+  ]);
 try {
   const config = readFileSync(".env.production", "utf8");
   assert.match(config, /^PUBLIC_G1_READY=['"]?no['"]?$/m);
@@ -80,6 +94,7 @@ try {
   summary.image = image;
   summary.deployedSourceSha = tag;
   before = facts();
+  protectedBefore = protectedResources();
   // Dedicated fixture network; both published ports are restricted to loopback.
   docker("network", "create", names.network);
   docker(
@@ -180,6 +195,7 @@ try {
     "USD",
   );
   const site = project.match(/site_key:\s+(pk_[A-Za-z0-9]+)/)?.[1];
+  const projectId = project.match(/project_id:\s+([0-9a-f-]+)/)?.[1];
   assert.ok(site);
   const executablePath =
     process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ||
@@ -263,6 +279,8 @@ try {
     "tests/db/ingestion-limits.test.ts",
     "tests/db/sensitive-logging.test.ts",
     "tests/db/identify-api.test.ts",
+    "tests/db/revenue-api.test.ts",
+    "tests/db/attribution-materializer.test.ts",
   ];
   const regression = run("npx", ["vitest", "run", ...tests], {
     env: {
@@ -278,6 +296,18 @@ try {
   summary.checks.validationOriginDedupFailure = "PASS: matching-source real-DB regressions";
   summary.checks.inAppLimitsDailyCap = "PASS: matching-source real-DB and unit regressions";
   summary.checks.logRedaction = "PASS: real handlers and fixture runtime logs";
+  if (process.argv.includes("--rehearse-dogfood")) {
+    summary.rehearsal = await rehearseDogfood({
+      browser,
+      base,
+      names,
+      env,
+      docker,
+      psql,
+      project: projectId,
+      site,
+    });
+  }
   const captured = spawnSync("docker", ["logs", names.app], { encoding: "utf8", env });
   assert.equal(captured.status, 0);
   const logs = `${captured.stdout}${captured.stderr}`;
@@ -296,12 +326,29 @@ try {
     "Actual-site consent/banner owner confirmation",
     "Independent saved Cloudflare rule inventory/counting-window review",
   ];
+  if (existsSync(".runtime/p2-current-owner-evidence.json")) {
+    const owner = JSON.parse(readFileSync(".runtime/p2-current-owner-evidence.json", "utf8"));
+    const proof = JSON.parse(readFileSync(owner.bannerEvidence, "utf8"));
+    assert.equal(proof.source, "OWNER_EXPLICIT_CONFIRMATION");
+    assert.equal(proof.banner_setup, "ACCEPTED");
+    assert.equal(owner.ownerGpc, "NOT_EXPOSED");
+    summary.ownerEvidence = {
+      bannerSetup: "ACCEPTED_OWNER_REPORTED",
+      ownerGpc: "NOT_EXPOSED",
+      enabledOwnerGpc: "NOT_PASSED",
+      offPhoneRecovery: "DEFERRED",
+    };
+    summary.pending = ["Enabled owner GPC evidence remains NOT_PASSED (NOT_EXPOSED)"];
+    summary.sourceLimitations = [
+      "Direct Cloudflare API/original-export review unverified; existing saved-panel evidence retained",
+    ];
+  }
 } catch (error) {
   // Suppress subprocess stderr/argv and assertions containing fixture IDs/secrets.
   summary.failureClass = error?.constructor?.name ?? "Error";
 } finally {
   await browser?.close();
-  for (const name of [names.app, names.db]) {
+  for (const name of [names.restore, names.app, names.db]) {
     try {
       docker("rm", "-f", name);
     } catch {
@@ -336,6 +383,13 @@ try {
     }
   }
   if (!summary.productionFactsUnchanged) summary.technical = "FAILED";
+  try {
+    summary.protectedResourcesUnchanged =
+      protectedBefore !== undefined && protectedBefore === protectedResources();
+  } catch {
+    summary.protectedResourcesUnchanged = false;
+  }
+  if (!summary.protectedResourcesUnchanged) summary.technical = "FAILED";
   writeFileSync(`${out}/summary.json`, JSON.stringify(summary, null, 2) + "\n", { mode: 0o600 });
   writeFileSync(".runtime/g1-latest-path", out + "\n", { mode: 0o600 });
 }

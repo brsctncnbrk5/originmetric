@@ -1260,3 +1260,108 @@ browser or completed owner step is requested again.
 No production config/deploy/DB/volume/timer change, new backup, workflow dispatch,
 notification or application regression run. **Formal G1 PENDING; GPC NOT_EXPOSED;
 data collection NOT PASSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
+
+## Closed-ingestion G1 and end-to-end preparation — 2026-10-03
+
+Continued canonical P2/§28 acceptance work without waiting for scheduled backup
+or expiry. No scope change, data-gate opening, deploy or production data mutation.
+Existing age identity/recipient is preserved; no new age key generated, read,
+transferred or rotated. Off-phone secret/account recovery stays **DEFERRED**.
+Owner GPC stays **NOT_EXPOSED / enabled-owner acceptance NOT PASSED**.
+
+### Completed preparation and verified technical evidence
+
+`prepare-p2-acceptance.mjs` checks closed-preview config and zero production fact
+baseline, consumes original explicit banner acceptance and GPC owner records,
+and writes a new mode-600 private labelled scenario. No execution/approval override
+flag; `productionWritesAllowed=false`. It prepares visit URL, expected API codes,
+labelled test-only payment/renewal/refund amounts and exact subscription/refund
+relationships, staged private ID/key capture and snapshot/phone requirements.
+`.runtime/p2-prepared-20261003T214706427Z/plan.json` is preparation, not an actual
+production visit or an approval to open routes. No server key is in the plan.
+
+Extended `gate-g1.mjs --technical-only --rehearse-dogfood` against **current deployed
+image** and matching live tracker/source `e74bfc1fcc6e404be977feee059dc1d3c78d170c`.
+Safe evidence: `.runtime/g1-1791064358867-3123104/summary.json` and regressions log.
+**98 tests across 9 files PASS** (including revenue and attribution regressions).
+Technical G1 **PASS / overall PENDING**. Owner banner is ACCEPTED from the original
+explicit private record; the obsolete generic owner-banner request is removed
+when that record is supplied. Cloudflare direct API/export source limit is listed
+separately; prior saved-panel evidence retained. Enabled owner GPC still open.
+
+`rehearse-dogfood.mjs` restricts application origin to loopback and container names
+to the gate's disposable prefix. API/server key stays in memory, never a browser
+page or artifact. Browser only talks to fixture origin. Verified:
+
+| Isolated control | Observed outcome |
+| --- | --- |
+| Required consent and visit persistence | No request/visitor before consent; consented session persisted for exact unique campaign, visitor and p2-test/controlled source. |
+| Trusted identify and exact retry | 200 linked / 200 duplicate; one customer and trusted server_identify link. |
+| Payment / exact retry / conflicting amount | 201 / 200 / 409; conflict and retries create no extra facts/customer/link. |
+| Renewal / linked refund | 201 / 201; exact external original-payment ID linkage and immutable acquisition/source. |
+| Amounts and test labels | Two 2900-minor USD payments, one 500-minor refund; payment 5800, refund 500, net 5300; all test=true. |
+| Private internal result | Missing/wrong token 404; valid fixture token 200 with source/status visible. |
+| Withdrawal and logs | Visitor removed, no new post-history sending; no key/visitor/customer/label/internal-token leak in fixture app logs. |
+| Populated fixture restore | In-memory custom dump → network-none/tmpfs PostgreSQL; exact ten-table counts, schema/migrations, 14 FKs, 0 orphans, freshness/source/acquisition/totals/identities/payload digests match. |
+| Tampered semantic controls | Wrong source, untrusted-link result, refund total and stale revenue timestamp each rejected by receiver validator. |
+
+No encrypted off-VPS snapshot or phone decryption is involved in this rehearsal.
+It is **ISOLATED_REHEARSAL_ONLY**, production data acceptance **NOT PASSED**;
+actual encrypted populated backup/phone restore **NOT RUN**. Final cleanup removed
+all owned fixture containers/network; production all-ten-table counts and protected
+container IDs/starts/restarts/mounts plus env/nginx/systemd/plan hashes unchanged.
+No production volume was restored/replaced and no real customer/revenue claimed.
+
+### Populated acceptance can no longer pass on counts alone
+
+`restore-phone.py` now requires private `acceptance_assertions` for any newly
+requested populated acceptance restore. Its fixed, validated project/campaign
+query checks exact customer/visitor/session identities, trusted session linkage,
+credited/first-touch source and acquisition, original-payment refund linkage,
+individual 2900/2900/500 payment/refund details and subscription, three semantic
+payload hashes, per-currency totals/test flags and latest received timestamp.
+These must match the pre-backup baseline and canonical test shape. Missing or
+changed baseline/semantics cannot PASS; raw private values are not printed.
+Existing verified empty manual restore and basic receiver behavior remain valid.
+
+`capture-p2-acceptance.py` prepares the future actual restore's metadata using
+read-only production queries. Requires the registered originmetric.app project
+and complete uniquely labelled chain, captures ten counts/private semantic metrics,
+and refuses non-test revenue. Before/after captures must agree; backup result must
+be remote-readback verified **inside** that UTC window, with matching deployed
+application/schema source. Only then can it produce the new private snapshot JSON.
+No backup is triggered and no SQL writes or phone exit results are fabricated.
+
+**Six semantic/snapshot-window unit tests PASS** with mismatch, missing/future/non-UTC
+baseline, invalid scope, changed counts/source, stale/unverified/out-of-window
+backup and typed-metric rejection controls. Negative real empty-production check
+returned **PREPARATION_BLOCKED**, wrote no populated baseline/snapshot and issued
+no production SQL writes. Safe result stored alongside the prepared plan.
+Commands and exact future capture protocol updated in the
+[runbook](../runbooks/P2_DOGFOOD_ACCEPTANCE.md#closed-ingestion-preparation-and-isolated-rehearsal).
+Lint/typecheck/format checks PASS; script syntax checked. Subprocess failure artifacts retain only tool/exit/failure-class metadata, never
+SQL/test diagnostics that might contain unknown generated identities or keys.
+Candidate and full committed-history redacted secret scans PASS.
+No application source,
+tracker bundle, migration or production build/deploy change; full CI publication
+and local/remote SHA audit follow this code commit.
+
+### Remaining canonical acceptance (no missing proof inferred)
+
+| Item | Current state |
+| --- | --- |
+| Formal six-item G1 / actual owner GPC | Technical PASS; banner ACCEPTED; owner GPC NOT_EXPOSED, enabled-owner evidence NOT PASSED; overall G1 PENDING. |
+| Actual consented owner visit → trusted production chain | NOT RUN; six production fact tables remain 0. Scenario, assertions and isolated rehearsal ready. Gate remains closed. |
+| Actual populated encrypted backup and phone restore | NOT RUN; earlier empty manual restore remains verified; new semantic capture/receiver prepared. |
+| First scheduled backup/expiry/freshness | PENDING until actual event/service/readback results; no wait or manual backup substitution in this task. |
+| Actual backup failure/missing-run delivery; independent dead-man | Existing monitoring/detector-error email receipts confirmed at owner source; real backup failure/missing and GitHub-independent observer alarm still unverified. |
+| Retention/lifecycle guarantee under job/account/provider failure | Backstop configured/manual execution verified, 0 deletions; strict <=90-day/native lifecycle and schedule reliability still open. |
+| Phone-independent recovery | DEFERRED by owner; existing key decision and vault/paper/attachment evidence preserved. |
+| Provider source limits | Earlier Cloudflare saved-panel/cache TTL evidence retained; direct API/original-export unverified, not requested again. |
+
+**Formal G1 PENDING; data collection NOT PASSED; ingestion closed; P2 OPEN;
+P3 NOT STARTED.** All currently authorized closed-ingestion preparation described
+above is complete; no owner decision is required for those completed actions.
+Actual production execution and missing external/owner evidence remain staged,
+not silently approved or waived.
