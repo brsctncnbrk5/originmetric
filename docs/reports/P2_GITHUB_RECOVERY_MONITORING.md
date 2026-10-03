@@ -336,3 +336,65 @@ Only after the successful fresh remote readback, ran `systemctl enable --now ori
 This resolves the scoped unattended-identity and backup-timer blocker. Actual decryption/manual isolated restore, provider lifecycle backstop, email/dead-man delivery, off-phone recovery (DEFERRED), real-domain consent/attribution acceptance and G1/P2 acceptance remain separate open items. No application deployment or gate opening was part of this task. Credential and runtime evidence stay outside Git; only sanitized STATUS/report changes are task commit files.
 
 Documentation verification: `git diff --check`, balanced Markdown fences and the new STATUS link target/anchor passed. Existing gitleaks v8.30.1 scanned current docs with `--redact`, read-only mount and `--network none`: **no leaks found**. No application code changed; the real scoped-credential service run and remote readback are the operational validation for this task.
+
+
+## Real restore audit — 2026-10-03
+
+**Result: BACKUP/REMOTE READBACK PASS; REAL RESTORE BLOCKED, NOT VERIFIED.** This task inspected the authorized GitHub backup and existing timer only; no new backup/upload/retention operation, deployment, monitoring notification, production SQL or traffic-gate change was performed. Canonical §§24–25/28 and D-008 remain the acceptance boundary; P2 is open and P3 was not started.
+
+### Last backup and preserved timer
+
+The installed service journal records start **2026-10-03 13:00:36 UTC**, successful completion **13:00:49 UTC**, with the same snapshot/readback result as root-only `.runtime/github-db/last-backup.json`. Current service status: `Result=success`, `ExecMainStatus=0`, inactive after the successful oneshot. No later backup or failure is inferred from these records.
+
+| Check | Independently observed result |
+|---|---|
+| Snapshot / private draft Release | `om-db-v1-20261003T130037Z-eeab03ba` / ID `402515437`; exact ownership marker, verified state and two DB-only asset names checked via scoped-credential GETs |
+| Captured / original remote verification | **13:00:37 UTC** / **13:00:45.757787 UTC** |
+| Fresh remote download | **13:09:36.719215 UTC**; `database.dump.age` **32381 B** |
+| Ciphertext SHA-256 | `278b0ca3ff038e2e5a07256b0e135e428a988894cec33b47f93123a57d876592`; fresh downloaded bytes equal local success record and remote verified body |
+| Manifest / format | Exact `SHA256SUMS` entry matches downloaded ciphertext; age format header valid. Neither proves decryption. |
+| Timer state | **enabled / active / waiting**; installed `OnCalendar=*-*-* 03:15:00 UTC`, `Persistent=true`, `RandomizedDelaySec=0` |
+| Next / previous scheduled execution | **2026-10-04 03:15:00 UTC** / `LastTriggerUSec` empty, list-timers LAST `-`; no completed scheduled run claimed |
+
+The timer and service were read only; no enable/disable/restart/reload or schedule edit occurred. Repository visibility was checked again after downloading. No remote Release or asset was modified/deleted.
+
+### Private-key availability and blocked checks
+
+Only safe results were emitted: existing-file checks, owner/mode where applicable and private identity marker presence, never key/token/env values. Inspected OriginMetric-owned `/opt/originmetric` and `/etc/originmetric`, conventional `/root/.config/age` and `/root/.age`; excluded Git history, dependencies/build caches and other projects. **362 regular files** were examined privately for standalone native/plugin age identity markers; **zero identity candidates**. Standard key paths under those roots plus `/root/.config/sops/age/keys.txt` and `/etc/age/keys.txt` are absent. The current process has no conventional identity reference. This is a scoped availability check, not a claim that every unrelated host file was searched. The existing public recipient is insufficient for decryption; no usable OriginMetric private identity was discovered.
+
+This agrees with the documented offline-key model. No private key was generated, transferred or requested; no decryption was attempted without one. An empty/synthetic restore would not test this actual backup, so no disposable PostgreSQL container/network/volume was created merely to claim progress.
+
+| Required real-restore validation | Status |
+|---|---|
+| Successful decryption and actual `pg_restore` | **BLOCKED / NOT RUN** |
+| Schema and 10 domain tables | **NOT CHECKED** |
+| Migration history against deployed schema | **NOT CHECKED** |
+| Core table counts | **NOT CHECKED**; no production counts queried in this task |
+| Foreign keys / tenant relationships / orphan checks | **NOT CHECKED** |
+| Restore result | **`restore_verified=false`**, unchanged in existing backup evidence |
+
+### Minimum owner step: use the existing offline key
+
+On the trusted device already holding the existing private key, download **`database.dump.age` and `SHA256SUMS` from Release ID `402515437`** in the private [recovery Releases dashboard](https://github.com/brsctncnbrk5/originmetric-recovery/releases). Select the exact snapshot name above; draft `untagged-*` URLs can change. In the download directory, confirm the hash above and then run the existing offline streaming procedure:
+
+```bash
+# On the trusted offline-key device; replace the key path and SSH host locally.
+# No private key or plaintext dump file is uploaded to the VPS.
+sha256sum -c SHA256SUMS
+# Continue only if this exact snapshot's ciphertext hash check succeeds.
+set -o pipefail
+age -d -i /local/path/existing-age-key.txt database.dump.age | \
+  ssh VPS_HOST 'cd /opt/originmetric && bash scripts/vps/restore-check.sh'
+OM_RESTORE_STATUS=("${PIPESTATUS[@]}")
+printf 'decrypt_exit=%s isolated_restore_exit=%s\n' "${OM_RESTORE_STATUS[0]}" "${OM_RESTORE_STATUS[1]}"
+```
+
+Keep the key/token/password/env contents local. Provide only both exit codes and sanitized table-count/restore output. Both exits must be zero, and the real schema/migration/constraint/count results must be recorded before acceptance; the existing helper's table-presence/migration-count summary alone does not establish migration-hash equality or every required integrity check. If the private-key device cannot run this pipeline, the remaining prerequisite is a secure decrypted stdin stream from that device, not putting the key on this VPS. The helper creates only a `--network none`, tmpfs disposable PostgreSQL 18 container and removes it on exit. Detailed migration and relationship verification still needs to be completed in that isolated test before declaring success; no production restore is authorized.
+
+### Cleanup, protected resources and next canonical work
+
+Fresh ciphertext/manifest downloads were held in a mode-700 temporary directory beneath ignored `.runtime` and removed on exit; removal verified. **No temporary PostgreSQL resources exist from this task.** Only sanitized private audit evidence remains at `.runtime/restore-audit-20261003.json` (root-owned mode 600, ignored/untracked). Pre/post hashes and container metadata confirm the canonical plan, DECISIONS, production env, installed OriginMetric ingress and backup units are unchanged, and production container IDs/start times/restart counts/mounts are unchanged. No production database query, volume write/mount, app command or restart was issued.
+
+The immediate canonical P2 task is the **real isolated manual restore** of this exact remote DB backup, followed by the still-open actual-domain required-consent/withdrawal/GPC and persisted trusted-attribution/duplicate/refund evidence and G1 review. Off-phone vault recovery remains **DEFERRED**; provider lifecycle backstop, dead-man/missing-run and email delivery remain open. No new general authorization or scoped-token setup is needed. Preserve daily **03:15 UTC**; stop before P3.
+
+Documentation validation: changed Markdown whitespace, balanced fences and local file/anchor links checked; existing gitleaks v8.30.1 with redaction/read-only mounts/network-none scanned the current docs (including both changed files) and full Git history: **no leaks found**. Only STATUS and this report are committed on `codex/originmetric-p2-vps-preparation`; normal push and full local/remote SHA equality are checked at handoff. No application code changed or application test suite was rerun; previous CI evidence is historical, and these checks do not resolve the restore blocker.
