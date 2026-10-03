@@ -27,6 +27,17 @@
 
 ## Next step
 
+**2026-10-04 local / 3 October 23:51 UTC — publication AssertionError RESOLVED / reverified.**
+The first `local == remote and clean` check failed only on cleanliness: this
+work's Python import created one untracked bytecode file. SHA equality was true.
+Only that file and its empty cache directory were removed in the original turn;
+final original publication audit passed. Follow-up separately confirms clean
+working tree, absent `scripts/vps/__pycache__/` and equal local/remote SHA.
+No additional cleanup needed; isolated-chain acceptance PASS retained, overall
+G1/P2 still OPEN. [Exact cause, secondary apport error and acceptance impact](reports/P2_GITHUB_RECOVERY_MONITORING.md#publication-assertionerror-audit--2026-10-04-local).
+Physical GPC remains OPEN; Recovery DEFERRED; current age key unchanged;
+P3 NOT STARTED. Next owner action remains the conditional physical GPC step below.
+
 **2026-10-04 local / 3 October 23:41–23:43 UTC — isolated full revenue chain
 ACCEPTANCE PASS; production and physical-browser acceptance remain OPEN.**
 Canonical §26/§28 controlled fixture scope: current deployed image and identical

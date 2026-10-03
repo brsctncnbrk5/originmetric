@@ -1668,3 +1668,45 @@ phone drill remain separately scoped open work.
 
 **PUBLIC_G1_READY=no; G1 PENDING; physical GPC OPEN; Recovery DEFERRED; existing age
 key unchanged; P2 OPEN; P3 NOT STARTED.**
+
+
+## Publication AssertionError audit — 2026-10-04 local
+
+The first post-push Python publication audit stopped at
+`assert local == remote and clean`. **SHA equality was true; working-tree
+cleanliness was false.** The immediately following diagnostic showed only
+`?? scripts/vps/__pycache__/`, while local HEAD and the remote assigned branch
+both equalled `53648a255de00198fe8405f7191a9fc49de77738`.
+The earlier operator audit imported `github-backup.py` without disabling Python
+bytecode generation, creating `github-backup.cpython-312.pyc`. This was an audit
+artifact, not an application change or failed attribution/restore assertion.
+
+The original turn removed **only that generated file**, removed its empty parent
+directory, and reran the publication audit with `python3 -B`. Final evidence
+`publication.json` at 3 October **23:45:34 UTC** records SHA equality and clean
+working tree. The failed first attempt is not counted as PASS. Its additional
+`apport` FileNotFoundError was a secondary exception-hook error: the hook tried to
+stat `/opt/originmetric/-`, because the Python program was supplied through stdin.
+It was not a second application acceptance failure.
+
+Owner-requested follow-up at **23:51:33 UTC** reran only the relevant publication
+checks, with separate assertions for SHA equality, working-tree cleanliness and
+cache absence. All PASS at the original published head: `git status --porcelain
+--untracked-files=all` empty; `scripts/vps/__pycache__/` absent; local/remote SHA
+identical. No files needed deletion in the follow-up. Private evidence:
+`.runtime/p2-chain-review-20261004/assertion-review.json`. Python audit commands
+use `-B` to avoid generating another bytecode artifact.
+
+**Acceptance impact:** the initial publication-cleanliness check failed and
+required cleanup before publication could be reported fully verified. Cleanup
+and the original rerun resolved it; this follow-up independently reconfirms the
+result. Retained gate evidence remains isolated-chain PASS, technical PASS,
+overall PENDING, production facts/protected resources unchanged and fixtures
+removed. No browser, revenue, restore or broad regression suite was rerun for
+this publication-only issue. This documentation correction is published in a new
+commit; its final SHA/clean-tree/cache audit is stored privately as
+`assertion-review-publication.json`.
+
+**Physical real GPC OPEN / NOT PASSED; Recovery DEFERRED; existing age key
+unchanged; ingestion closed; G1 PENDING; P2 OPEN; P3 NOT STARTED.** No key,
+production-data, deployment, access-window or notification operation occurred.
