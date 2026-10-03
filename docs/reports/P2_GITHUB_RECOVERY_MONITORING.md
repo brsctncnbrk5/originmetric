@@ -1,6 +1,16 @@
 # P2 — originmetric.app consent, GitHub recovery and dashboard monitoring
 
-Date: 2026-10-02; transferred Cloudflare evidence update: 2026-10-03. Local encryption/env preparation and documentation only; **no production redeploy, ingestion opening, first upload, scheduled external probe or notification**. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
+Date: 2026-10-02; transferred Cloudflare evidence update: 2026-10-03. Local encryption/env preparation and documentation only; **no production redeploy, ingestion opening or scheduled external probe**; the authorized private draft ZIP transfer is recorded below. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
+
+## Private GitHub phone transfer — 2026-10-03
+
+The owner explicitly authorized a **one-time ZIP upload for phone download**. The existing SHA256SUMS verified all three referenced source files. ZIP CRC, exactly four relative member names, and each member's bytes were checked: `recipient-check.txt.age`, harmless `recipient-check.txt`, `env.production.age`, `SHA256SUMS`. No plaintext production env, private key, credential or other file is included. Local ZIP: `/opt/originmetric/.runtime/p2-recovery-transfer-20261003T011214Z/originmetric-phone-recovery.zip`; **1863 B**, SHA-256 `a35fdf8963f58382d7cfbb8881e8c4abb524434f2ee1fb1e9d981af0793b4256`.
+
+Authenticated GitHub API confirmed `brsctncnbrk5/originmetric` is **public**, so its visibility was preserved. Created **private** `brsctncnbrk5/originmetric-recovery` with only GitHub's harmless initial README commit; no recovery file was added to any Git history. Rechecked private visibility immediately before upload and after readback. Created a new **draft** release `phone-recovery-20261003t011214z` with a single ZIP asset; no public VPS download endpoint, release publication, remote backup configuration or automation was created.
+
+[Draft release page](https://github.com/brsctncnbrk5/originmetric-recovery/releases/tag/untagged-0236588ff9f334da0762) · [ZIP download](https://github.com/brsctncnbrk5/originmetric-recovery/releases/download/untagged-0236588ff9f334da0762/originmetric-phone-recovery.zip). Both are token-free GitHub URLs and require the authorized account to be signed in with access to the private draft. An authenticated API download on the VPS matched the ZIP SHA-256, CRC, exact member list and source bytes. This is **server-side transfer/readback verification only**; phone download, local decryption, KeePassDX attachment/off-phone vault backup, phone-independent access and restore remain unverified.
+
+This permission covers this transfer only; it does not accept the canonical GitHub storage/lifecycle/monitoring deviations or satisfy separate password-manager storage. **No database backup or restore occurred; no automatic backup is configured. G1 pending; P2 open; P3 not started.** Env (including BACKUP_REMOTE), canonical plan, DECISIONS and app container IDs/start times/restart counts matched the pre-transfer baseline. Source/ZIP/readback artifacts remain ignored in `.runtime/`; nothing encrypted is committed. Earlier local-only/no-upload statements below describe the earlier preparation, superseded for this ZIP by this section.
 
 ## Age recipient and separate env recovery preparation — 2026-10-03
 
