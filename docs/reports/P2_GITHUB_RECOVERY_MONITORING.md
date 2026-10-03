@@ -876,3 +876,38 @@ Existing age decision, completed vault/empty-restore evidence and daily 03:15 UT
 schedule remain unchanged. After formal G1 is complete, continue the labelled
 persisted visit → trusted identify → revenue → attribution chain, then its
 populated backup/restore; these steps are not yet eligible to run.
+
+
+## G1 evidence applicability and first owner-dependent item — 2026-10-03
+
+Read-only/fresh-profile verification at **18:10 UTC** completed the applicable
+technical reconciliation before the first owner-dependent item. Current deployed
+source and image match the existing technical gate PASS, and current public
+tracker SHA-256 matches that gate. Production `src`, `tracker`, and `drizzle`
+match deployed source `e74bfc1fcc6e404be977feee059dc1d3c78d170c`.
+Private safe evidence: `.runtime/p2-g1-review-20261003T181042Z/review.json`.
+
+Live `/dogfood` returned **200** with `data-consent=required`, no `data-gpc=ignore`,
+all three enabled consent controls, and initial **İzin bekleniyor**. Fresh independent
+profile observed **0** analytics requests, **0** tracker cookies/localStorage and
+absent visitor ID before consent. No Allow action was taken. All six fact counts
+were **0** before and after. Browser closed; no identifiers, headers, request bodies,
+traces or screenshots retained. Existing system Chrome was used; no dependency
+installed. An initial read-only count query used an incorrect attribution table
+name and was corrected to schema-defined `customer_attribution`; a browser launch
+using Playwright's unavailable default executable was corrected to existing system
+Chrome. Failed attempts are not PASS evidence. No full regression rerun is claimed.
+
+Canonical §28 items 3–6 retain their existing reviewed technical evidence; this
+verification confirms source applicability, not a new Cloudflare provider inspection.
+The **first owner-dependent open item is dated confirmation of the actual required-consent
+banner setup** (G1 item 1 / current checklist). Single requested action: owner confirms
+in writing acceptance of the existing `originmetric.app/dogfood` consent banner,
+with **Reddet / İzin ver / İzni geri çek** controls. This is setup acceptance only;
+previous UI reports need not be repeated and phone storage/network is not inferred.
+
+Owner GPC remains **NOT_EXPOSED**; enabled-owner GPC behavior remains **NOT PASSED**.
+No missing evidence is waived. **Formal G1 PENDING; data collection NOT PASSED;
+P2 OPEN; P3 NOT STARTED.** `PUBLIC_G1_READY=no` verified. No gate opening, config,
+deploy, production DB write, labelled conversion/revenue or populated restore occurred.
+Work pauses at this first owner evidence item as requested.

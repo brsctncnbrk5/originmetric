@@ -27,6 +27,20 @@
 
 ## Next step
 
+**2026-10-03 18:10 UTC — G1 technical evidence applicability rechecked.**
+Current deployed source/image and public tracker hash match the prior technical
+G1 PASS. Live `/dogfood` returns 200, uses required consent with no GPC ignore
+attribute, starts at **İzin bekleniyor**, and has enabled controls. In an independent
+fresh browser profile, analytics requests, tracker cookies/localStorage and visitor
+identifier were absent before consent; six fact counts remained 0 before/after.
+This is a focused live recheck, not a rerun of the regression suite or owner-phone
+inspection. **First owner-dependent item: dated actual-banner setup confirmation.**
+Single owner step: confirm in writing acceptance of the existing `originmetric.app/dogfood`
+required-consent banner with deny/allow/withdraw controls. This confirms setup only;
+GPC remains **NOT_EXPOSED / enabled-owner acceptance NOT PASSED**, formal G1
+**PENDING**, data collection **NOT PASSED**, **P2 OPEN; P3 NOT STARTED**.
+No data gate/config/deploy/DB write occurred. See the latest report entry.
+
 **2026-10-03 — owner GPC reference result: NOT_EXPOSED (OWNER-REPORTED).**
 Android Chrome Client-side detection reported **DOM signal not present**. The
 owner signal check is recorded and complete with this result; enabled-owner GPC
