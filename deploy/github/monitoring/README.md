@@ -17,3 +17,11 @@ missing-run detection and notification destination/delivery are separate operati
 See [GitHub schedule documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 Standard hosted runners on public repositories are [free](https://docs.github.com/en/billing/concepts/product-billing/github-actions).
 No larger runner, artifact storage, npm dependency or paid service is configured.
+
+
+For native Actions email notifications, open GitHub **Settings → Notifications →
+System → Actions**, select **Email**, and save. Optionally choose failed workflows
+only. See [GitHub Actions notification settings](https://docs.github.com/en/subscriptions-and-notifications/how-tos/managing-github-actions-notifications).
+The workflow has no dedicated email-send step. A failed control run does not prove
+email delivery: record actual receipt separately. Account notification settings
+and workflow-trigger eligibility must be checked when mail is not received.

@@ -966,3 +966,30 @@ dead-man coverage; those separate gaps remain open.
 Existing lifecycle/no-spend and deferred off-phone recovery gaps remain explicit.
 No production config/deploy/DB change, gate opening, new regression run or backup
 claim. **Data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.**
+
+
+## Owner failure-control email not received / account-setting prerequisite — 2026-10-03
+
+Owner reports **“gelmedi”** for the previously executed labelled failure-control
+email. Recorded **NOT_RECEIVED / OWNER-REPORTED**, email delivery **NOT PASSED**.
+Existing failed workflow runs establish the controlled failure path only, not
+mail delivery; nonreceipt cause is **UNKNOWN**.
+
+Reviewed monitoring workflow/template: no dedicated email-sending step is present.
+Native GitHub Actions notifications depend on account notification configuration.
+[Official GitHub notification guidance](https://docs.github.com/en/subscriptions-and-notifications/how-tos/managing-github-actions-notifications)
+checked 2026-10-03 directs users to Notification settings → System → Actions →
+Email, then Save; failed-workflows-only is optional. Account settings are not
+visible in existing evidence, so no disabled-setting diagnosis is asserted.
+
+**Next single owner step:** at `https://github.com/settings/notifications`, enable
+**Email** under **System → Actions** and save; report saved or already enabled.
+No email address/contents/screenshots needed. This is configuration evidence only,
+not receipt evidence. A new labelled delivery control can follow after the setting
+is confirmed; no new control/notification has been dispatched in this turn.
+Independent dead-man, actual missing-run/backup failure detection and scheduled
+backup evidence remain open regardless of notification settings.
+
+Banner acceptance remains complete; GPC NOT_EXPOSED / enabled-owner GPC NOT PASSED;
+**formal G1 PENDING; ingestion closed; data collection NOT PASSED; P2 OPEN;
+P3 NOT STARTED**. No production application/config/DB or workflow modification.

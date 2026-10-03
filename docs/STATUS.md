@@ -27,6 +27,18 @@
 
 ## Next step
 
+**2026-10-03 — failure-control email NOT_RECEIVED (OWNER-REPORTED).**
+Owner reports no email from the existing labelled GitHub failure control.
+Workflow failure-path evidence remains valid; email delivery is **NOT PASSED**.
+Reviewed workflow has no dedicated mail-send step; delivery depends on GitHub
+account Actions notification settings, which are unverified. Nonreceipt cause
+is **UNKNOWN**, not attributed to an outage or specific setting.
+**Next single owner step:** GitHub notification settings → System → Actions →
+select Email and Save; report saved (or already enabled). Official GitHub docs
+verify this account setting path; no address or message contents requested.
+No new notification/workflow dispatched. GPC **NOT_EXPOSED**, formal G1
+**PENDING**, ingestion closed; **P2 OPEN; P3 NOT STARTED**.
+
 **2026-10-03 — no other available GPC browser (OWNER-REPORTED).**
 Owner reports **none** in response to the available-other-browser question.
 Actual-banner setup remains ACCEPTED. Android Chrome **NOT_EXPOSED** and
