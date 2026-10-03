@@ -1,6 +1,6 @@
 # P2 controlled dogfood acceptance
 
-Prepared 2026-10-03. **NOT EXECUTED / G1 PENDING / P2 OPEN.** Use only the owner's
+Updated 2026-10-03. **CLOSED PREVIEW READY / TECHNICAL G1 PASS / FORMAL G1 PENDING / P2 OPEN.** Use only the owner's
 `originmetric.app` visits. P3 is outside this runbook. Test records are never real
 customers, sales or revenue. Keep the existing age recipient; the private key stays
 on the phone. Daily backup remains **03:15 UTC**.
@@ -27,8 +27,10 @@ on the phone. Daily backup remains **03:15 UTC**.
    migration. It does not fall back to a broad operator credential. Use the normal
    exact-clean-reviewed-SHA deploy, smoke and rollback path from VPS_INSTALLATION.
    Keep ingestion closed while reviewing the banner. Serve the exact `/dogfood`
-   page through the reviewed proxy configuration; it currently returns 404 on the
-   old deployed image, so **do not ask the owner to test it yet**.
+   page through the reviewed proxy configuration. This preparation is now
+   complete at source `e74bfc1fcc6e404be977feee059dc1d3c78d170c`: backed-up reviewed
+   deploy/smoke and technical G1 pass; `/dogfood` returns 200. The old 404 is
+   historical. No customer/revenue/attribution facts have been created.
 5. Complete the real-domain deny, allow, withdraw and GPC checks one at a time.
    Before consent: no `om_*` storage and no `/api/v1/e` request. Withdrawal clears
    tracker state and stops requests; GPC suppresses both even after Allow. Record
@@ -37,6 +39,13 @@ on the phone. Daily backup remains **03:15 UTC**.
    and dated owner confirmation, and record all six G1 outcomes before opening
    the ingestion gate. A browser 202 is
    insufficient: closed ingress also returns 202 while dropping events.
+
+Current next owner check is **only deny**: open `/dogfood` in a private tab, do
+not grant consent, click **Reddet**, and report whether **Reddedildi** appears.
+Live automated pre-consent/deny check already observed no analytics request,
+visitor identifier, tracker cookie or tracker local storage. Owner confirmation
+is still pending; allow/withdraw/GPC checks follow individually. Data gates remain
+closed throughout the banner acceptance checks.
 
 ## Visit → conversion → revenue → attribution
 

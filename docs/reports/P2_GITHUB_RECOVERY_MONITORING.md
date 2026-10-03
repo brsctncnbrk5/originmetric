@@ -665,3 +665,46 @@ deployment must retain backup-before-build/migrate, smoke and rollback. G1 fixtu
 readiness now requires final PostgreSQL TCP server rather than transient init
 socket. Actual browser consent acceptance, persisted test attribution and populated
 backup restore remain pending; P2 stays open and P3 is not started.
+
+### Closed preview actually deployed and technical G1 verified
+
+Normal exact-clean-SHA deployment completed at
+`e74bfc1fcc6e404be977feee059dc1d3c78d170c`, with predeploy scoped snapshot
+`om-db-v1-20261003T164300Z-e5ec346e` remotely verified at **16:43:07 UTC** before
+image build/migrations. Deployment smoke passed; exact `/dogfood` route then
+installed with nginx validation/reload. No rollback was required. Full source
+[CI run 37137940264 succeeded](https://github.com/brsctncnbrk5/originmetric/actions/runs/37137940264).
+
+Deployed-image `gate-g1.mjs --technical-only`: **technical PASS / overall PENDING**.
+Required consent/withdrawal, default GPC, browser trust boundary, validation/origin/
+dedup/failure isolation, limits/daily cap and redaction passed with deployed bytes
+and matching-source isolated real-DB regressions (7 files). Test fixtures removed;
+production fact counts unchanged by the gate. Safe evidence path is recorded in
+`.runtime/g1-latest-path`. The tool's generic independent Cloudflare review pending
+string remains a direct-inspection limitation; it does not revoke earlier
+transferred saved-rule/window/order/SSL inventory evidence or request those panels
+again. Formal G1 still requires the dated owner actual-banner acceptance/review.
+
+Public actual-page browser check **16:51 UTC**: `/dogfood` 200; test label visible;
+Allow enabled and Deny/Withdraw visible. Before consent and after clicking Deny:
+**0 analytics requests**, no visitor identifier, no tracker cookie/local storage.
+This is independent live behavior evidence, not owner browser confirmation.
+No Allow action or real test revenue was executed on production.
+
+At **16:52 UTC**, actual ten-table counts: workspace/project/API key **1 each**
+(labelled configuration only); events/sessions/customers/links/revenue/attribution/
+ingestion_daily **0**. Public events remain **202/drop**, identify/revenue **503**,
+internal and fixtures **404**. DB and Caddy IDs/starts and all existing mounts
+unchanged; app was intentionally recreated by the reviewed deployment. Production
+volumes were not removed/restored/replaced; no real customer or income claimed.
+No private key was moved; no credential/record body was printed. Daily timer is
+still enabled/active, first scheduled execution **PENDING**, next 2026-10-04 03:15 UTC.
+
+Current remaining acceptance: owner actual consent/deny/allow/withdraw/GPC and
+formal G1; subsequent persisted controlled trusted test chain; its populated
+snapshot restore; actual email/dead-man/scheduled backup; independent lifecycle
+backstop activation; deferred phone-independent recovery. Browser TTL mismatch is
+resolved; provider API/export source limit remains explicit. Earlier vault/env
+attachment and empty manual restore remain complete. **Next owner step only:**
+private tab → `/dogfood` → **Reddet** → report **Reddedildi** visible yes/no.
+**P2 OPEN; P3 NOT STARTED.**

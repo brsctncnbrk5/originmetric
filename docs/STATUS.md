@@ -11,7 +11,7 @@
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
 | P2 | **TRADEBOT REMOVED; WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
-| P2 last full-suite tested code head | `2558928fa4b3f02929d66a14f17d9265c792192e` — [CI continuation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37135062561) |
+| P2 last full-suite tested code head | `e74bfc1fcc6e404be977feee059dc1d3c78d170c` — [CI closed-preview continuation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37137940264) |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
@@ -35,8 +35,18 @@ API/export inspection remains unverified. A scoped encrypted preparation backup
 was remotely verified at 16:39 UTC. A separately labelled P2 test project/key
 was prepared privately, with no customer/revenue creation; only
 `BACKUP_BACKEND=github` and registered `OM_DOGFOOD_SITE_KEY` were updated.
-Closed-ingestion consent preview deployment and deployed-image technical G1
-verification are the next task; formal owner consent acceptance remains pending.
+Reviewed preview deploy/smoke and deployed-image **technical G1 PASS** completed;
+formal G1 remains **PENDING** owner browser acceptance. `/dogfood` now returns
+200 with enabled consent controls/test labels; live automated deny/pre-consent
+check observed zero analytics requests, tracker cookies/storage/visitor ID.
+G1 fixtures removed and production fact counts unchanged by those tests.
+Only labelled test workspace/project/key rows exist (1 each); all events,
+sessions, customers, links, revenue and attribution counts remain 0.
+DB/Caddy container identities/starts and every existing mount are unchanged;
+app was intentionally recreated at the reviewed source above. New predeploy
+encrypted snapshot readback verified at 16:43 UTC. No populated fact restore yet.
+**Next owner step:** open `/dogfood` in a private tab, click **Reddet**, report only
+whether **Reddedildi** appears. Allow/withdraw/GPC steps follow separately.
 Existing age recipient and daily 03:15 UTC timer are unchanged. **P2 OPEN; P3 NOT STARTED.**
 
 **2026-10-03 — P2 technical acceptance continuation; G1/P2 still PENDING/OPEN:**
@@ -59,8 +69,8 @@ reviewed deployment, owner browser checks, persisted labelled trusted test chain
 and populated-backup restore are still required. Existing empty restore and
 owner-reported vault/env attachment steps remain complete; off-phone vault is
 DEFERRED. Current age key decision stands. **P3 NOT STARTED; ingestion closed.**
-Next owner check is only the saved tracker browser TTL; broader completed
-Cloudflare/vault/phone prerequisites are not requested again.
+The previously pending tracker browser TTL check is resolved above; broader
+completed Cloudflare/vault/phone prerequisites are not requested again.
 
 **2026-10-03 — REAL MANUAL RESTORE VERIFIED; P2 still OPEN:** exact GitHub snapshot `om-db-v1-20261003T130037Z-eeab03ba` restored via phone decryption → SSH at **14:45:11–14:45:22 UTC**. Owner reports pipeline **0/0**; independently checked VPS `pg_restore=0`, exact schema/10 tables, 4 migration hashes/timestamps, all 10 domain row counts **0**, and 14 foreign keys with **0 orphan rows**. Empty domain tables do not prove real-visit/revenue freshness or populated relationships. New private final confirmation resolves the receiver's pending-phone flag; historical result files are preserved. Exact temporary restore container absent; task ciphertext staging removed; production metadata/config hashes unchanged. Daily **03:15 UTC** timer **enabled/active/waiting**, next **2026-10-04 03:15 UTC**; no scheduled backup completion yet. Independently observed three successful scheduled HTTPS monitoring runs; uninterrupted five-minute observation/dead-man/email remain unproved. [Final evidence and complete remaining P2 criteria](reports/P2_GITHUB_RECOVERY_MONITORING.md#real-manual-restore-verified-and-remaining-p2-acceptance--2026-10-03).
 
