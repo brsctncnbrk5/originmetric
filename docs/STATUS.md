@@ -27,6 +27,18 @@
 
 ## Next step
 
+**2026-10-03 — owner browser identified: Android Chrome (OWNER-REPORTED).**
+Version/channel/native enabled GPC signal unverified; no browser support or GPC
+PASS inferred from the name or DNT setting. Existing injected GPC=true live proof
+remains independent technical evidence. **Next single owner check:** open the
+[officially linked GPC reference](https://global-privacy-control.vercel.app/) in
+Android Chrome private tab; report only Client-side detection value **true**,
+**false**, or **DOM signal not present**. True establishes an enabled signal at
+that reference, not OriginMetric acceptance; false/absent cannot pass enabled
+owner GPC. No browser/extension install, flags, gate opening or production change.
+Ingestion closed; **data collection NOT PASSED; formal G1 pending; P2 OPEN;
+P3 NOT STARTED.**
+
 **2026-10-03 — owner WITHDRAW UI COMPLETE / independent live withdrawal controls verified:**
 owner clicked **İzni geri çek** in the same tab without reload and saw
 **İzin geri çekildi**. UI evidence alone is not deletion/sending proof. Separate

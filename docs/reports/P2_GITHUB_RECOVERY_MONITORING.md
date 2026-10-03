@@ -809,3 +809,35 @@ assumed and no new browser/dependency is installed. Injected GPC control is kept
 separate from owner setting acceptance. Formal G1 remains pending; existing key,
 vault/attachment evidence and 03:15 UTC schedule remain unchanged. **P2 OPEN;
 P3 NOT STARTED.**
+
+## Android Chrome identified / real GPC signal check pending — 2026-10-03
+
+Owner identifies the acceptance browser as **Android Chrome**. This is browser
+metadata only: no version/channel, navigator GPC value or Sec-GPC observation was
+provided. Do not infer enabled native GPC, native support, or successful GPC
+acceptance from the browser name or the earlier normal Allow UI message.
+
+Primary sources checked for the next step:
+- [Google Android Chrome help](https://support.google.com/chrome/answer/2790761?co=GENIE.Platform%3DAndroid&hl=en)
+  documents **Do Not Track**; that setting is not the navigator.globalPrivacyControl/
+  Sec-GPC signal required by this tracker's GPC check.
+- [GPC initiative](https://globalprivacycontrol.org/) links its
+  [reference implementation](https://global-privacy-control.vercel.app/), which
+  exposes client-side signal presence/value and server-side Sec-GPC detection.
+  Its client code distinguishes absent navigator property from exposed true/false.
+  The GPC user guide lists Chrome extensions; this does not establish Android
+  extension availability or an enabled signal on this owner's browser.
+
+Next **single** owner step: Chrome private tab → reference URL → Client-side
+detection → report only **true**, **false**, or **DOM signal not present**. No
+account, credential, identifier, cookie, screenshot or request header is requested.
+True proves reference-site enabled signal only; subsequent actual dogfood GPC
+behavior still needs checking. False/absent cannot pass enabled-owner GPC and
+must be recorded as **NOT_ENABLED** (false) or **NOT_EXPOSED** (absent), not waived. No Canary
+flag or new browser/extension is recommended/installed at this step. This manual
+reference check adds no dependency or integration to OriginMetric.
+
+Existing injected live-page GPC=true technical proof remains separate from owner
+browser signal evidence. No new OriginMetric data/test revenue/restore was run;
+no production source/env/config/DB/volume/timer change. Ingestion remains closed;
+**data collection NOT PASSED; formal G1 PENDING; P2 OPEN; P3 NOT STARTED.**
