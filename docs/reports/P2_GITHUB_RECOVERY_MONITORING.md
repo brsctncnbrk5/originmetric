@@ -1216,3 +1216,47 @@ data collection NOT PASSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
 Application/env/nginx/deploy/DB/volumes and existing age key unchanged. Deferred
 off-phone recovery unchanged. Prepared workflow copies and safe private evidence
 are retained for review; full application suite was not rerun for workflow-only work.
+
+
+## Recovery detector-error email matched / next scheduled evidence — 2026-10-03 UTC
+
+Owner reports receipt **4 October 00:09**, subject **“Run failed: Remote backup
+freshness watchdog - main (5f0b38a)”**, naming run **37154103588**. Read-only API
+matches workflow **Remote backup freshness watchdog**, branch **main**, full SHA
+`5f0b38a94b7edbd5514d0e2076037f27eab5e73e`, and completed/failure at **3 October
+21:09:34 UTC**. Explicit run identification plus matching subject SHA/name/branch
+correlates the owner's email with this exact [run](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37154103588).
+Owner timezone remains unspecified; 4 October 00:09 matches the UTC completion
+minute/date rollover if UTC+03, not assumed. No new sender value, header or mailbox
+inspection was supplied; previous message sender evidence is not transferred here.
+
+**Delivery of this detector-error email: PASS / OWNER-REPORTED.** The draft-visibility
+UNKNOWN failure remains a detector error, not an actual missing backup. Corrected
+freshness manual run PASS remains valid. This closes the pending receipt item for
+37154103588 only; actual stale/missing-backup and production backup-job failure
+notification acceptance remain **NOT VERIFIED**. No repeated notification/control.
+
+Continued next operational evidence with read-only checks at **21:18 UTC**:
+local backup watchdog **FRESH_REMOTE_VERIFIED_BACKUP**, timer **enabled/active**,
+LastTrigger empty; **first scheduled backup PENDING / NOT DUE** at audit, next
+**2026-10-04 03:15 UTC**. Private recovery expiry and freshness workflows both
+active; no schedule-event run returned yet. **First scheduled expiry/freshness
+completion PENDING**, not PASS from installed schedule/manual runs.
+Public HTTPS [scheduled run 37154300615](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37154300615)
+created **21:12:40 UTC**, completed/success. The preceding listed scheduled samples
+were **17:37:38** and **12:49:14 UTC**; this sparse result history does not prove
+continuous five-minute availability or independent alarm delivery for missed
+observer schedules. No schedule reliability guarantee or missing-run PASS inferred.
+
+**Next open evidence:** actual scheduled freshness/expiry outcomes and first real
+03:15 UTC backup → remote readback. These checks await external scheduled runs;
+no immediate owner action is required. Audit after due time must check actual
+service execution, verified new snapshot/readback and cleanup rather than timer
+state alone. Keep actual missing-backup/failure notification, GitHub-independent
+dead-man, strict <=90-day provider/job-failure guarantee and deferred off-phone
+recovery gaps explicit. Existing G1 owner-GPC gap remains unchanged; no new
+browser or completed owner step is requested again.
+
+No production config/deploy/DB/volume/timer change, new backup, workflow dispatch,
+notification or application regression run. **Formal G1 PENDING; GPC NOT_EXPOSED;
+data collection NOT PASSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**

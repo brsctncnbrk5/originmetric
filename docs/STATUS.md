@@ -27,6 +27,25 @@
 
 ## Next step
 
+**2026-10-03 UTC / owner 4 October — recovery detector-error email RECEIVED.**
+Owner reports **4 October 00:09**, subject **Run failed: Remote backup freshness
+watchdog - main (5f0b38a)**. API independently matches full commit, workflow,
+branch and failure in **37154103588**, completed **3 October 21:09:34 UTC**.
+Owner timezone unspecified; date rollover/minute match at UTC+03 is conditional.
+**Detector-error delivery PASS / OWNER-REPORTED**; actual missing-backup and
+backup-job failure delivery remain NOT VERIFIED. Corrected watchdog technical PASS
+retained; earlier visibility error not recategorized as missing backup.
+Read-only follow-up **21:18 UTC**: local backup fresh, timer enabled/active,
+LastTrigger empty; first scheduled backup **PENDING / NOT DUE**, next **4 October
+03:15 UTC**. Recovery schedules active, no scheduled run returned yet. Public
+HTTPS scheduled observation **37154300615 SUCCESS** at 21:12 UTC; sparse recorded
+runs do not prove uninterrupted five-minute monitoring or missed-observer alarm.
+**Next open evidence:** first scheduled freshness/retention execution and real
+03:15 UTC backup with remote readback. Not inferable from manual runs/timer setup;
+no immediate owner action required for these checks. Actual missing-run delivery,
+GitHub-independent dead-man, strict lifecycle guarantee and prior G1 gaps remain open.
+**G1 PENDING; GPC NOT_EXPOSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — recovery Actions scope verified; retention + remote freshness activated.**
 Owner reports account-wide **brsctncnbrk5 Actions $0 / Stop usage Yes**. Repo API
 confirms private `originmetric-recovery` belongs to that account; coverage follows
