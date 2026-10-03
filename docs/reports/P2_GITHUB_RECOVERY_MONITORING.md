@@ -1498,3 +1498,92 @@ phone-independent recovery DEFERRED; existing age key unchanged; P2 OPEN;
 P3 NOT STARTED.** Actual execution cannot approve another window or the full
 revenue chain. Completion and post-push SHA/clean-tree audit recorded privately;
 no new full CI result inferred from this acceptance run.
+
+## GPC evidence reconciliation / closed-ingestion controls — 2026-10-04 local
+
+Canonical basis: locked plan §8.1 and §28 G1 item 2 require
+`navigator.globalPrivacyControl === true` to block storage and sending by default,
+including after `consent(true)`, with the explicit `data-gpc="ignore"` override.
+§28 calls for implementation and passing tests; it does not explicitly require a
+particular physical browser. The current formal review additionally retains the
+open enabled-owner browser evidence. That requirement is not silently removed
+because the technical tests pass or because a browser exposes no signal.
+
+**NOT_EXPOSED cause verified at its actual evidence level.** Original private
+owner record `.runtime/p2-gpc-not-exposed-20261003T180342Z/owner-result.json`
+states Android Chrome, reference **Client-side detection: DOM signal not present**,
+OWNER_REPORTED, enabled-owner false, server-side `Sec-GPC` NOT_CHECKED. This
+explains the recorded classification: the reference did not observe the DOM
+property, rather than observing an enabled true signal. Browser version, settings,
+and the deeper reason for the missing property were not captured; neither a
+browser-wide support claim nor a server-header conclusion follows. The existing
+tracker checks strict true; absent/false do not activate its GPC block. Required
+consent remains a separate protection. The banner's ordinary Allow text cannot
+distinguish absent from false and cannot certify GPC.
+
+The later owner record
+`.runtime/p2-gpc-unavailable-20261003T200656Z/owner-result.json` explicitly reports
+no other available GPC browser. Preserve that answer: no repeated unavailable
+Chrome reference check, new browser/extension, experimental setting or service
+was requested or installed.
+
+Focused verification **3 October 23:29:58–23:30:08 UTC** used the existing
+`/usr/bin/google-chrome`, fresh isolated contexts and the current public tracker.
+Source remains `e74bfc1fcc6e404be977feee059dc1d3c78d170c`; tracker SHA-256 remains
+`b629914f93296cbb78d4d09e940c0e0ff78139b59f9a3008ecbae68a9eb6d7e9`, equal to the
+previous deployed-image gate evidence. No production source change or deployment.
+
+| Focused check | Result / acceptance limit |
+| --- | --- |
+| Operator browser, unmodified native signal, actual `/dogfood` | DOM property absent, outgoing navigation `Sec-GPC` absent, zero tracker state/requests before consent. Allow deliberately not clicked. This is operator evidence only; it does not inspect the owner's Chrome or establish GPC success. |
+| Actual `/dogfood`, explicitly injected DOM true | Required consent present, no ignore override. Allow displayed the privacy-blocked message. Zero visitor identifier, `om_*` cookies/localStorage/sessionStorage and event request attempts; still zero after pushState/replaceState/popstate/hashchange and reload plus Allow. PASS_INJECTED_ONLY. |
+| `data-gpc="ignore"`, deployed bytes in isolated intercepted origin | GPC true, required-consent pre-Allow state/requests zero; Allow created an identifier and exactly one intercepted event request. Withdrawal cleared state. PASS_ISOLATED_INTERCEPTED_ONLY; no production request or DB acceptance. |
+| Closed-access/resource proof | Actual closed nginx file exactly equals the G1/1 rollback copy before/after, `PUBLIC_G1_READY=no`, protected container/config metadata unchanged. Six production counts unchanged: events 1, sessions 1, customers/links/revenue/attribution 0. |
+
+The live test intercepted any `/api/v1/e` regression attempt before transmission,
+while separately counting attempts (zero). Thus closed-server dropping cannot
+explain the observed zero sends. The override origin and all its responses were
+intercepted, never forwarded to production. The runner initially stopped before
+browser checks on an incorrect nginx filename, then on an unavailable default
+Playwright binary; corrected to the existing nginx path and installed Chrome.
+Those setup attempts are not PASS runs and did not open access. Final runner
+exit 0. Private runner and safe-value result:
+`.runtime/p2-gpc-review-20261004/verify.mjs`, `result.json`. No identifiers, site
+keys, temporary access token, raw browser headers or logs published.
+
+| G1/P2 item | Consolidated status after this review |
+| --- | --- |
+| G1/1 required consent / withdrawal | PASS actual-domain operator scope; prior owner banner setup ACCEPTED. Phone storage/network remains unobserved. |
+| G1/2 default GPC + configurable ignore | Technical PASS retained and focused controls PASS. Physical enabled-owner signal/actual behavior NOT PASSED; original NOT_EXPOSED retained. |
+| G1/3 body/schema/origin/dedup/failure isolation | Prior matching-source technical PASS retained; no new regression-suite claim. |
+| G1/4 rate limits / ceiling / daily cap / edge rule | Prior technical PASS and accepted saved-panel evidence retained; direct provider API/original-export verification remains unverified. |
+| G1/5 log redaction | Prior technical PASS and actual G1/1 window sensitive-log PASS retained. |
+| G1/6 browser trust boundary | Prior technical PASS retained; production customer/link/revenue/attribution counts remain zero. |
+| Actual persisted full visit → identify → revenue → attribution chain | NOT RUN; only the separately approved G1/1 event/session exists. |
+| Populated encrypted backup / actual phone restore | NOT PASSED; fixture rehearsal and empty restore do not close this item. |
+| Recovery/monitoring | Existing manual upload/readback and labelled owner-reported email controls retained. Scheduled backup/retention/freshness completion, actual backup-failure/missing-run delivery, GitHub-independent dead-man and strict lifecycle acceptance remain unverified by this review. |
+| Off-phone secret/account recovery | DEFERRED; current age identity/recipient preserved, no key read/generation/rotation. |
+
+**Missing physical validation:** first observe a real enabled DOM true signal,
+then on the actual dogfood page verify no ignore attribute, click Allow and
+observe zero tracker identifiers/storage and zero event request attempts, including
+history/reload. A privacy-blocked UI message alone is only owner UI evidence;
+native true at a reference alone is signal evidence. Neither alone closes the
+complete behavior proof. An absent or false signal cannot receive enabled-GPC PASS.
+
+**Conditional single owner step:** when a physical browser with GPC already
+enabled becomes available, open
+[the existing reference page](https://global-privacy-control.vercel.app/) in that
+browser and report its **Client-side detection** value and browser name.
+No action on the currently unavailable Android Chrome setup is needed now.
+`true` permits the next actual-site behavior verification; false/absent leaves
+acceptance open. This is conditional on a newly available capable browser, not a
+request to repeat the completed Chrome check or install a dependency.
+
+**Access stays closed.** No temporary test access is necessary for signal/zero-send
+GPC proof; no reopening proposed or authorized. Any future positive persisted
+traffic would require its own stated scope and authorization; D-009 was exhausted.
+**Formal G1 PENDING; GPC NOT_EXPOSED / enabled-owner NOT PASSED;
+PUBLIC_G1_READY=no; recovery DEFERRED; current age key unchanged; P2 OPEN;
+P3 NOT STARTED.** Documentation-only publication; commit/push and remote SHA
+equality audit will be kept in `.runtime/p2-gpc-review-20261004/publication.json`.

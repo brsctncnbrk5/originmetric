@@ -27,6 +27,31 @@
 
 ## Next step
 
+**2026-10-04 local / 3 October 23:30 UTC — GPC evidence reconciled;
+closed-ingestion technical controls PASS, physical-browser evidence OPEN.**
+Android Chrome's original owner-reported **DOM signal not present** means the
+reference page did not observe a `navigator.globalPrivacyControl` property;
+it does not establish enabled GPC, a false value, or server-side `Sec-GPC`.
+Owner already reported no other available GPC browser; no repeat Chrome check
+or installation requested. Canonical §28 G1/2 default blocking and
+`data-gpc="ignore"` are technically verified: live deployed tracker with injected
+true suppressed all storage/identifiers/request attempts after Allow, history and
+reload; isolated intercepted override generated one request only after consent
+and cleared state on withdrawal. **Injected/control PASS is not native GPC PASS.**
+Actual-domain G1/1 operator PASS retained; original banner acceptance retained;
+G1 items 3–6 retain prior technical evidence and provider-source limits.
+Missing: a physical browser exposing true and its actual-site zero-storage/
+zero-sending evidence. Until such a browser is available, no immediate phone
+action can close that gap. [Evidence, checklist and conditional single step](reports/P2_GITHUB_RECOVERY_MONITORING.md#gpc-evidence-reconciliation--closed-ingestion-controls--2026-10-04-local).
+Private result `.runtime/p2-gpc-review-20261004/result.json`; production remains
+**1 event / 1 session / 0 customers, links, revenue, attribution**; closed nginx
+bytes and protected resources unchanged. No access window, deployment or age-key
+operation. **GPC NOT_EXPOSED / enabled-owner NOT PASSED; G1 PENDING;
+PUBLIC_G1_READY=no; recovery DEFERRED; existing age key unchanged; P2 OPEN;
+P3 NOT STARTED.** Full revenue chain/populated restore and separate recovery/
+monitoring acceptance gaps remain open. This entry supersedes historical next-step
+requests below; no new general permission or test-access approval requested.
+
 **2026-10-04 local / 3 October 22:52–22:53 UTC — actual controlled G1/1 PASS
 (operator-browser scope); ingestion CLOSED AGAIN.** Owner explicitly approved
 one isolated browser/current test project, `/api/v1/e` only, maximum 600 seconds.

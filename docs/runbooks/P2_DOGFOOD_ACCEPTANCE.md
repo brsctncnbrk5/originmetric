@@ -298,3 +298,24 @@ authorized chain, reconcile/reuse the unique existing labelled session rather
 than inventing a new zero baseline or claiming it was the owner's phone visit.
 Formal G1 stays PENDING; native owner GPC NOT_EXPOSED / NOT PASSED, off-phone
 recovery DEFERRED, existing age identity preserved, P2 OPEN, P3 NOT STARTED.
+
+### GPC evidence follow-up with access closed
+
+The 2026-10-04 local [focused review](../reports/P2_GITHUB_RECOVERY_MONITORING.md#gpc-evidence-reconciliation--closed-ingestion-controls--2026-10-04-local)
+retains native owner **NOT_EXPOSED / NOT PASSED**. Default injected-true behavior
+on the live page and the isolated `data-gpc="ignore"` control PASS only at their
+technical evidence level. Do not count a missing signal, ordinary Allow UI,
+202/drop or injected true as enabled physical-browser acceptance.
+
+The owner already reported no other available GPC browser. No repeat Android
+Chrome check or installation is required now. Conditional single step when a
+capable physical browser becomes available: with GPC enabled, open the existing
+[reference](https://global-privacy-control.vercel.app/) and report Client-side
+detection plus browser name. True proves only signal availability; subsequent
+actual-site Allow testing still needs observed zero tracker identifiers/storage
+and zero event request attempts. Record absent as NOT_EXPOSED, false as NOT_ENABLED.
+Keep owner UI, native signal and instrumented behavior evidence separate.
+
+Keep ingestion closed for these checks; zero-send GPC evidence needs no access
+window or persisted event. Preserve the one-event/one-session baseline, age key,
+recovery DEFERRED and P3 NOT STARTED. Do not reuse the exhausted D-009 approval.
