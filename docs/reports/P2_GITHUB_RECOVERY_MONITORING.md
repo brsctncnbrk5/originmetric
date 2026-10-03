@@ -744,3 +744,27 @@ no persisted real-visit/test-payment attribution or new populated restore is
 claimed. Existing key decision/vault evidence stand. Timer enabled/active, daily
 **03:15 UTC**, first scheduled result **PENDING**; no production config/deploy/DB
 write or volume change in this deny verification. **P2 OPEN; P3 NOT STARTED.**
+
+## Owner Allow UI acceptance — 2026-10-03
+
+Owner reports clicking **İzin ver** in the same tab and seeing **İzin verildi**.
+Recorded at **17:31 UTC**, source **OWNER-REPORTED**; this is banner UI acceptance
+only. No phone identifier, cookie, request trace or sensitive screenshot collected.
+Safe metadata: `.runtime/p2-allow-20261003T173115Z/owner-allow.json`.
+Installed exact events location still returns 202 without upstream proxy;
+ingestion was not opened. No config/deploy/production DB write/volume change was
+made for this recording, and no real payment or new restore was performed.
+
+**Data collection NOT PASSED / actual persisted visit PENDING.** The reported UI
+message (or a 202/drop response) is not application acceptance/persistence proof.
+Earlier deny counters/counts remain evidence from their dated checks, not new
+measurements after this Allow click. This result does not establish GPC behavior.
+Owner's explicit instruction to keep collection unaccepted while ingestion is
+closed is preserved. Formal G1 remains pending; P2 open; P3 not started.
+
+Next single owner step: **without refreshing the same tab**, click **İzni geri çek**
+and report only whether **İzin geri çekildi** appears. Withdrawal's actual tracker
+state clearing/request stopping and GPC review remain separate acceptance evidence;
+no withdrawal PASS is written before the checks. Existing age-key/no-rotation and
+daily 03:15 UTC decisions remain unchanged; completed vault/attachment steps are
+not requested again.

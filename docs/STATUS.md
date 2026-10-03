@@ -27,6 +27,16 @@
 
 ## Next step
 
+**2026-10-03 — owner ALLOW UI check COMPLETE:** owner clicked **İzin ver** in
+the same tab and saw **İzin verildi**. Recorded at 17:31 UTC as **owner-reported
+banner behavior only**. Installed ingestion gate remains 202/drop; no gate/config,
+deployment, DB or volume change made for this step. **Data collection NOT PASSED**:
+this UI result/HTTP 202 does not prove application acceptance or persisted data.
+**Next owner check only:** without refreshing the same tab, click **İzni geri çek**
+and report whether **İzin geri çekildi** appears. Withdrawal/GPC acceptance,
+formal G1, actual persisted controlled chain and populated restore remain pending.
+Existing age key decision and 03:15 UTC schedule preserved. **P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — owner DENY check COMPLETE / server persistence unchanged:** owner
 clicked **Reddet**, saw **Reddedildi**, and has **not** clicked Allow. At 17:03 UTC,
 all ten production table counts match the pre-owner baseline: workspace/project/

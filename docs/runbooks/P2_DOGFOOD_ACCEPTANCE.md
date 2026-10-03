@@ -41,18 +41,23 @@ on the phone. Daily backup remains **03:15 UTC**.
    insufficient: closed ingress also returns 202 while dropping events.
 
 Owner deny check is now **COMPLETE**: owner clicked **Reddet**, saw **Reddedildi**,
-and explicitly has not clicked Allow. Production facts remain zero and application
+and at that deny step had not clicked Allow. The deny audit found zero production facts and empty application
 ingestion counters empty; a labelled operator empty POST confirmed the active
 202/drop path without application ingestion. This does not observe the owner's
 phone outbound requests; proxy access logs are disabled.
 
-Current next owner check is **only allow UI**: in the same private tab click
-**İzin ver**, and report the visible status text. Normally **İzin verildi** appears;
-GPC may instead show the browser privacy preference blocking statistics. No ID,
-cookie, key, token or screenshot is requested.
+Owner Allow UI is now **COMPLETE, OWNER-REPORTED**: clicked **İzin ver** in the
+same tab and saw **İzin verildi**, recorded 2026-10-03 17:31 UTC. This proves the
+reported banner transition, not data collection. Ingestion remains 202/drop;
+**data collection NOT PASSED** until the gate opens after formal G1 and an actual
+persisted visit is independently verified. This is not a GPC-enabled browser test.
+
+Current next owner check is **only withdrawal UI**: without refreshing the same
+tab, click **İzni geri çek**, and report whether **İzin geri çekildi** appears.
+No ID, cookie, key, token or screenshot is requested.
 Live automated pre-consent/deny check already observed no analytics request,
 visitor identifier, tracker cookie or tracker local storage. Owner confirmation
-for allow/withdraw/GPC is still pending; those checks follow individually. Data gates remain
+for withdraw/GPC is still pending; those checks follow individually. Data gates remain
 closed throughout the banner acceptance checks.
 
 ## Visit → conversion → revenue → attribution
