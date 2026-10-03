@@ -27,6 +27,17 @@
 
 ## Next step
 
+**2026-10-03 — Actions email settings already enabled; delivery NOT_RECEIVED.**
+Owner reports **GitHub + Email (Failed workflows only), Saved**; setting prerequisite
+is COMPLETE / OWNER-REPORTED. Read-only GitHub API confirms all three existing
+controls completed with failure and actor/triggering actor `brsctncnbrk5`; the
+serial control failed at its intended labelled step. No actor mismatch observed.
+Email delivery remains **NOT PASSED**, cause **UNKNOWN**; no new control sent.
+**Next single owner step:** search the GitHub notification mailbox, including
+spam/trash, for `originmetric-monitoring`; report found or not found. No mail
+address/content requested; do not repeat the completed Actions-setting step.
+**G1 PENDING; GPC NOT_EXPOSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — failure-control email NOT_RECEIVED (OWNER-REPORTED).**
 Owner reports no email from the existing labelled GitHub failure control.
 Workflow failure-path evidence remains valid; email delivery is **NOT PASSED**.

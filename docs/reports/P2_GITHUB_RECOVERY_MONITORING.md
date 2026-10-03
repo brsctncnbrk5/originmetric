@@ -993,3 +993,36 @@ backup evidence remain open regardless of notification settings.
 Banner acceptance remains complete; GPC NOT_EXPOSED / enabled-owner GPC NOT PASSED;
 **formal G1 PENDING; ingestion closed; data collection NOT PASSED; P2 OPEN;
 P3 NOT STARTED**. No production application/config/DB or workflow modification.
+
+
+## Actions notification setting confirmed / delivery diagnosis — 2026-10-03
+
+Owner reports existing **Actions: GitHub, Email (Failed workflows only); Saved**
+and continued nonreceipt. Setting prerequisite is **COMPLETE / OWNER-REPORTED**;
+email receipt remains **NOT_RECEIVED / NOT PASSED**. No disabled-setting diagnosis
+is justified and the completed setting step is not requested again.
+
+Read-only GitHub API verification: controls 37132327501, 37132330300 and
+37133412117 all have event `workflow_dispatch`, status completed, conclusion
+failure, and both actor and triggering_actor `brsctncnbrk5`. Serial control
+37133412117 failed at **Controlled notification test (expected failure only)**;
+setup succeeded and safe summary completed. This excludes cancellation and actor
+mismatch as explanations for these controls, not all possible delivery causes.
+
+[GitHub workflow notification documentation](https://docs.github.com/en/actions/concepts/workflows-and-actions/notifications-for-workflow-runs)
+confirms native notifications for triggered runs when notifications are enabled.
+No API receipt/bounce proof is available in the inspected workflow evidence;
+mail routing/filtering and actual receipt remain unverified, cause **UNKNOWN**.
+[GitHub notification header documentation](https://docs.github.com/en/subscriptions-and-notifications/reference/email-notification-headers)
+identifies `notifications@github.com` as sender. No mailbox contents accessed.
+
+**Next single owner step:** in the mailbox used for GitHub notifications, search
+all mail including spam/trash for `originmetric-monitoring`; report found / not
+found only. This distinguishes mailbox filtering from apparent nondelivery without
+requesting an address, headers, message content or screenshot. No new notification,
+workflow, account-setting or production mutation performed.
+
+Banner setup remains ACCEPTED; GPC NOT_EXPOSED / enabled-owner GPC NOT PASSED;
+**formal G1 PENDING; data collection NOT PASSED; ingestion closed; P2 OPEN;
+P3 NOT STARTED**. Scheduled backup, independent missing-run/dead-man, lifecycle
+and deferred phone-independent recovery gaps retain their earlier evidence limits.
