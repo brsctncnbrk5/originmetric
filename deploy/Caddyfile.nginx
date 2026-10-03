@@ -1,0 +1,40 @@
+{
+	auto_https off
+	# No access log. Redact request context from Caddy's operational errors too.
+	log {
+		format filter {
+			wrap json
+			fields {
+				request>remote_ip delete
+				request>remote_port delete
+				request>client_ip delete
+				request>headers delete
+				request>uri delete
+			}
+		}
+	}
+}
+:80 {
+	# Loopback publication + private nginx token, not caller-supplied IP/XFF.
+	@untrusted not header X-OM-Proxy-Token {$INGEST_PROXY_TOKEN}
+	respond @untrusted 403
+	header Cache-Control "no-store"
+	@private path /internal/* /api/internal/*
+	respond @private 404
+	@unsafeFixture path /fixtures/basic /fixtures/gpc /fixtures/csp /fixtures/storage /fixtures/blocked /fixtures/withdrawal
+	respond @unsafeFixture 404
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+	}
+	reverse_proxy app:3000 {
+		header_up X-OM-Proxy-Token {$INGEST_PROXY_TOKEN}
+		# nginx normalized CF-Connecting-IP from verified Cloudflare peers.
+		header_up -X-Forwarded-For
+		header_up -X-Real-IP
+		transport http {
+			dial_timeout 5s
+			response_header_timeout 15s
+		}
+	}
+}

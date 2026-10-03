@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 const port = Number(process.env.E2E_PORT ?? 3100);
 // Optional override for environments with a pre-installed Chromium of a different revision.
 const executablePath = process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE || undefined;
+const internalToken = process.env.INTERNAL_TOKEN ?? "originmetric-e2e-internal";
 
 export default defineConfig({
   testDir: "tests/e2e",
@@ -22,9 +23,17 @@ export default defineConfig({
   ],
   webServer: {
     // Serves the production build; `npm run test:e2e` builds first.
-    command: `npx next start -H 127.0.0.1 -p ${port}`,
+    command: "node .next/standalone/server.js",
     url: `http://127.0.0.1:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,
+    env: {
+      INTERNAL_TOKEN: internalToken,
+      INGEST_PROXY_MODE: "local",
+      // Isolated browser fixture only; production must use its registered public key.
+      OM_DOGFOOD_SITE_KEY: "pk_DogfoodBrowserTest0001",
+      HOSTNAME: "127.0.0.1",
+      PORT: String(port),
+    },
   },
 });

@@ -1,0 +1,16 @@
+[Unit]
+Description=OriginMetric Cloudflare-only public web ingress
+After=network-pre.target
+Before=nginx.service
+Wants=network-pre.target
+ConditionPathExists=/etc/originmetric/firewall/cloudflare-v4.txt
+ConditionPathExists=/etc/originmetric/firewall/cloudflare-v6.txt
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/originmetric-web-firewall apply
+# Stop does not reopen web access. Explicit rollback removes owned rules.
+
+[Install]
+WantedBy=multi-user.target

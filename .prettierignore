@@ -11,3 +11,8 @@ next-env.d.ts
 
 # Hand-written docs (locked planning content must not be reformatted)
 *.md
+
+public/js/
+.runtime/
+backups/
+secrets/

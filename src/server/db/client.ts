@@ -35,7 +35,7 @@ export function createDb(
   const sql = postgres(url, {
     max: options.max ?? 10,
     onnotice: () => {},
-    connection: { TimeZone: "UTC" },
+    connection: { TimeZone: "UTC", statement_timeout: 10000, lock_timeout: 5000 },
   });
   const db = drizzle(sql, { schema });
   return { db, sql, close: () => sql.end({ timeout: 5 }) };

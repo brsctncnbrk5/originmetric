@@ -17,6 +17,7 @@ import {
   bigint,
   boolean,
   char,
+  date,
   check,
   foreignKey,
   index,
@@ -337,5 +338,21 @@ export const customerAttribution = pgTable(
       sql`(${t.status} = 'unattributed' and ${t.creditedSource} is null and ${t.firstTouchSource} is null)
         or (${t.status} <> 'unattributed' and ${t.creditedSource} is not null and ${t.firstTouchSource} is not null and ${t.acquiredAt} is not null)`,
     ),
+  ],
+);
+
+/** P2 abuse budget, UTC day; persistent across app restarts. Not billing/quota usage. */
+export const ingestionDaily = pgTable(
+  "ingestion_daily",
+  {
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    day: date("day", { mode: "string" }).notNull(),
+    accepted: integer("accepted").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.projectId, t.day] }),
+    check("ingestion_daily_positive", sql`${t.accepted} > 0`),
   ],
 );

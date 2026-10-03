@@ -10,12 +10,13 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "npm run tracker:build && next build && node scripts/prepare-standalone.mjs",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint --max-warnings=0 .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
+    "gate:g1": "flock -n .runtime/operation.lock node scripts/vps/gate-g1.mjs",
     "test": "vitest run",
     "test:unit": "vitest run --project unit",
     "test:db": "vitest run --project db",
@@ -26,7 +27,8 @@
     "db:migrate": "drizzle-kit migrate",
     "db:check": "drizzle-kit check",
     "check": "npm run lint && npm run format:check && npm run typecheck && npm run test && npm run tracker:build",
-    "test:e2e": "npm run build && playwright test"
+    "test:e2e": "npm run build && playwright test",
+    "demo": "npm run build && playwright test tests/e2e/vertical-slice.spec.ts --project=chromium"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",

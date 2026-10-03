@@ -1,0 +1,7 @@
+# Optional read-only extension. Mount only redacted operational status, never credentials/logs.
+services:
+  app:
+    environment:
+      OM_OPERATIONS_FILE: /app/operations/snapshot.json
+    volumes:
+      - ${OM_OPERATIONS_DIR:?Select the private operational-summary directory}:/app/operations:ro
