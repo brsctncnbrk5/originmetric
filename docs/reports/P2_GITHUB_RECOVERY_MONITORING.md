@@ -1266,7 +1266,7 @@ data collection NOT PASSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
 
 Continued canonical P2/§28 acceptance work without waiting for scheduled backup
 or expiry. No scope change, data-gate opening, deploy or production data mutation.
-Existing age identity/recipient is preserved; no new age key generated, read,
+Existing owner/production age identity/recipient is preserved; no such key generated, read,
 transferred or rotated. Off-phone secret/account recovery stays **DEFERRED**.
 Owner GPC stays **NOT_EXPOSED / enabled-owner acceptance NOT PASSED**.
 
@@ -1343,9 +1343,23 @@ Commands and exact future capture protocol updated in the
 Lint/typecheck/format checks PASS; script syntax checked. Subprocess failure artifacts retain only tool/exit/failure-class metadata, never
 SQL/test diagnostics that might contain unknown generated identities or keys.
 Candidate and full committed-history redacted secret scans PASS.
-No application source,
-tracker bundle, migration or production build/deploy change; full CI publication
-and local/remote SHA audit follow this code commit.
+No application source, tracker bundle, migration or production build/deploy change.
+
+**Full CI SUCCESS** for code `f959cd31fe441b0b0c531c7cd40a393c15dce7c4`,
+[run 37157304870](https://github.com/brsctncnbrk5/originmetric/actions/runs/37157304870).
+GitHub API independently verifies the exact head SHA, completed/success state and
+all verification steps: full-history secret scan, lint/format/types, migrations
+and schema, unit/real-DB tests, tracker budget/build, Playwright/demo, package
+script syntax and production Docker/consent dogfood/synthetic encrypted restore.
+CI creates only its disposable synthetic encryption key, not an owner/production
+key; this is not actual populated off-VPS backup or phone restore acceptance.
+The duplicate push-trigger run was concurrency-cancelled, not a failed control.
+Code committed and pushed to the assigned preparation branch; local/remote SHA
+both `f959cd31fe441b0b0c531c7cd40a393c15dce7c4`, clean tree at that publication.
+Private audit: `.runtime/p2-prepared-20261003T214706427Z/code-publication.json`.
+This final evidence update is a documentation-only commit; its post-push SHA and
+clean-tree audit is recorded alongside the preparation artifacts, avoiding a
+self-referential commit hash in the document.
 
 ### Remaining canonical acceptance (no missing proof inferred)
 

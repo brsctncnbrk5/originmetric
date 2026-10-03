@@ -11,7 +11,7 @@
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
 | P2 | **TRADEBOT REMOVED; WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
-| P2 last full-suite tested code head | `e74bfc1fcc6e404be977feee059dc1d3c78d170c` — [CI closed-preview continuation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37137940264) |
+| P2 last full-suite tested code head | `f959cd31fe441b0b0c531c7cd40a393c15dce7c4` — [CI closed-ingestion acceptance preparation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37157304870); deployed application remains `e74bfc1fcc6e404be977feee059dc1d3c78d170c` |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
 | P1a base `main` | `03aaea9e9abf779c704b974909495a20189f6edf` |
@@ -48,7 +48,13 @@ than requested again. **Owner GPC NOT_EXPOSED / enabled-owner NOT PASSED**;
 **Formal G1 PENDING; data collection NOT PASSED; ingestion closed; P2 OPEN;
 P3 NOT STARTED.** No new owner decision is needed for completed preparation.
 Scheduled and actual production proofs remain separate; do not infer PASS from
-these fixtures or from the installed schedules. CI result tracked with task publication.
+these fixtures or from the installed schedules. Full CI **SUCCESS** for code
+`f959cd31fe441b0b0c531c7cd40a393c15dce7c4`: lint/types, migrations, unit/DB,
+Playwright, production Docker/consent dogfood and synthetic encrypted restore.
+[Run 37157304870](https://github.com/brsctncnbrk5/originmetric/actions/runs/37157304870).
+CI uses a disposable synthetic key; existing owner/production age key is untouched.
+Code publication local/remote SHA equality verified; this final evidence update is
+a separate documentation commit, with its final SHA audit kept privately.
 
 **2026-10-03 UTC / owner 4 October — recovery detector-error email RECEIVED.**
 Owner reports **4 October 00:09**, subject **Run failed: Remote backup freshness
