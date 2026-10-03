@@ -52,12 +52,20 @@ reported banner transition, not data collection. Ingestion remains 202/drop;
 **data collection NOT PASSED** until the gate opens after formal G1 and an actual
 persisted visit is independently verified. This is not a GPC-enabled browser test.
 
-Current next owner check is **only withdrawal UI**: without refreshing the same
-tab, click **İzni geri çek**, and report whether **İzin geri çekildi** appears.
-No ID, cookie, key, token or screenshot is requested.
+Owner withdrawal UI is now **COMPLETE, OWNER-REPORTED**: same tab, no reload,
+**İzni geri çek** clicked, **İzin geri çekildi** visible. Separate live controls
+verified normal tracker cookies 2 → 0 and visitor absent; forced cookie-write
+failure fallback localStorage 3 → 0. No new analytics requests after history
+events/reload in either control. These controls are not phone storage/network
+inspection and the UI message alone is not deletion/sending proof.
+
+Current next acceptance is **GPC**. Ask only the owner's browser name first to
+prepare its supported privacy-setting step; do not presume support or ask for
+screenshots/IDs/cookies. Independently injected GPC=true on the live page blocked
+storage and analytics even after Allow, but owner browser setting is unverified.
 Live automated pre-consent/deny check already observed no analytics request,
 visitor identifier, tracker cookie or tracker local storage. Owner confirmation
-for withdraw/GPC is still pending; those checks follow individually. Data gates remain
+for GPC is still pending. Data gates remain
 closed throughout the banner acceptance checks.
 
 ## Visit → conversion → revenue → attribution

@@ -768,3 +768,44 @@ state clearing/request stopping and GPC review remain separate acceptance eviden
 no withdrawal PASS is written before the checks. Existing age-key/no-rotation and
 daily 03:15 UTC decisions remain unchanged; completed vault/attachment steps are
 not requested again.
+
+## Owner withdrawal UI and independent live state/sending verification — 2026-10-03
+
+Owner reports **same tab / no reload / İzni geri çek clicked / İzin geri çekildi
+visible**. Recorded as **OWNER-REPORTED UI COMPLETE**, not identifier deletion,
+request stopping or phone network/storage inspection. The owner's explicit
+evidence distinction is preserved. Safe control evidence is under
+`.runtime/p2-withdraw-20261003T173635Z/`; no value of a visitor/customer identifier,
+cookie, key, token or request body is shown or saved in this evidence.
+
+Independent automated **live originmetric.app/dogfood** controls:
+
+| Control | Actual observation | Scope |
+| --- | --- | --- |
+| Required-consent baseline | Visitor absent, tracker cookie/localStorage/sessionStorage counts 0; analytics requests 0 | Fresh independent profile, not owner phone |
+| Normal Allow | Visitor present, tracker cookies 2; one analytics request, response 202/drop | Client positive control only; not application persistence |
+| Normal withdrawal | Visitor absent, tracker cookies 2 → 0; tracker storage counts 0 | Direct browser state checks, not inferred from UI |
+| Cookie-write-failure fallback | Simulated cookie write rejection; Allow created 3 tracker localStorage entries; withdrawal 3 → 0 and visitor absent | Explicit injected fallback control on live tracker |
+| Post-withdraw history/reload | 0 new analytics requests for pushState/replaceState/popstate; normal branch also hashchange; reload still visitor/storage absent and 0 new requests | 1000 ms post-history + 500 ms after reload, both branches |
+| Default GPC | Injected navigator GPC=true; Allow showed privacy-blocked status; visitor/storage absent, 0 analytics requests | Simulated signal on live page; not actual owner browser setting |
+
+Normal control completed **17:38:31 UTC**; fallback completed **17:40:24 UTC**.
+Profiles/browser were closed after testing. These controls verify the live
+implementation's clearing and no new sends in the stated cases/windows; they do
+not observe the owner's phone or claim to cancel already-sent/in-flight requests.
+No trace, screenshot, request payload or cookie contents were retained.
+
+Read-only server verification at **17:39 UTC**: all ten counts identical to the
+prior deny baseline, configuration rows 1 each and domain facts 0; containers/
+start times/restarts unchanged, ingestion still closed. Recheck after both
+controls at **17:40:53 UTC**: application ingestion counters **{}**; events,
+sessions, customers, revenue, links and attribution all **0**. **Data collection
+NOT PASSED**: allowed client requests were dropped by nginx. No production
+config/deploy/DB write/volume change, revenue event or populated restore occurred.
+
+**Next acceptance is GPC.** Browser name requested (metadata only) so the next
+single owner privacy-setting/check step fits the actual browser; support is not
+assumed and no new browser/dependency is installed. Injected GPC control is kept
+separate from owner setting acceptance. Formal G1 remains pending; existing key,
+vault/attachment evidence and 03:15 UTC schedule remain unchanged. **P2 OPEN;
+P3 NOT STARTED.**

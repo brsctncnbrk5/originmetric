@@ -27,6 +27,21 @@
 
 ## Next step
 
+**2026-10-03 — owner WITHDRAW UI COMPLETE / independent live withdrawal controls verified:**
+owner clicked **İzni geri çek** in the same tab without reload and saw
+**İzin geri çekildi**. UI evidence alone is not deletion/sending proof. Separate
+live browser controls at 17:38–17:40 UTC verified visitor ID absent, tracker cookies
+**2 → 0**, and forced cookie-write-failure fallback localStorage **3 → 0** after
+withdrawal; no new analytics requests during history triggers or reload. GPC=true
+injected on the live page also blocked storage/sending after Allow (simulated
+signal, not owner browser setting). Profiles were closed; no identifier values,
+request bodies or phone traces collected. At 17:40 UTC, application counters
+remain empty and all six fact-table counts 0. Ingestion stays closed;
+**data collection NOT PASSED**. These independent controls are not inspection of
+the owner's phone storage/network. **Next acceptance: GPC**; owner's browser name
+requested to give the correct single setting/check step. Formal G1 pending;
+**P2 OPEN; P3 NOT STARTED.** No production config/deploy/DB-write/volume change.
+
 **2026-10-03 — owner ALLOW UI check COMPLETE:** owner clicked **İzin ver** in
 the same tab and saw **İzin verildi**. Recorded at 17:31 UTC as **owner-reported
 banner behavior only**. Installed ingestion gate remains 202/drop; no gate/config,
