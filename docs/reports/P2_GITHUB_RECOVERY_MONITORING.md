@@ -2,6 +2,8 @@
 
 Date: 2026-10-02; Cloudflare/owner evidence, remote ZIP readback and concrete proposal updates: 2026-10-03. Local encryption/env preparation and documentation only; **no production redeploy, ingestion opening or scheduled external probe**; the authorized private draft ZIP transfer is recorded below. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
 
+**Latest result (2026-10-03): REAL MANUAL RESTORE VERIFIED for the exact empty GitHub DB snapshot; P2 remains OPEN.** The [final verification and remaining canonical criteria](#real-manual-restore-verified-and-remaining-p2-acceptance--2026-10-03) supersede earlier restore OPEN/UNVERIFIED/pending-phone entries. Earlier dated sections remain historical evidence; no blanket P2 acceptance is implied.
+
 ## D-008 uygulama: gerçek DB backup ve bağımsız monitoring — 2026-10-03
 
 **Kullanıcı onayı kaydedildi:** [D-008](../DECISIONS.md) private age-encrypted günlük DB draft Release backup, 03:15 UTC / Türkiye 06:15, 7 daily / 4 weekly / 2 monthly / ≤90 gün; ayrı public repo/standart GitHub-hosted yaklaşık 5 dakikalık HTTPS monitoring ve telefon Actions/Releases erişimini uygulama/etkinleştirme yetkisidir. Önceki “karar bekliyor/yalnız hazırlık” kayıtları bu kapsamda tarihsel kaldı; genel onay tekrar istenmez. Canonical plan dosyası değişmedi. Bu operasyon onayı, telefon dışı kasa ertelemesini kaldırmaz veya canonical acceptance/G1/P2'yi kapatmaz.
@@ -434,3 +436,67 @@ Owner-reported actual pipeline: **`decrypt_exit=0`, `restore_exit=1`**. Independ
 **Correction:** receiver subprocesses now explicitly use `cwd=ROOT`, independent of the SSH caller directory. Safe evidence also records the validation phase, tool name and numeric exit code; raw stderr/SQL diagnostic bodies remain memory-only and suppressed. No production env, DB, volume, app, key/recipient or timer change.
 
 **Regression checks:** invoked the corrected synthetic receiver with actual caller directory `/root`: all 4 migration hashes/timestamps, exact 10-table schema, table counts and 14 FK orphan queries completed; owned container removed and protected metadata unchanged. Separately, invalid synthetic archive from `/root` must reach `pg_restore_stream` then exit 1, retain `restore_verified=false`, suppress diagnostic bodies and clean its container. These are correction checks only; **the real GitHub backup still needs another phone stream**. Existing-key/no-rotation decision and daily **03:15 UTC** are preserved. **P2 OPEN; P3 NOT STARTED.**
+
+
+## Real manual restore verified and remaining P2 acceptance — 2026-10-03
+
+**REAL MANUAL RESTORE VERIFIED / PASS for this exact snapshot only. P2 OPEN; G1 PENDING; P3 NOT STARTED.** The owner reports the latest phone pipeline returned **`decrypt_exit=0`, `restore_exit=0`**, following the previously reported exact ciphertext hash match. Independently inspected the matching successful **real_phone_stream** server evidence, checked all required result fields and rechecked cleanup/protected resources/timer. Phone decryption/hash results are owner-reported; PostgreSQL/schema/migration/count/FK and cleanup results are independently checked VPS evidence. Synthetic tests are excluded from this acceptance.
+
+| Evidence | Verified result |
+|---|---|
+| Snapshot / private Release | `om-db-v1-20261003T130037Z-eeab03ba` / `402515437` |
+| Ciphertext / SHA-256 | 32381 B / `278b0ca3ff038e2e5a07256b0e135e428a988894cec33b47f93123a57d876592` |
+| Actual receiver start / finish | **2026-10-03 14:45:11.042384–14:45:22.635616 UTC** |
+| Independent final verification | **14:48:51.925876 UTC** |
+| `pg_restore` / validation | Exit **0**; `database_checks_verified=true`; no failure; phase `database_checks_complete` |
+| Schema | Exact 10-table inventory; table/sequence definitions, columns/types/defaults/nullability, constraints/validation state, indexes/validity, functions, user triggers/enabled state and enums match reference migrated from snapshot source commit `31a370387b9e8a6a61d92d2d156918bbb0451cc2` |
+| Migration history | **4**; exact ordered hash and timestamp equality with the snapshot-source migrations |
+| Relational integrity | **14 foreign keys checked**, including composite project/customer/session/refund links; **0 orphan rows**, every per-constraint count zero |
+| Isolation | Actual evidence confirms network `none`, 0 published ports, no bind/named mounts in Docker `Mounts`; the executed receiver configured PostgreSQL data and `/tmp` with `--tmpfs`, disabled Docker logs, panic-only PostgreSQL logging, 512 MiB / 1 CPU limit |
+| Original server evidence | `.runtime/restore-phone-rqsjwgby/result.json`; SHA-256 `e08ff464ea9690147d8fc40c0747d680fddc1a58b258bea89ba4888f471eca94` |
+| Final confirmation | New root-only ignored `.runtime/restore-phone-rqsjwgby/verification.json`: **`REAL_MANUAL_RESTORE_VERIFIED`, `restore_verified=true`**, joining original server evidence with owner-reported phone exits |
+
+The original receiver `result.json` remains unchanged with `ISOLATED_DB_CHECKS_COMPLETE_PHONE_EXIT_PENDING` / `restore_verified=false`, because it was written before the phone exit report. The new confirmation resolves that pending state without rewriting historical evidence. Likewise the backup creation record's original restore flag is not overwritten or treated as the current final confirmation.
+
+### Actual restored row counts and limits
+
+| Domain table | Rows |
+|---|---:|
+| `workspaces` | 0 |
+| `projects` | 0 |
+| `api_keys` | 0 |
+| `events` | 0 |
+| `sessions` | 0 |
+| `customers` | 0 |
+| `customer_visitors` | 0 |
+| `revenue_events` | 0 |
+| `customer_attribution` | 0 |
+| `ingestion_daily` | 0 |
+
+These are **actual restored backup counts**, not synthetic results or new production SELECTs. This real snapshot contains an empty domain database plus the four migration rows. Foreign-key definitions/validation match and orphan checks return zero, but the empty tables do not demonstrate populated business relationships or real visits. `latest_revenue_received_at=NO_REVENUE_ROWS`: the canonical <26 h revenue freshness condition cannot be demonstrated here. No live dogfood/attribution, full fresh-machine disaster drill, or populated-data coverage is inferred.
+
+### Cleanup, production preservation and timer
+
+Rechecked exact test container `om-phone-restore-364ed469a305406c`: Docker inspect confirms it is absent. `docker ps -a` contains only the pre-existing OriginMetric containers; this test created no named network or volume. The receiver's tmpfs data is gone with its container. After confirming the staged ciphertext hash and exact two-file inventory, removed only this task's `.runtime/phone-pigpm9sw/database.dump.age`, `SHA256SUMS` and now-empty transfer directory. Phone files/key, remote GitHub Releases/assets, existing production volumes and sanitized private evidence were preserved. No plaintext dump, private key or sensitive diagnostic file was created.
+
+Receiver pre/post protected-resource comparison was true. An additional final comparison against the earlier private baseline confirms unchanged production container IDs/start times/restart counts/mount definitions and hashes of canonical plan, production env, installed OriginMetric nginx and backup units. No production SQL, volume mounting/writing, application command, restart, deployment or traffic-gate change occurred. This is metadata/configuration preservation evidence, not a claim of byte-for-byte volume content hashing.
+
+Existing daily timer is **enabled / active / waiting**, exact **`OnCalendar=*-*-* 03:15:00 UTC`**, `Persistent=true`, `RandomizedDelaySec=0`; next **2026-10-04 03:15:00 UTC**. LAST/`LastTriggerUSec` remain empty, so no completed scheduled backup is claimed. The prior manual service backup/upload/readback and today's manual restore are independently complete; no scheduler operation occurred in this task.
+
+A public, unauthenticated GET of the separate monitoring workflow's runs now verifies actual **schedule / completed / success** runs [37124111668](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37124111668) (12:49:14 UTC), [37118167664](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37118167664) (10:59:03 UTC) and [37116586580](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37116586580) (10:29:30 UTC). This supersedes earlier “no scheduled-run success yet” monitoring statements at the API workflow-result level. These timestamps do **not** establish uninterrupted five-minute observation, independent missing-run detection or email delivery. No workflow dispatch/configuration change or notification was sent.
+
+### Remaining canonical P2 acceptance criteria
+
+| Open criterion | Exact remaining work / existing evidence boundary |
+|---|---|
+| **G1 formal completion before public ingestion** — §28 | Record the complete six-item gate against the reviewed deployed slice: required-consent/withdrawal/GPC, body/schema/origin/dedup/failure isolation, in-app rate limits/abuse ceiling/daily cap plus the single edge rule, log redaction, no browser identity/revenue poisoning. Earlier fixture/full-suite evidence exists; it does not by itself close real-site acceptance. Current data gates remain closed. |
+| **Actual `originmetric.app` consent setup and owner review** — §§5/8/28 | Required-consent banner integration, zero storage/network before consent, withdrawal clears/stops, GPC default; owner confirms actual dogfood setup. Controlled/synthetic fixtures do not fulfill this. No other site is authorized. |
+| **Persisted real dogfood attribution and protected operator access** — §28 P2 exit/deliverables | Consented visit → persisted session/source → trusted server identify → owner-originated test payment → attributed internal result; exercise duplicate/refund/renewal behavior and token-protected internal access through the authorized private path. Reviewed deploy/post-deploy smoke and existing backup prerequisites must be respected. Restore of this empty snapshot does not fulfill this criterion. |
+| **Backup/monitoring failure and missing-run email evidence** — §§24–25 | Prove backup start/success/fail/missing detection and actual email delivery to the defined owner target; resolve dump-size jump warning (±50%) coverage. Independent scheduled HTTPS workflow successes now exist, but scheduler gaps, failures and email/dead-man delivery remain unproved. First 03:15 UTC scheduled backup completion is still pending; enabled timer/manual success are not that evidence. Advanced full alerting/automated restore remain P7, not newly required P2 implementation. |
+| **Storage/retention acceptance difference** — §24 / D-008 | GitHub private DB backend is authorized and owned 7/4/2/≤90-day pruning has successful operational evidence. Provider lifecycle backstop and behavior when VPS/job/account fails are still unresolved canonical differences; no new general GitHub/provider approval is requested, and D-008 did not waive these acceptance gaps. |
+| **Phone-independent secret recovery** — §24 | Off-phone vault backup remains owner-**DEFERRED**; demonstrate independent access to existing offline key/password-manager/paper/account/2FA recovery and separately stored encrypted env. Preserve earlier owner declarations about paper/key/vault/env; their contents are never requested. Restore success does not prove phone-loss readiness. Owner's explicit no-rotation/current-key decision remains in force. |
+| **Remaining edge configuration verification limit** — §23 / G1 review | User-panel evidence already supports the saved single rule/window/order, Full (strict) and conflicting-rule inventories; earlier VPS behavior/firewall/dual-stack checks remain valid evidence. Saved `/js/*` cache configuration is still unverified. Direct provider ruleset/original-export review remains an explicit source limit; do not repeat the already supplied panel request or label all Cloudflare evidence missing. |
+
+**Next canonical work:** close actual-domain consent/owner review and formal G1 before any data-gate opening or controlled end-to-end dogfood deployment, while resolving the outstanding backup/monitoring/secret-recovery acceptance gaps. Do not start P3 or claim `SLICE LIVE (dogfood)` until the complete P2 exit criteria are met. No phase/plan decision was changed by this restore confirmation.
+
+Only STATUS and this report are task changes; application/receiver code is unchanged. Markdown/link/whitespace checks and redacted offline gitleaks scans cover the task documents and Git history before commit. No application suite or restore rerun is necessary: the actual phone stream and independently checked server evidence are this task's operational validation. Normal assigned-branch commit/push and full local/remote SHA equality are checked at handoff.
