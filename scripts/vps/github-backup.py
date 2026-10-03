@@ -30,11 +30,12 @@ def metadata(release):
     try:
         m = json.loads(release['body'])
         stamp = dt.datetime.fromisoformat(m['captured_at'])
-        tag = release['tag_name']
+        tag = m['snapshot']
         if (not release['draft'] or m['managed_by'] != MARKER
                 or m['state'] not in ('pending', 'verified')
                 or stamp.utcoffset() != dt.timedelta(0)
-                or tag != m['snapshot']
+                or release.get('name') != tag
+                or not (release['tag_name'] == tag or re.fullmatch(r'untagged-[a-f0-9]{20,40}', release['tag_name']))
                 or not re.fullmatch(r'om-db-v1-\d{8}T\d{6}Z-[a-f0-9]{8}', tag)
                 or stamp.strftime('%Y%m%dT%H%M%SZ') != tag[9:25]
                 or not re.fullmatch(r'[a-f0-9]{64}', m['sha256'])
@@ -61,7 +62,8 @@ def retention(releases, now, protected_id):
     """Keep newest snapshot per calendar period; never prune without current verified backup."""
     current = next((r for r in releases if r['id'] == protected_id), None)
     parsed = metadata(current) if current else None
-    if not parsed or parsed[0]['state'] != 'verified':
+    if (not parsed or parsed[0]['state'] != 'verified' or parsed[1] > now
+            or now - parsed[1] >= dt.timedelta(days=1)):
         raise BackupError('Retention requires a newly verified backup')
     valid = []
     expired = []
@@ -177,6 +179,8 @@ dc exec -T db pg_dump -U originmetric -d originmetric -Fc --no-owner --no-acl | 
         if f.read(22) != b'age-encryption.org/v1\n':
             # Header is 22 bytes including newline.
             raise BackupError('Not an age ciphertext')
+    if cipher.stat().st_size >= 2 * 1024 ** 3:
+        raise BackupError('Ciphertext exceeds GitHub asset limit; no upload/retention')
     m = {'managed_by': MARKER, 'snapshot': snapshot, 'captured_at': now.isoformat(),
          'state': 'pending', 'classes': ['daily'], 'sha256': digest(cipher),
          'size_bytes': cipher.stat().st_size,
@@ -211,7 +215,12 @@ dc exec -T db pg_dump -U originmetric -d originmetric -Fc --no-owner --no-acl | 
         raise BackupError('Remote snapshot changed; no retention')
     m['state'] = 'verified'
     m['verified_at'] = dt.datetime.now(UTC).isoformat()
-    gh.api(f'repos/{REPO}/releases/{rid}', 'PATCH', {'body': json.dumps(m, sort_keys=True)})
+    gh.api(f'repos/{REPO}/releases/{rid}', 'PATCH', {'tag_name': snapshot, 'draft': True, 'body': json.dumps(m, sort_keys=True)})
+    final = gh.api(f'repos/{REPO}/releases/{rid}')
+    return finish(gh, rid, m, final['html_url'])
+
+
+def finish(gh, rid, m, url):
     candidates = retention(gh.releases(), dt.datetime.now(UTC), rid)
     for old in candidates:
         gh.private()
@@ -220,8 +229,44 @@ dc exec -T db pg_dump -U originmetric -d originmetric -Fc --no-owner --no-acl | 
         if fresh['body'] != old['body'] or fresh['assets'] != old['assets'] or not metadata(fresh):
             raise BackupError('Retention target changed; cleanup stopped')
         gh.api(f'repos/{REPO}/releases/{old["id"]}', 'DELETE')
-    return dict(m, release_id=rid, url=release['html_url'], pruned=len(candidates),
+    return dict(m, release_id=rid, url=url, pruned=len(candidates),
                 result='BACKUP_CREATED_REMOTE_READBACK_VERIFIED', restore_verified=False)
+
+
+def verify_existing(gh, snapshot, work):
+    # Resume an exact owned complete snapshot after a failed final metadata/cleanup step.
+    matches = [r for r in gh.releases() if r.get('name') == snapshot and metadata(r)]
+    if len(matches) != 1:
+        raise BackupError('Exact owned complete snapshot not found')
+    r = matches[0]
+    m, stamp = metadata(r)
+    if dt.datetime.now(UTC) - stamp >= dt.timedelta(days=1):
+        raise BackupError('Resume requires a recently uploaded snapshot; create a new backup')
+    if {a['name'] for a in r['assets']} != ASSETS:
+        raise BackupError('Incomplete snapshot cannot be resumed; create a new backup')
+    gh.private()
+    for a in r['assets']:
+        with (work / a['name']).open('wb') as out:
+            gh.api(f'repos/{REPO}/releases/assets/{a["id"]}', output=out)
+    cipher = work / 'database.dump.age'
+    expected_manifest = m['sha256'] + '  database.dump.age\n'
+    if (digest(cipher) != m['sha256'] or cipher.stat().st_size != m['size_bytes']
+            or (work / 'SHA256SUMS').read_text() != expected_manifest):
+        raise BackupError('Existing remote snapshot hash/manifest mismatch; no retention')
+    with cipher.open('rb') as f:
+        if f.read(22) != b'age-encryption.org/v1\n':
+            raise BackupError('Existing object is not an age ciphertext')
+    fresh = gh.api(f'repos/{REPO}/releases/{r["id"]}')
+    if fresh['body'] != r['body'] or fresh['assets'] != r['assets']:
+        raise BackupError('Snapshot changed during readback; no retention')
+    m['state'] = 'verified'
+    m['verified_at'] = dt.datetime.now(UTC).isoformat()
+    gh.private()
+    gh.api(f'repos/{REPO}/releases/{r["id"]}', 'PATCH',
+           {'tag_name': snapshot, 'draft': True, 'body': json.dumps(m, sort_keys=True)})
+    final = gh.api(f'repos/{REPO}/releases/{r["id"]}')
+    return finish(gh, r['id'], m, final['html_url'])
+
 
 
 def main():
@@ -229,6 +274,7 @@ def main():
     parser.add_argument('--operator-once', action='store_true',
                         help='Explicit one-time owner project login; never use in scheduled service')
     parser.add_argument('--check-credential', action='store_true')
+    parser.add_argument('--verify-existing-snapshot', help='Exact owned snapshot name; reverify ciphertext, then safe retention')
     args = parser.parse_args()
     os.umask(0o077)
     state = ROOT / '.runtime/github-db'
@@ -245,7 +291,8 @@ def main():
                 print('Authorized private target/credential check PASS; scope must match owner token setup')
                 return
             with tempfile.TemporaryDirectory(prefix='snapshot-', dir=state) as folder:
-                result = backup(gh, Path(folder))
+                result = (verify_existing(gh, args.verify_existing_snapshot, Path(folder))
+                          if args.verify_existing_snapshot else backup(gh, Path(folder)))
             target = state / 'last-backup.json'
             tmp = state / 'last-backup.json.tmp'
             tmp.write_text(json.dumps(result, indent=2) + '\n')

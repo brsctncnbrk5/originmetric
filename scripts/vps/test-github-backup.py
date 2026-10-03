@@ -26,7 +26,7 @@ def release(rid, stamp, state='verified'):
         classes.append('monthly')
     m = dict(managed_by=b.MARKER, snapshot=tag, captured_at=stamp.isoformat(), state=state,
              classes=classes, sha256='a' * 64, size_bytes=100)
-    return dict(id=rid, tag_name=tag, draft=True, body=json.dumps(m),
+    return dict(id=rid, name=tag, tag_name=tag, draft=True, body=json.dumps(m),
                 assets=[{'id': rid * 10 + 1, 'name': 'database.dump.age'},
                         {'id': rid * 10 + 2, 'name': 'SHA256SUMS'}])
 
@@ -65,11 +65,22 @@ class RetentionTests(unittest.TestCase):
         cases[4]['body'] = 'not-json'
         self.assertEqual(b.retention([current] + cases, NOW, 1), [])
 
+    def test_github_temporary_draft_tag_requires_exact_own_title(self):
+        r = release(1, NOW)
+        r['tag_name'] = 'untagged-' + 'a' * 20
+        self.assertIsNotNone(b.metadata(r))
+        r['name'] = 'unrelated release'
+        self.assertIsNone(b.metadata(r))
+
     def test_no_prune_without_verified_current(self):
         with self.assertRaises(b.BackupError):
             b.retention([release(1, NOW, 'pending')], NOW, 1)
         with self.assertRaises(b.BackupError):
             b.retention([], NOW, 1)
+
+    def test_old_verified_snapshot_cannot_authorize_cleanup(self):
+        with self.assertRaises(b.BackupError):
+            b.retention([release(1, NOW - dt.timedelta(days=2))], NOW, 1)
 
     def test_bad_date_class_marker_and_duplicate_assets_rejected(self):
         for field, value in [('managed_by', 'other'), ('classes', ['daily', 'weekly']),
@@ -148,6 +159,57 @@ class ChainTests(unittest.TestCase):
                 b.backup(gh, Path(folder))
         self.assertEqual(gh.deleted, [])
         self.assertEqual(json.loads(gh.release['body'])['state'], 'pending')
+
+    def test_dump_failure_does_not_create_release(self):
+        gh = FakeGitHub()
+        class Failed:
+            returncode = 1
+        with tempfile.TemporaryDirectory() as folder, patch.object(b.subprocess, 'run', return_value=Failed()):
+            with self.assertRaises(b.BackupError):
+                b.backup(gh, Path(folder))
+        self.assertIsNone(gh.release)
+        self.assertEqual(gh.deleted, [])
+
+    def test_visibility_failure_prevents_upload(self):
+        gh = FakeGitHub()
+        gh.private = lambda: (_ for _ in ()).throw(b.BackupError('Not private'))
+        with tempfile.TemporaryDirectory() as folder, patch.object(b.subprocess, 'run', self.dump), patch.object(b.subprocess, 'check_output', return_value='a'*40):
+            with self.assertRaises(b.BackupError):
+                b.backup(gh, Path(folder))
+        self.assertIsNone(gh.release)
+
+    def test_retention_detects_changed_assets_before_delete(self):
+        gh = FakeGitHub()
+        original = gh.api
+        def changed(path, method='GET', payload=None, **kwargs):
+            result = original(path, method, payload, **kwargs)
+            if path == f'repos/{b.REPO}/releases/2' and method == 'GET':
+                result['assets'].append({'id': 123, 'name': 'unrelated.txt'})
+            return result
+        gh.api = changed
+        with tempfile.TemporaryDirectory() as folder, patch.object(b.subprocess, 'run', self.dump), patch.object(b.subprocess, 'check_output', return_value='a'*40):
+            with self.assertRaises(b.BackupError):
+                b.backup(gh, Path(folder))
+        self.assertEqual(gh.deleted, [])
+
+
+class GuardTests(unittest.TestCase):
+    def test_operation_lock_blocks_before_any_github_request(self):
+        import fcntl
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); (root / '.runtime').mkdir()
+            with (root / '.runtime/operation.lock').open('a') as held:
+                fcntl.flock(held, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                with patch.object(b, 'ROOT', root), patch.object(b, 'GitHub') as github, patch.object(sys, 'argv', ['backup']):
+                    with self.assertRaises(SystemExit):
+                        b.main()
+                    github.assert_not_called()
+
+    def test_missing_service_token_has_no_operator_fallback(self):
+        with tempfile.TemporaryDirectory() as folder, patch.object(b, 'AUTH', Path(folder)), patch.dict(b.os.environ, {'CREDENTIALS_DIRECTORY': folder}):
+            with self.assertRaises(b.BackupError):
+                b.GitHub(False)
+
 
 
 if __name__ == '__main__':

@@ -1,3 +1,5 @@
+# Historical template; active isolated repository is brsctncnbrk5/originmetric-monitoring.
+# Source mirror: deploy/github/monitoring/uptime.yml. Do not activate this in app repository.
 # REVIEW TEMPLATE ONLY. Not installed under .github/workflows and not activated.
 # Approve exact target/operation and potential Actions notifications before dispatch.
 name: OriginMetric independent HTTPS observation

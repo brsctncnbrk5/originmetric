@@ -7,8 +7,8 @@ HTTP 200 and appropriate bounded response content are required; failure fails th
 
 Open the repository **Actions** tab on a phone for timestamps, PASS/FAIL and endpoint results.
 A result older than 15 minutes is stale/unknown. A successful run is one availability sample.
-The proposed schedule is approximately every five minutes (`2-57/5 * * * *`, UTC), enabled
-only after the initial manual check passes. Jobs can be delayed or dropped; public schedules
+The schedule runs approximately every five minutes (`2-57/5 * * * *`, UTC); it was enabled
+after the initial manual check passed. Jobs can be delayed or dropped; public schedules
 may be disabled after 60 days without repository activity. Check Actions weekly and confirm
 that the workflow remains enabled and fresh. No synthetic commit is made to hide inactivity.
 

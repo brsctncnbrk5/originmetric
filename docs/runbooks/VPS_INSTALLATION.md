@@ -424,3 +424,74 @@ olmayan JSON sonucu verir; başarısız kontrolde exit 1. VPS'de çalıştırma 
 `deploy/github/uptime.yml` inactive kalır; authorized runner/notification/no-spend kontrolü ve açık
 etkinleştirme kararı sonrası bağımsız run kanıtı alınır. Bir run recurring monitoring/dead-man/email
 kanıtı değildir. Missing-run ve e-posta delivery şartları ayrıca açık kalır.
+
+### D-008: GitHub DB backup kimliği ve gerçek restore
+
+Onaylanan operasyon: DB-only private draft Release + public bağımsız monitoring.
+Canonical kabul/ingestion kapıları ve telefon dışı kasa yedeği ertelemesi değişmez.
+`github-backup.py` shared operation.lock kullanır; dump → age → private upload → ciphertext
+ve manifest readback SHA-256 → owned retention zincirini uygular. `backup.sh` rclone aracı
+aynen korunur; yeni araç deploy/G1 prerequisite'lerini sessizce bypass etmez.
+
+Günlük servis için GitHub hesabında **fine-grained personal access token** oluştur:
+resource owner `brsctncnbrk5`, **Only select repositories → originmetric-recovery**,
+**Contents: Read and write**; Metadata read otomatik, Actions/Workflows/Administration veya
+başka repo/account izni ekleme. Önerilen expiry 90 gün; süresi dolmadan yenile.
+Bu tokenı sohbete/terminal çıktısına/Git'e koyma. Proje owner login'ini cron'a kopyalama.
+GitHub token oluşturma panelinden alınan değeri yalnız VPS'deki güvenilir yerel terminalde
+hidden input ile proje kapsamındaki özel dosyaya yerleştir:
+
+```bash
+cd /opt/originmetric
+set +x
+umask 077
+read -rs -p 'Repo-scoped backup token (hidden): ' OM_BACKUP_TOKEN
+printf '%s\n' "$OM_BACKUP_TOKEN" > .runtime/github-auth/backup-token
+unset OM_BACKUP_TOKEN
+chmod 600 .runtime/github-auth/backup-token
+chown root:root .runtime/github-auth/backup-token
+python3 scripts/vps/github-backup.py --check-credential
+# Token selection/scope'u panelde doğrula; API check seçili-repo kapsamını introspect etmez.
+python3 scripts/vps/github-backup.py
+# Yalnız scoped kimlikle gerçek upload/readback PASS sonrası:
+systemctl enable --now originmetric-github-backup.timer
+systemctl list-timers originmetric-github-backup.timer --no-pager
+```
+
+Servis systemd `LoadCredential=backup-token:...` ile tokenı root-only credential dosyasından
+okur; process argv/journal'a koymaz. OriginMetric'in GH_CONFIG_DIR'i sabit kalır; servis
+fine-grained tokenı yalnız child gh process ortamına verir. `--operator-once` açıkça tek seferlik
+owner kontrolü içindir; unit bu flag'i kullanmaz ve scoped token yokken broad girişe fallback
+yapmaz. Tokenın Contents write yetkisi silmeyi de mümkün kılar; dar repo seçimi zorunludur.
+Timer **03:15 UTC / Türkiye 06:15**, Persistent=true (kaçırılan çalışmayı boot sonrası yakalar).
+Service/timer dosyaları kurulmuş olabilir; missing kimlik halinde enabled/active kabul edilmez.
+
+Saklama, explicit `originmetric-github-db/v1` marker + snapshot title/body + yalnız iki izinli
+DB asset'i olan draft kayıtları kapsar. Calendar gün/ISO hafta/ay başına en yeni snapshot'ın
+7/4/2 birleşimi tutulur; Sunday ve ayın 1'i snapshot'ları weekly/monthly uygunluğunu taşır.
+90 gün ve üzeri owned snapshot temizlenir; eski partial kayıt için 1 gün grace vardır.
+Yeni complete snapshot hash readback doğrulanmadan hiçbir cleanup yok. Değişmiş/ek ilgisiz
+asset'li/published/unmarked release korunur; git tag/ref silinmez. VPS/job durursa provider
+lifecycle backstop yoktur; bu açık gap ayrı kalır. Sır içermeyen durum `.runtime/github-db/last-backup.json`,
+başarısızlık `.runtime/github-db/last-failure.json`; job exit nonzero ise success sayılmaz.
+
+Tam upload sonrası metadata/cleanup kesilirse yeni dump yerine **24 saatten yeni** exact owned
+snapshot `--verify-existing-snapshot SNAPSHOT_NAME` ile remote'dan yeniden indirip hash/manifest
+kontrolü ve güvenli cleanup tamamlanabilir. GitHub draft geçici `untagged-*` alias'ı değişebilir;
+stable ownership release name/body marker'dır. Incomplete snapshot bu resume yoluyla doğrulanmaz.
+
+Gerçek restore: telefonun GitHub owner hesabıyla private Releases'ten **database.dump.age ve
+SHA256SUMS** indir; mevcut phone recovery ZIP'i DB dump değildir. Güvenilir offline-key cihazında:
+
+```bash
+set -o pipefail
+sha256sum -c SHA256SUMS
+age -d -i /local/path/existing-age-key.txt database.dump.age | \
+  ssh VPS_HOST 'cd /opt/originmetric && bash scripts/vps/restore-check.sh'
+```
+
+Private key cihazda kalır; decrypted dump dosyası VPS'ye/diske yazılmaz. `restore-check.sh`
+network-none/tmpfs disposable PostgreSQL kullanır; üretim restore'u yapmaz. Her iki pipeline
+exit sonucu, 10 tablo/migration metadata, sayılar ve disposable cleanup/production değişmeme
+kanıtı sır içermeden raporlanır. Hash veya age header başarılı decryption/DB restore sayılmaz.
+Telefon dışı kasa yedeği **ERTELENDİ**; phone-independent account/key/vault/2FA yolu eksiktir.
