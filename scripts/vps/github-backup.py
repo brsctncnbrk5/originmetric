@@ -159,7 +159,17 @@ def digest(path):
     return h.hexdigest()
 
 
-def backup(gh, work):
+def size_warning(previous, current):
+    """Warn on an inclusive 50% change; no baseline is not an invented success."""
+    if type(previous) is not int or previous <= 0:
+        return []
+    if abs(current - previous) * 2 < previous:
+        return []
+    return [{'code': 'BACKUP_SIZE_JUMP', 'previous_bytes': previous,
+             'current_bytes': current, 'threshold_percent': 50}]
+
+
+def backup(gh, work, previous_size=None):
     now = dt.datetime.now(UTC).replace(microsecond=0)
     snapshot = 'om-db-v1-' + now.strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     cipher = work / 'database.dump.age'
@@ -184,6 +194,7 @@ dc exec -T db pg_dump -U originmetric -d originmetric -Fc --no-owner --no-acl | 
     m = {'managed_by': MARKER, 'snapshot': snapshot, 'captured_at': now.isoformat(),
          'state': 'pending', 'classes': ['daily'], 'sha256': digest(cipher),
          'size_bytes': cipher.stat().st_size,
+         'warnings': size_warning(previous_size, cipher.stat().st_size),
          'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()}
     if now.weekday() == 6:
         m['classes'].append('weekly')
@@ -274,6 +285,8 @@ def main():
     parser.add_argument('--operator-once', action='store_true',
                         help='Explicit one-time owner project login; never use in scheduled service')
     parser.add_argument('--check-credential', action='store_true')
+    parser.add_argument('--already-locked', action='store_true',
+                        help='Deployment only: require inherited fd 9 for the exact operation lock')
     parser.add_argument('--verify-existing-snapshot', help='Exact owned snapshot name; reverify ciphertext, then safe retention')
     args = parser.parse_args()
     os.umask(0o077)
@@ -281,7 +294,19 @@ def main():
     state.mkdir(parents=True, exist_ok=True, mode=0o700)
     try:
         # The same operation lock is shared with existing deploy/rclone backup scripts.
-        with (ROOT / '.runtime/operation.lock').open('a') as lock:
+        lock_path = ROOT / '.runtime/operation.lock'
+        if args.already_locked:
+            try:
+                held = os.fstat(9)
+                expected = lock_path.stat()
+                if (held.st_dev, held.st_ino) != (expected.st_dev, expected.st_ino):
+                    raise BackupError('Exact inherited deployment lock is required')
+                lock_file = os.fdopen(os.dup(9), 'a')
+            except OSError as exc:
+                raise BackupError('Inherited deployment lock missing; no backup action') from exc
+        else:
+            lock_file = lock_path.open('a')
+        with lock_file as lock:
             try:
                 fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             except BlockingIOError as exc:
@@ -290,9 +315,18 @@ def main():
             if args.check_credential:
                 print('Authorized private target/credential check PASS; scope must match owner token setup')
                 return
+            previous_size = None
+            previous = state / 'last-backup.json'
+            if previous.is_file():
+                try:
+                    last = json.loads(previous.read_text())
+                    if last.get('result') == 'BACKUP_CREATED_REMOTE_READBACK_VERIFIED':
+                        previous_size = last.get('size_bytes')
+                except (OSError, ValueError):
+                    pass
             with tempfile.TemporaryDirectory(prefix='snapshot-', dir=state) as folder:
                 result = (verify_existing(gh, args.verify_existing_snapshot, Path(folder))
-                          if args.verify_existing_snapshot else backup(gh, Path(folder)))
+                          if args.verify_existing_snapshot else backup(gh, Path(folder), previous_size))
             target = state / 'last-backup.json'
             tmp = state / 'last-backup.json.tmp'
             tmp.write_text(json.dumps(result, indent=2) + '\n')

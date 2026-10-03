@@ -92,6 +92,18 @@ class RetentionTests(unittest.TestCase):
         self.assertIsNone(b.metadata(r))
 
 
+class SizeWarningTests(unittest.TestCase):
+    def test_inclusive_both_directions_and_boundaries(self):
+        for size in (50, 150, 200):
+            self.assertEqual(b.size_warning(100, size)[0]['code'], 'BACKUP_SIZE_JUMP')
+        for size in (51, 100, 149):
+            self.assertEqual(b.size_warning(100, size), [])
+
+    def test_missing_invalid_baseline_is_not_a_warning(self):
+        for baseline in (None, 0, -1, '100', True):
+            self.assertEqual(b.size_warning(baseline, 150), [])
+
+
 class FakeGitHub:
     def __init__(self, corrupt=False):
         self.corrupt = corrupt
@@ -204,6 +216,15 @@ class GuardTests(unittest.TestCase):
                     with self.assertRaises(SystemExit):
                         b.main()
                     github.assert_not_called()
+
+    def test_inherited_lock_flag_cannot_bypass_lock_proof(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); (root / '.runtime').mkdir()
+            (root / '.runtime/operation.lock').touch()
+            with patch.object(b, 'ROOT', root), patch.object(b, 'GitHub') as github, patch.object(sys, 'argv', ['backup', '--already-locked']):
+                with self.assertRaises(SystemExit):
+                    b.main()
+                github.assert_not_called()
 
     def test_missing_service_token_has_no_operator_fallback(self):
         with tempfile.TemporaryDirectory() as folder, patch.object(b, 'AUTH', Path(folder)), patch.dict(b.os.environ, {'CREDENTIALS_DIRECTORY': folder}):

@@ -6,7 +6,7 @@ OM_FIXTURE=$(mktemp -d)
 trap 'rm -rf "$OM_FIXTURE"' EXIT
 mkdir -p "$OM_FIXTURE/scripts/vps" "$OM_FIXTURE/mock" "$OM_FIXTURE/.runtime"
 cp "$OM_SOURCE/scripts/deploy.sh" "$OM_FIXTURE/scripts/"
-cp "$OM_SOURCE/scripts/vps/"{common,init-env,preflight,smoke}.sh "$OM_FIXTURE/scripts/vps/"
+cp "$OM_SOURCE/scripts/vps/"{common,init-env,preflight,smoke,predeploy-backup}.sh "$OM_FIXTURE/scripts/vps/"
 cat > "$OM_FIXTURE/scripts/vps/backup.sh" <<'MOCK'
 #!/usr/bin/env bash
 exit 0
@@ -43,6 +43,22 @@ bash scripts/vps/init-env.sh >/dev/null
 OM_CHECKSUM=$(sha256sum .env.production)
 if bash scripts/vps/init-env.sh >/dev/null 2>&1; then echo 'init overwrote existing secrets' >&2; exit 1; fi
 [[ $(sha256sum .env.production) == "$OM_CHECKSUM" ]]
+cat > "$OM_FIXTURE/mock/python3" <<'MOCK'
+#!/usr/bin/env bash
+printf '%s\n' "$*" > .runtime/github-backup-call
+exit 1
+MOCK
+chmod +x "$OM_FIXTURE/mock/python3"
+printf '\nBACKUP_BACKEND=github\n' >> .env.production
+printf '%s\n' "$OM_OLD_SHA" > .runtime/current-tag
+if bash scripts/deploy.sh "$OM_NEW_SHA" > .runtime/github-failed.log 2>&1; then
+  echo 'failed GitHub predeploy backup returned success' >&2; exit 1
+fi
+[[ $(cat .runtime/github-backup-call) == 'scripts/vps/github-backup.py --already-locked' ]]
+if grep -Eq ' build | run | up ' .runtime/mock.log; then
+  echo 'Docker mutation before verified GitHub backup' >&2; exit 1
+fi
+printf '\nBACKUP_BACKEND=rclone\n' >> .env.production
 printf '%s\n' "$OM_OLD_SHA" > .runtime/current-tag
 if bash scripts/deploy.sh "$OM_NEW_SHA" > .runtime/with-old.log 2>&1; then echo 'failed deploy returned success' >&2; exit 1; fi
 [[ $(cat .runtime/current-tag) == "$OM_OLD_SHA" ]]

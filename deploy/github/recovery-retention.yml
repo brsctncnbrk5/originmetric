@@ -1,0 +1,40 @@
+# REVIEW TEMPLATE ONLY. Not installed/activated: private Actions no-spend budget unverified.
+# VPS 03:15 UTC backup timer is not changed by this independent provider-side backstop.
+name: Owned recovery expiry backstop
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: "Delete only exact owned >=90-day draft DB snapshots"
+        type: boolean
+        default: false
+  schedule:
+    - cron: "45 3 * * *"
+permissions:
+  contents: write
+concurrency:
+  group: recovery-owned-expiry
+  cancel-in-progress: false
+jobs:
+  expiry:
+    if: ${{ vars.RETENTION_BACKSTOP_READY == 'true' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          repository: brsctncnbrk5/originmetric
+          # Replace with final reviewed commit containing the companion expiry script.
+          ref: REQUIRED_REVIEWED_FULL_SHA
+          persist-credentials: false
+      - name: Expire only owned age-encrypted DB assets, protect phone recovery
+        env:
+          GH_TOKEN: ${{ github.token }}
+          APPLY: ${{ github.event_name == 'schedule' || inputs.apply }}
+        shell: bash
+        run: |
+          if [[ "$APPLY" == true ]]; then
+            python3 scripts/vps/recovery-retention.py --apply
+          else
+            python3 scripts/vps/recovery-retention.py
+          fi

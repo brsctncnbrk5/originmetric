@@ -500,3 +500,113 @@ A public, unauthenticated GET of the separate monitoring workflow's runs now ver
 **Next canonical work:** close actual-domain consent/owner review and formal G1 before any data-gate opening or controlled end-to-end dogfood deployment, while resolving the outstanding backup/monitoring/secret-recovery acceptance gaps. Do not start P3 or claim `SLICE LIVE (dogfood)` until the complete P2 exit criteria are met. No phase/plan decision was changed by this restore confirmation.
 
 Only STATUS and this report are task changes; application/receiver code is unchanged. Markdown/link/whitespace checks and redacted offline gitleaks scans cover the task documents and Git history before commit. No application suite or restore rerun is necessary: the actual phone stream and independently checked server evidence are this task's operational validation. Normal assigned-branch commit/push and full local/remote SHA equality are checked at handoff.
+## P2 acceptance continuation — 2026-10-03
+
+**P2 OPEN; G1 PENDING; P3 NOT STARTED.** Continuation evidence is private under
+`.runtime/p2-acceptance-20261003T150616Z/`. The earlier real empty-snapshot restore
+remains verified; no new populated production restore has occurred. Existing age
+key use remains the owner's explicit decision. No secret value was requested,
+recorded here or transferred to the VPS.
+
+## Technical work and evidence
+
+- Added ±50% inclusive ciphertext size-change warnings to the normal scoped
+  backup metadata. Seventeen backup-policy/credential/lock tests pass. Added a
+  read-only local watchdog: newer backup failure supersedes old success;
+  >26-hour stale/missing verification fails; invalid/future evidence is UNKNOWN.
+  Four watchdog tests pass. At 15:31 UTC the actual manual backup is fresh;
+  independent missing-run monitoring and email delivery explicitly remain false.
+  These controls do not simulate a failure of the production backup itself.
+- Public monitoring commit `866e0559f70aace5c106e107e52d33f999e2a936`
+  preserves the five-minute schedule and adds explicitly labelled controlled
+  failure notification tests. Expected failure steps completed:
+  [monitoring control 37132327501](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37132327501),
+  [backup missing control 37132330300](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37132330300),
+  [backup failure control 37133412117](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37133412117).
+  Earlier concurrent backup-control run 37132328909 was cancelled and is excluded;
+  the serial retry above completed. Normal observation 37132649577 succeeded.
+  [Normal observation 37133538649](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37133538649)
+  also succeeded after the final control. These
+  prove the workflow failure path, **not** actual backup failure/missing-run
+  detection, email receipt, uninterrupted scheduling or a service outage.
+  Owner email receipt remains unconfirmed; only a receipt/no-receipt result was
+  requested, never an address or message contents.
+- Retention inventory/dry-run: one managed DB snapshot, one unrelated phone
+  recovery release, zero >=90-day owned candidates, zero deletions. Existing
+  7/4/2 and <=90-day policy remains unchanged. Prepared separate provider-side
+  expiry script with exact ownership, private-repo and changed-target guards;
+  three tests pass. `deploy/github/recovery-retention.yml` is **a review template,
+  not installed or active**. Private Actions no-spend budget and reviewed source
+  pin must be verified before activation. GitHub draft Releases have no confirmed
+  native lifecycle backstop here; failed VPS/account/provider scenarios remain
+  acceptance gaps. No retention gap is silently waived by D-008.
+- Installed only the `/js/` origin cache-header change; `nginx -t`, reload and
+  isolated original-peer/header-overwrite proof pass. Source copy matches the
+  installed change. Tracker responses after reload: **MISS, HIT, HIT**, edge TTL
+  `s-maxage=3600`. Origin browser TTL is 300 seconds, but public Cloudflare response
+  rewrites it to **max-age=14400** (4 hours). Saved browser/cache rule review is
+  therefore still required. No Cloudflare API credential/zone ID is available;
+  no direct panel/API or original export claim is made. Previously supplied API
+  bypass/rate/SSL/inventory panel evidence remains valid at its recorded source
+  level. [Cloudflare TTL reference](https://developers.cloudflare.com/cache/how-to/edge-browser-cache-ttl/).
+- Prepared explicit GitHub predeploy adapter with inherited exact operation lock
+  and scoped credential, keeping the remote-readback gate before deployment.
+  Default rclone path remains explicit; production env/backend was not changed.
+  Mocked GitHub backup failure stops before Docker build/migration; existing
+  rollback/first-deploy DB-preservation tests pass. No production app deployment,
+  migration, API test ingestion, project/key creation or revenue occurred here.
+  Production DB, volumes and app were not modified; the intentional nginx header
+  reload above is the only production ingress change.
+
+## Prepared dogfood and populated recovery acceptance
+
+[P2_DOGFOOD_ACCEPTANCE.md](../runbooks/P2_DOGFOOD_ACCEPTANCE.md) contains the ordered
+real-domain G1 review, deny/allow/withdraw/GPC checks, separate labelled test
+workspace/project, server-only trusted conversion, `test=true` payment, exact
+duplicate/conflict, renewal/refund assertions, protected internal result and a
+new populated snapshot restore. Test totals are explicitly test minor units,
+never business/customer/revenue evidence. Production currently serves the old
+build and `/dogfood` returns 404; owner browser consent testing is not ready yet.
+
+Receiver now supports a new private `--snapshot-evidence` JSON, mandatory explicit
+new snapshot source SHA, exact expected ten-table counts and a populated-test
+requirement. It still uses network-none/tmpfs, no plaintext dump file/log/key and
+removes only its container. Synthetic regression verified 10 tables, 4 migrations,
+14 FKs and cleanup without production changes; it is **not real restore evidence**.
+Empty-as-populated negative control failed as required (exit 1, cleanup and
+production metadata unchanged). Real new restore additionally needs
+phone exits 0/0, actual snapshot counts/freshness and attribution/payment assertions;
+neither PASS nor P2 completion can be inferred from this preparation.
+
+Earlier recipient sample/hash/decrypt, encrypted env decrypt and KeePassDX
+attachment/save remain owner-reported COMPLETE. They are not requested again.
+Off-phone vault backup remains explicitly DEFERRED; independent key/vault/account/
+2FA recovery remains unverified. Existing key-use decision is preserved.
+
+## Remaining canonical P2 acceptance
+
+1. Formal six-item G1 deployed-build evidence and actual-domain owner consent/GPC/
+   withdrawal confirmation before ingestion opens (§28).
+2. Reviewed deploy/smoke, persisted real owner visit → trusted conversion →
+   labelled test payment → attribution, duplicate/conflict/refund/renewal and
+   private token-protected internal result (§28).
+3. New populated encrypted backup/readback and phone-only real restore, exact
+   counts, freshness, schema/migrations, FKs and test-attribution assertions.
+   The required first manual **empty** restore is already complete, not undone.
+4. Actual scheduled backup success, failure/start/success/missing-run detection,
+   independent dead-man and confirmed owner email receipt (§§24–25). First
+   03:15 UTC run is **PENDING**, no LastTrigger yet; enabled/active timer next
+   2026-10-04 **03:15 UTC** (05:15 CEST) is not scheduled-success evidence.
+5. Activated/verified independent lifecycle/retention backstop and documented
+   failure behavior, within the authorized free/no-spend constraints (§24/D-008).
+6. Phone-independent secret/account recovery; deferred off-phone vault decision
+   is preserved and completed attachment/paper/key declarations are not repeated.
+7. Saved `/js/*` cache and browser TTL verification; direct Cloudflare API/export
+   review limit remains explicit. Already supplied broader panel checks stand.
+
+Local lint, format, typecheck, production build, 219 unit tests, three isolated
+consent/GPC/operations browser tests, backup/watchdog/retention and deploy/proxy
+checks pass. No full real-DB suite against production was run. Full-suite CI #68
+remains historical evidence; this continuation must receive its own CI result.
+Task sources/docs and both Git histories are secret-scanned before handoff;
+assigned-branch normal push and full local/remote SHA equality are checked.

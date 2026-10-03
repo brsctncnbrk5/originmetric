@@ -5,6 +5,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import signal
 import subprocess
@@ -109,6 +110,8 @@ SELECT coalesce(jsonb_agg(jsonb_build_object('name',k.conname,'child',c.relname,
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--self-test', action='store_true', help='Synthetic only; never real restore evidence')
+    parser.add_argument('--snapshot-evidence', type=Path,
+                        help='Private verified-transfer JSON for a newer snapshot; no key or dump')
     args = parser.parse_args()
     if not args.self_test and sys.stdin.isatty():
         print('Decrypted dump must arrive via stdin; private key stays on phone')
@@ -138,12 +141,19 @@ def main():
     try:
         before = protected()
         evidence['phase'] = 'snapshot_source_migrations'
-        source = json.loads((ROOT / '.runtime/phone-transfer-phone-pigpm9sw.json').read_text())
+        source = json.loads((args.snapshot_evidence or
+                             ROOT / '.runtime/phone-transfer-phone-pigpm9sw.json').read_text())
         assert source['remote_hash_and_manifest_match']
         # Pin the source commit from the tested snapshot, even if a later backup runs.
-        release = run(['git', 'show', '31a370387b9e8a6a61d92d2d156918bbb0451cc2:drizzle/meta/_journal.json'])
+        source_sha = source.get('source_sha', '31a370387b9e8a6a61d92d2d156918bbb0451cc2')
+        if not re.fullmatch(r'[0-9a-f]{40}', source_sha):
+            raise CheckError('Invalid snapshot source commit')
+        if not re.fullmatch(r'[0-9a-f]{64}', source['sha256']):
+            raise CheckError('Invalid verified ciphertext digest')
+        if args.snapshot_evidence and 'source_sha' not in source:
+            raise CheckError('New snapshot requires explicit source commit')
+        release = run(['git', 'show', source_sha + ':drizzle/meta/_journal.json'])
         journal = json.loads(release)['entries']
-        source_sha = '31a370387b9e8a6a61d92d2d156918bbb0451cc2'
         evidence.update({'snapshot': source['snapshot'], 'ciphertext_sha256': source['sha256'],
                          'source_sha': source_sha, 'production_sql_issued': False})
         evidence['phase'] = 'isolated_container_initialization'
@@ -218,6 +228,13 @@ def main():
                               'categories': sorted(reference_catalog)}
         evidence['row_counts'] = {t: int(sql('phone_restore', 'SELECT count(*) FROM public.'
                                             + identifier(t) + ';')) for t in TABLES}
+        expected_counts = source.get('expected_row_counts')
+        if expected_counts is not None:
+            if (set(expected_counts) != set(TABLES)
+                    or any(type(v) is not int or v < 0 for v in expected_counts.values())
+                    or expected_counts != evidence['row_counts']):
+                raise CheckError('Restored counts differ from quiescent snapshot evidence')
+        evidence['row_counts_match_snapshot_evidence'] = expected_counts is not None
         evidence['phase'] = 'row_count_and_relationship_validation'
         keys = json.loads(sql('phone_restore', FK_QUERY))
         orphans = {}
@@ -239,7 +256,15 @@ def main():
                                             'per_constraint_orphans': orphans}
         evidence['freshness'] = {'latest_revenue_received_at': sql('phone_restore',
                                 'SELECT coalesce(max(received_at)::text,\'NO_REVENUE_ROWS\') FROM revenue_events;'),
-                                'note': 'Empty fact tables cannot prove real-visit/revenue freshness'}
+                                'note': 'Counts/FKs alone do not prove the dogfood attribution chain'}
+        if source.get('require_populated_test_restore'):
+            if (expected_counts is None or any(evidence['row_counts'][t] == 0 for t in
+                    ('sessions', 'events', 'customers', 'customer_visitors',
+                     'revenue_events', 'customer_attribution'))):
+                raise CheckError('Populated acceptance requires nonempty chain and exact counts')
+            if int(sql('phone_restore', 'SELECT count(*) FROM revenue_events WHERE NOT test;')):
+                raise CheckError('Acceptance dump includes revenue not labelled test')
+            evidence['populated_test_restore_checks'] = True
         evidence['database_checks_verified'] = True
         evidence['phase'] = 'database_checks_complete'
     except CheckError as exc:

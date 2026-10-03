@@ -1,6 +1,16 @@
 name: Public HTTPS observation
 on:
   workflow_dispatch:
+    inputs:
+      alert_test:
+        description: "Controlled failure notification test; no real outage/backup failure"
+        type: choice
+        default: none
+        options:
+          - none
+          - monitoring-failure-control
+          - backup-failure-control
+          - backup-missing-control
   schedule:
     - cron: "2-57/5 * * * *"
 permissions:
@@ -19,6 +29,14 @@ jobs:
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
         with:
           node-version: "22"
+      - name: Controlled notification test (expected failure only)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.alert_test != 'none' }}
+        env:
+          OM_ALERT_CASE: ${{ inputs.alert_test }}
+        shell: bash
+        run: |
+          printf 'CONTROLLED ALERT TEST: %s; no actual outage or backup operation\n' "$OM_ALERT_CASE"
+          exit 1
       - name: Observe public HTTPS without credentials or writes
         shell: bash
         run: |
@@ -37,6 +55,6 @@ jobs:
             summary += '| Public path | HTTP | Result |\n|---|---|---|\n';
             for (const item of r.results) summary += `| ${item.path} | ${item.status ?? 'unavailable'} | ${item.passed ? 'PASS' : 'FAIL'} |\n`;
           }
-          summary += '\nAvailability sample only; no email delivery or missing-workflow alarm is verified.\n';
+          summary += '\nAvailability sample only; no email delivery or missing-workflow alarm is verified. Controlled alert-test failures are not real outages or backup failures.\n';
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
           JS

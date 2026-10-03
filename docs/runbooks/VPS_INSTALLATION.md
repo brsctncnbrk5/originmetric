@@ -495,3 +495,9 @@ network-none/tmpfs disposable PostgreSQL kullanır; üretim restore'u yapmaz. He
 exit sonucu, 10 tablo/migration metadata, sayılar ve disposable cleanup/production değişmeme
 kanıtı sır içermeden raporlanır. Hash veya age header başarılı decryption/DB restore sayılmaz.
 Telefon dışı kasa yedeği **ERTELENDİ**; phone-independent account/key/vault/2FA yolu eksiktir.
+## P2 acceptance continuation
+
+For the controlled real-domain visit, trusted test conversion/revenue and the new
+populated-backup restore, use [P2_DOGFOOD_ACCEPTANCE.md](P2_DOGFOOD_ACCEPTANCE.md).
+It preserves closed ingress until G1, the existing phone-only age key and the
+daily 03:15 UTC timer. A completed empty restore does not prove populated dogfood.

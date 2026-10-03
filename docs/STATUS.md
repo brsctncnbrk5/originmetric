@@ -27,6 +27,29 @@
 
 ## Next step
 
+**2026-10-03 — P2 technical acceptance continuation; G1/P2 still PENDING/OPEN:**
+controlled monitoring/backup-failure/backup-missing GitHub notification paths
+completed (expected failures; no production outage). Actual email receipt and
+independent missing-run monitoring remain unverified. Backup ±50% size warnings,
+local freshness/failure watchdog and guarded predeploy GitHub adapter tested.
+Retention dry-run deleted nothing; independent 90-day backstop prepared but
+**not activated** pending private Actions no-spend verification/source pin.
+Tracker origin `/js/` cache headers installed and edge **MISS/HIT/HIT** observed;
+Cloudflare browser TTL still **14400 seconds**, saved override review pending.
+Production DB/app/volumes unchanged; only the documented nginx cache-header
+reload occurred. Daily **03:15 UTC** timer enabled/active; first scheduled result
+**PENDING**, next 2026-10-04 03:15 UTC. No new test customer/revenue was created.
+[Evidence and remaining seven acceptance items](reports/P2_GITHUB_RECOVERY_MONITORING.md#p2-acceptance-continuation--2026-10-03).
+
+**Prepared next acceptance:** [controlled dogfood and populated restore runbook](runbooks/P2_DOGFOOD_ACCEPTANCE.md).
+Local consent/GPC tests pass, but production `/dogfood` is still 404; formal G1,
+reviewed deployment, owner browser checks, persisted labelled trusted test chain
+and populated-backup restore are still required. Existing empty restore and
+owner-reported vault/env attachment steps remain complete; off-phone vault is
+DEFERRED. Current age key decision stands. **P3 NOT STARTED; ingestion closed.**
+Next owner check is only the saved tracker browser TTL; broader completed
+Cloudflare/vault/phone prerequisites are not requested again.
+
 **2026-10-03 — REAL MANUAL RESTORE VERIFIED; P2 still OPEN:** exact GitHub snapshot `om-db-v1-20261003T130037Z-eeab03ba` restored via phone decryption → SSH at **14:45:11–14:45:22 UTC**. Owner reports pipeline **0/0**; independently checked VPS `pg_restore=0`, exact schema/10 tables, 4 migration hashes/timestamps, all 10 domain row counts **0**, and 14 foreign keys with **0 orphan rows**. Empty domain tables do not prove real-visit/revenue freshness or populated relationships. New private final confirmation resolves the receiver's pending-phone flag; historical result files are preserved. Exact temporary restore container absent; task ciphertext staging removed; production metadata/config hashes unchanged. Daily **03:15 UTC** timer **enabled/active/waiting**, next **2026-10-04 03:15 UTC**; no scheduled backup completion yet. Independently observed three successful scheduled HTTPS monitoring runs; uninterrupted five-minute observation/dead-man/email remain unproved. [Final evidence and complete remaining P2 criteria](reports/P2_GITHUB_RECOVERY_MONITORING.md#real-manual-restore-verified-and-remaining-p2-acceptance--2026-10-03).
 
 **Next canonical work / remaining acceptance:** actual `originmetric.app` required-consent/banner/withdrawal/GPC and owner confirmation; formal six-item G1 review before ingestion opens; reviewed deploy/smoke plus persisted trusted identify→payment→attribution, duplicate/refund/renewal and private internal access; backup failure/missing-run/email and dump-size-warning evidence (first scheduled backup still pending); provider lifecycle/retention backstop acceptance; phone-independent secret recovery (**off-phone vault DEFERRED**); saved tracker-cache configuration and explicit limits of direct Cloudflare/original-export review. Earlier panel evidence remains valid; no repeated general GitHub approval or key rotation is required. **G1 PENDING; P2 OPEN; P3 NOT STARTED; data gates remain closed.** No next-phase work begun.

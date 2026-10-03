@@ -12,7 +12,7 @@ OM_OLD=$(cat .runtime/current-tag 2>/dev/null || true)
 if [[ -n $OM_OLD ]]; then
   # Prevent rollback from silently dropping newly accepted daily-cap semantics.
   [[ $OM_OLD =~ ^[a-f0-9]{40}$ ]] || fail 'Invalid previous image tag'
-  bash scripts/vps/backup.sh --already-locked
+  bash scripts/vps/predeploy-backup.sh
 fi
 # Build at exact SHA on the VPS; no GHCR account or paid build service required.
 docker build --pull --tag "originmetric:$APP_TAG" .
