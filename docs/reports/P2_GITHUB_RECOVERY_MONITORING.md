@@ -617,3 +617,11 @@ readback test (`rg` absent on the runner). Assertions now use portable grep, wit
 the same corruption/read-failure/retention expectations; isolated local readback
 proof passes. This failed CI run is not labelled successful; final corrected
 commit CI must be checked separately.
+
+Corrected run 37134598497 then passed the portable controls and production image
+consent/identify/test-payment attribution, but exposed an existing restore-check
+startup race: socket-only initialization server exited between pg_isready and
+createdb. Both isolated receivers now wait for final TCP readiness **inside** their
+network-none container; timeout stops explicitly. The basic receiver also
+suppresses row-level pg_restore diagnostics. This failed synthetic CI restore
+does not invalidate the earlier independently verified real phone restore.

@@ -6,14 +6,24 @@ need docker
 OM_CONTAINER="originmetric-restore-$(date +%s)-$$"
 cleanup_restore() { docker rm -f "$OM_CONTAINER" >/dev/null 2>&1 || true; }
 trap cleanup_restore EXIT
-docker run -d --name "$OM_CONTAINER" --network none --tmpfs /var/lib/postgresql \
-  -e POSTGRES_HOST_AUTH_METHOD=trust postgres:18.6-alpine >/dev/null
+docker run -d --name "$OM_CONTAINER" --network none --log-driver none \
+  --memory 512m --cpus 1 --tmpfs /var/lib/postgresql:rw,size=268435456 \
+  -e POSTGRES_HOST_AUTH_METHOD=trust postgres:18.6-alpine \
+  -c log_statement=none -c log_min_messages=panic -c log_min_error_statement=panic >/dev/null
+OM_READY=no
 for OM_ATTEMPT in $(seq 1 30); do
-  if docker exec "$OM_CONTAINER" pg_isready -U postgres >/dev/null 2>&1; then break; fi
+  # Image initialization uses a temporary Unix-socket-only server. Wait for TCP
+  # on the final server, inside this network-none container, before createdb.
+  if docker exec "$OM_CONTAINER" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then
+    OM_READY=yes; break
+  fi
   sleep 1
 done
+[[ $OM_READY == yes ]] || fail 'Isolated PostgreSQL did not become ready'
 docker exec "$OM_CONTAINER" createdb -U postgres originmetric_restore
-docker exec -i "$OM_CONTAINER" pg_restore -U postgres -d originmetric_restore --exit-on-error --no-owner --no-acl
+if ! docker exec -i "$OM_CONTAINER" pg_restore -U postgres -d originmetric_restore --exit-on-error --no-owner --no-acl >/dev/null 2>&1; then
+  fail 'Isolated restore failed; row-level diagnostics suppressed'
+fi
 # Verify domain and migration metadata exist, counts are readable and constraints are installed.
 OM_TABLES=$(docker exec "$OM_CONTAINER" psql -U postgres -d originmetric_restore -Atc "SELECT count(*) FROM information_schema.tables WHERE table_schema='public' AND table_name IN ('projects','events','sessions','customers','customer_visitors','revenue_events','customer_attribution','api_keys','workspaces','ingestion_daily')")
 [[ $OM_TABLES == 10 ]] || fail 'Restored domain tables incomplete'

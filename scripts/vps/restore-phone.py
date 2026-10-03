@@ -173,7 +173,8 @@ def main():
                                  'postgres_logging': 'disabled docker logs; panic only PostgreSQL',
                                  'memory_bytes': 536870912, 'data_tmpfs_bytes': 268435456}
         for _ in range(40):
-            ready = subprocess.run(['docker', 'exec', name, 'pg_isready', '-U', 'postgres'],
+            # The image's initialization server is Unix-socket-only and temporary.
+            ready = subprocess.run(['docker', 'exec', name, 'pg_isready', '-h', '127.0.0.1', '-U', 'postgres'],
                                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=5)
             if ready.returncode == 0:
                 break
