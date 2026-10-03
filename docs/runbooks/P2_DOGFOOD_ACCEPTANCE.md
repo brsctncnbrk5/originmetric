@@ -218,3 +218,63 @@ source. Only then does the tool create a new private `snapshot-evidence-*.json`
 for `restore-phone.py --snapshot-evidence`. It never manufactures a restore,
 phone exit or actual visit result. These commands are prepared; no populated
 production snapshot or phone restore has been run during closed-ingestion work.
+
+## Prepared first actual controlled consent test — approval pending
+
+The first applicable actual-domain test is canonical **G1 item 1**: a fresh isolated
+operator browser on the registered originmetric.app test project, deny → allow →
+exact labelled persisted pageview/session → withdraw. Existing owner banner
+acceptance is retained. This is actual-domain operator evidence; it cannot claim
+inspection of the owner's phone or native enabled-owner GPC. The unavailable
+native GPC test remains NOT PASSED. Formal G1 stays PENDING.
+
+The normal production chain above still requires formal G1. This proposed test is
+an explicitly approved, bounded controlled-traffic exception under canonical §28's
+controlled-traffic rule, not public go-live or a waiver. **Do not activate without
+owner approval of the scope below.**
+
+- Only `/api/v1/e`, POST, exact origin and `/dogfood` referrer, plus a private
+  temporary HttpOnly/Secure/SameSite=Strict access cookie. The private entry URL
+  stays in mode-600 runtime files and is consumed by one fresh operator browser.
+- Maximum **600 seconds from activation**, ending earlier immediately after the
+  test. The server checks allowed epoch seconds; copying a cookie or failure of
+  the rollback timer cannot extend the window. Other requests continue to drop
+  without forwarding (202; oversized bodies may receive 413).
+- Keep `PUBLIC_G1_READY=no`, other public APIs closed, existing Cloudflare/host
+  firewall, application/DB, deployed image and age key/recipient unchanged.
+- Expected production data: **one test-labelled event and session**, source
+  `p2-test`, medium `controlled`; zero customers/links/revenue/attribution. No
+  identify, payment, renewal, refund, backup or phone restore is authorized by
+  this approval. Retain labelled test facts; do not delete/truncate production.
+- Before consent and after deny: zero tracker state/visitor and outbound event
+  requests. Allow: 202 plus independently verified exact SQL persistence;
+  202 alone cannot PASS. Withdraw: zero tracker state/visitor, no new request or
+  fact after a history event. Store only booleans/counts, not IDs/bodies/headers.
+
+Prepared commands (activation and actual test are **not executed**):
+
+```bash
+python3 scripts/vps/prepare-controlled-consent.py
+# Read .runtime/p2-consent-window-last-path privately for <window-directory>.
+# Only after the exact owner approval:
+python3 scripts/vps/prepare-controlled-consent.py activate <window-directory>
+node scripts/vps/accept-controlled-consent.mjs <window-directory>
+# Immediate manual closure if test runner fails or is interrupted:
+python3 scripts/vps/prepare-controlled-consent.py rollback <window-directory>
+```
+
+Preparation snapshots the exact closed nginx config and protected-resource
+metadata. Activation refuses a changed config or reused window, generates a fresh
+server deadline and arms a scoped systemd rollback **before** changing the site.
+Nginx syntax/reload failure restores the closed config. The test runner closes the
+browser and restores config in `finally`; the independent 600-second timer repeats
+closure. Rollback refuses to overwrite a subsequently changed unrelated config;
+the server deadline still expires. Confirm restored bytes, nginx reload, public
+drop behavior and protected resources before claiming final test PASS. If timer
+arming, reload, persistence, withdrawal or cleanup fails, retain failure evidence
+and close the route; no acceptance PASS is inferred.
+
+The local nginx mock controls and candidate syntax checks are preparation only.
+They do not prove an installed timer, actual production visit or owner acceptance.
+Keep **GPC NOT_EXPOSED, phone-independent recovery DEFERRED, G1 PENDING, P2 OPEN,
+P3 NOT STARTED** regardless of this partial test's eventual result.

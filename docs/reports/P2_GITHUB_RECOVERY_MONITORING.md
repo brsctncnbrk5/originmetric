@@ -1379,3 +1379,59 @@ P3 NOT STARTED.** All currently authorized closed-ingestion preparation describe
 above is complete; no owner decision is required for those completed actions.
 Actual production execution and missing external/owner evidence remain staged,
 not silently approved or waived.
+
+
+## First applicable actual G1 test prepared — 2026-10-04 local
+
+Canonical G1 item 1 has the existing explicit owner banner acceptance and
+technical deny/allow/withdraw controls. First applicable additional real test:
+**operator browser actual-domain consented persistence and withdrawal**, not
+another banner confirmation or a repeated unavailable GPC reference check.
+The canonical item 2 native owner test is presently unavailable (NOT_EXPOSED),
+not waived. Normal public go-live remains blocked by formal G1.
+
+Prepared a proposed controlled-traffic exception requiring one specific owner
+approval. No activation or public data-gate opening has occurred. Exact scope:
+one fresh operator browser, registered originmetric.app test project and prior
+unique private campaign, **maximum 600 seconds**, `/api/v1/e` only, POST with exact
+origin/dogfood referrer and private access cookie. Other visitors cannot enter the
+forwarding path without that private token; other APIs remain closed. The token
+is temporary infrastructure access, not a new API key or age identity. Bootstrap
+and candidate artifacts are root-only; token/headers/bodies are never published.
+Expected one labelled event/session, zero customers/link/revenue/attribution.
+No real customer or monetary event is claimed; test facts retained for later
+controlled attribution/backup, with no production deletion/truncate.
+
+Scripts: `prepare-controlled-consent.py` stages an exact closed-config backup,
+private candidate/deadline template and protected-resource baseline. Owner-approved
+activation will arm a scoped systemd rollback before nginx mutation; the server's
+own epoch-second expiry caps cookie replay even if that timer fails. Immediate
+manual rollback and the actual runner's `finally` restore the closed route;
+syntax/reload failure also restores the saved config. Refuse reused windows or
+changed config; refuse overwriting unrelated subsequent changes. No claim is made
+that the rollback timer has been installed/tested on production yet.
+
+`accept-controlled-consent.mjs` is ready, **NOT RUN**. It observes fresh real-domain
+browser state/request counts before consent and after deny, verifies exact SQL
+persistence after Allow, and checks cleared state/no new requests/facts after
+withdrawal/history navigation. Always closes its browser, restores the route and
+compares protected resources. Safe booleans/counts only; no native GPC injection,
+no owner-phone observation, no actual restore claimed. Failure cannot become PASS.
+
+**Preparation verification:** 14 loopback-only nginx controls PASS: missing/wrong
+cookie, wrong origin/page/method, valid forwarding, oversized body, and all denied
+again after server expiry. Initial long nginx parameter was rejected and corrected
+by chunking expiry rules; failed attempt is not PASS. Current complete candidate
+nginx syntax PASS. Production config still equals exact closed backup; six fact
+tables remain zero. Private directory pointer:
+`.runtime/p2-consent-window-last-path`; candidate/preparation/protected evidence
+stored there. No access token appears in tracked files. JavaScript lint/syntax, Python syntax,
+format and diff checks PASS; redacted candidate secret scan PASS. Publication
+and local/remote SHA audit are kept in this private preparation directory; no
+new full-CI or actual-test success is inferred from these preparation checks.
+
+**Actual acceptance NOT RUN; awaiting one bounded owner approval.** This test may
+only establish actual-domain operator scope; it does not complete formal G1,
+waive enabled-owner GPC, start the full revenue chain or open uncontrolled traffic.
+GPC NOT_EXPOSED; phone-independent recovery DEFERRED; current age key/recipient
+unchanged; PUBLIC_G1_READY=no; G1 PENDING; P2 OPEN; P3 NOT STARTED.

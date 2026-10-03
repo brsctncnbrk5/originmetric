@@ -27,6 +27,22 @@
 
 ## Next step
 
+**2026-10-04 local — first applicable actual G1 test PREPARED / approval pending.**
+Canonical item 1: actual-domain operator deny → consented labelled persistence →
+withdrawal, using one fresh isolated browser and the registered test project.
+Prepared cookie/origin/page/POST-restricted `/api/v1/e` window, maximum **600 s**,
+server-side expiry plus pre-armed scoped rollback and immediate final cleanup.
+**14 loopback controls and candidate nginx syntax PASS — preparation only**;
+activation/timer/live test NOT RUN, production config unchanged and facts zero.
+The actual runner requires SQL persistence, never 202 alone, and records only
+operator-scope evidence. Owner-phone storage/network and enabled-owner GPC remain
+unobserved. This is a proposed explicitly approved controlled-traffic exception,
+not formal G1 completion or public go-live. **One pending owner decision:** permit
+this 10-minute maximum isolated-browser test (one event/session; no revenue).
+[Scope, commands and rollback](runbooks/P2_DOGFOOD_ACCEPTANCE.md#prepared-first-actual-controlled-consent-test--approval-pending).
+**GPC NOT_EXPOSED; off-phone recovery DEFERRED; existing age key unchanged;
+PUBLIC_G1_READY=no; G1 PENDING; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — closed-ingestion G1 and end-to-end preparation COMPLETE / technical PASS.**
 Extended deployed-image G1 with `--rehearse-dogfood`: **98 tests / 9 files PASS**;
 trusted identify/retry, test payment/duplicate/conflict, renewal/refund, exact
