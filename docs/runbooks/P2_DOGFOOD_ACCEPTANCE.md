@@ -68,8 +68,11 @@ that storage and analytics are blocked even after Allow.
 
 Current step is **formal six-item G1 review**; see the
 [consolidated checklist](../reports/P2_GITHUB_RECOVERY_MONITORING.md#gpc-not-exposed-recorded--formal-g1-review--2026-10-03).
-Technical evidence is PASS; dated owner actual-banner setup confirmation and
-enabled-owner GPC evidence remain pending. Preserve accepted Cloudflare panel
+Technical evidence is PASS. On 2026-10-03 the owner explicitly accepted the
+actual required-consent banner and Reddet / İzin ver / İzni geri çek controls;
+dated owner setup confirmation is COMPLETE. Enabled-owner GPC evidence remains
+pending. Next single owner step: report the name of an already available other
+browser that can enable GPC, or report none; no installation requested. Preserve accepted Cloudflare panel
 proof and its direct API/export inspection limit. Do not repeat the completed
 reference check or install a browser/extension/change flags. Data gates remain
 closed; persisted visits/trusted conversion and populated restore start only

@@ -27,6 +27,19 @@
 
 ## Next step
 
+**2026-10-03 — owner actual-banner setup ACCEPTED (explicit written confirmation).**
+Owner confirms the existing `originmetric.app/dogfood` required-consent setup and
+**Reddet / İzin ver / İzni geri çek** controls. G1 item 1's dated owner setup
+confirmation is now complete; earlier technical and UI evidence retains its
+stated scope. This does not establish owner-phone storage/network evidence.
+**Next open owner item: enabled GPC behavior evidence.** Android Chrome reference
+result remains **NOT_EXPOSED**, enabled-owner acceptance **NOT PASSED**; injected
+GPC=true remains separate technical PASS. Single next step: owner reports whether
+an already available other browser can enable GPC (browser name, or none).
+No installation, experimental flag, repeat Android reference check or gate opening.
+**Formal G1 PENDING; data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.**
+The older banner-confirmation requests below are historical and resolved by this entry.
+
 **2026-10-03 18:10 UTC — G1 technical evidence applicability rechecked.**
 Current deployed source/image and public tracker hash match the prior technical
 G1 PASS. Live `/dogfood` returns 200, uses required consent with no GPC ignore

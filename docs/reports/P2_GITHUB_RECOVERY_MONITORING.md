@@ -911,3 +911,33 @@ No missing evidence is waived. **Formal G1 PENDING; data collection NOT PASSED;
 P2 OPEN; P3 NOT STARTED.** `PUBLIC_G1_READY=no` verified. No gate opening, config,
 deploy, production DB write, labelled conversion/revenue or populated restore occurred.
 Work pauses at this first owner evidence item as requested.
+
+
+## Owner actual-banner setup accepted / next GPC evidence item — 2026-10-03
+
+Owner explicitly confirms: “originmetric.app/dogfood üzerindeki zorunlu izin
+düzenini ve Reddet / İzin ver / İzni geri çek kontrollerini onaylıyorum.”
+Dated actual-banner setup confirmation is **ACCEPTED / OWNER-CONFIRMED**.
+This resolves the G1 item 1 setup-confirmation gap in the previous checklist.
+Prior independent technical controls and owner UI reports remain evidence at their
+recorded scope; owner-phone storage/network is not newly observed or inferred.
+
+| G1 item | Updated outcome |
+| --- | --- |
+| 1. Required consent / withdrawal | Technical PASS retained; dated owner actual-banner setup ACCEPTED; previous deny/allow/withdraw UI reports COMPLETE. |
+| 2. Default GPC | Technical PASS retained; Android Chrome reference NOT_EXPOSED; enabled-owner behavior evidence NOT PASSED, still open. |
+| 3. Body/schema/origin/dedup/failure isolation | Existing matching-source technical PASS retained. |
+| 4. Rate limits / abuse ceiling / daily cap / edge rule | Existing technical and saved-panel evidence retained; independent direct provider API/export inspection still unverified. |
+| 5. Log redaction | Existing technical PASS retained. |
+| 6. Browser trust boundary | Existing technical PASS retained. |
+
+**Next first owner-dependent item: enabled GPC evidence.** Single step: report the
+name of an already available other browser in which GPC can be enabled, or report
+none. This collects availability metadata only, not a PASS. No new browser,
+extension or flag installation, repeated Android reference check, production
+mutation or data gate opening is requested/performed. Subsequent verification
+depends on that answer; the prior NOT_EXPOSED result is preserved.
+
+**Formal G1 PENDING; data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.**
+No missing evidence waived; no production deployment/config/DB change or new
+regression run. Existing technical source applicability review remains valid.
