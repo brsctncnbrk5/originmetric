@@ -27,6 +27,17 @@
 
 ## Next step
 
+**2026-10-03 20:45 UTC — correct-account notification retest completed.**
+Owner confirms **brsctncnbrk5 Actions Email enabled / Failed workflows only**.
+Explicitly requested single `monitoring-failure-control` dispatched as
+brsctncnbrk5; [run 37152667292](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37152667292)
+completed with expected failure at the labelled control step. No real outage or
+backup operation. Settings prerequisite now COMPLETE / OWNER-REPORTED for the
+correct account; **email delivery PENDING owner receipt**, not PASS.
+**Next single owner step:** check the mailbox receiving brsctncnbrk5 notifications,
+including spam, for this new failure-test email; report received / not received.
+**G1 PENDING; GPC NOT_EXPOSED; ingestion closed; P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — notification account mismatch VERIFIED / prior inference corrected.**
 Owner's saved Actions email settings belong to **brsctncnbrk7-byte**. Read-only API
 reconfirms actor and triggering_actor **brsctncnbrk5** for all three existing

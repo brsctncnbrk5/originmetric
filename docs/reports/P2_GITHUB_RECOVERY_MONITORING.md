@@ -1066,3 +1066,31 @@ rules and is not inferred from these manual-test actors.
 
 **Formal G1 PENDING; GPC NOT_EXPOSED; data collection NOT PASSED; ingestion closed;
 P2 OPEN; P3 NOT STARTED.** No production application/config/DB changes.
+
+
+## Correct-account controlled email-delivery retest — 2026-10-03
+
+Owner confirms **brsctncnbrk5 → Actions → Email already enabled, Failed workflows
+only selected**, and explicitly requests a new controlled failure test. Account
+setting prerequisite is now **COMPLETE / OWNER-REPORTED for brsctncnbrk5**.
+Auth API login was verified as brsctncnbrk5 before dispatch; existing uptime workflow
+active. One manual `monitoring-failure-control` was dispatched at **20:45:12 UTC**
+against `main` in `brsctncnbrk5/originmetric-monitoring`.
+
+[Run 37152667292](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37152667292)
+created at **20:45:14 UTC**, completed/failure; API verifies actor and triggering_actor
+**brsctncnbrk5** and the intended **Controlled notification test (expected failure
+only)** step failed. Setup succeeded and the safe summary completed. No actual
+outage/backup failure, production mutation or dedicated mail-send step. This is
+successful execution of the controlled failure path, **not email delivery PASS**.
+
+**Email delivery remains PENDING_OWNER_RECEIPT.** Prior cross-account nonreceipt
+is preserved separately. Next single owner action: check the mailbox receiving
+brsctncnbrk5 notifications, including spam, for the new originmetric-monitoring
+failure-test email; report received / not received only. No mail address or
+contents requested. Native recipient is the triggering account under the previously
+verified GitHub rule; actual dispatch/delivery by the mail system is not asserted.
+
+**G1 PENDING; GPC NOT_EXPOSED; ingestion closed; data collection NOT PASSED;
+P2 OPEN; P3 NOT STARTED.** Independent dead-man/missing-run and scheduled-backup,
+lifecycle and deferred off-phone recovery gaps remain open even if receipt passes.
