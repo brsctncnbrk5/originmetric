@@ -27,6 +27,18 @@
 
 ## Next step
 
+**2026-10-03 — tracker browser TTL VERIFIED:** owner saved Cloudflare Browser
+Cache TTL = Respect Existing Headers. At 16:37 UTC, three public tracker GETs
+returned 200 and `public, max-age=300, s-maxage=3600`, with MISS → REVALIDATED →
+HIT. The previous 14400-second browser override is resolved; direct provider
+API/export inspection remains unverified. A scoped encrypted preparation backup
+was remotely verified at 16:39 UTC. A separately labelled P2 test project/key
+was prepared privately, with no customer/revenue creation; only
+`BACKUP_BACKEND=github` and registered `OM_DOGFOOD_SITE_KEY` were updated.
+Closed-ingestion consent preview deployment and deployed-image technical G1
+verification are the next task; formal owner consent acceptance remains pending.
+Existing age recipient and daily 03:15 UTC timer are unchanged. **P2 OPEN; P3 NOT STARTED.**
+
 **2026-10-03 — P2 technical acceptance continuation; G1/P2 still PENDING/OPEN:**
 controlled monitoring/backup-failure/backup-missing GitHub notification paths
 completed (expected failures; no production outage). Actual email receipt and

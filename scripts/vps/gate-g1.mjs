@@ -113,6 +113,8 @@ try {
   let ready = false;
   for (let i = 0; i < 60; i++) {
     try {
+      // Initialization starts a temporary socket-only server; require final TCP readiness.
+      docker("exec", names.db, "pg_isready", "-h", "127.0.0.1", "-U", "postgres");
       psql(names.db, "SELECT 1");
       ready = true;
       break;

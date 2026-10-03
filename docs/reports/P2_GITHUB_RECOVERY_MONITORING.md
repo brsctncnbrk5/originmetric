@@ -636,3 +636,32 @@ Retention review template pins that exact source. The final documentation/templa
 commit sits above this tested code; no application/receiver change follows it.
 This CI evidence is not an actual-domain or populated production snapshot restore
 result. G1 pending, P2 open, P3 not started; first scheduled backup remains pending.
+
+## Browser TTL resolved and closed consent preview preparation — 2026-10-03
+
+Owner reports saving Browser Cache TTL = **Respect Existing Headers** for
+originmetric.app. Independent public GETs at **16:37:16 UTC**: all HTTP 200,
+`Cache-Control: public, max-age=300, s-maxage=3600`, cache statuses
+**MISS → REVALIDATED → HIT**. Browser 14400-second override is resolved.
+Saved setting evidence is owner-reported plus live behavior; no direct Cloudflare
+API/panel/export inspection is claimed. Existing wider panel evidence stands.
+Private evidence: `.runtime/p2-cache-20261003T163716Z/tracker-ttl.json`.
+
+Fresh preparation backup `om-db-v1-20261003T163906Z-b6687a79` completed scoped
+encrypted upload and exact ciphertext/manifest remote readback at **16:39:13 UTC**;
+no size warning. This is **manual backup/readback**, not new restore or scheduled
+success. Separately labelled workspace/project/key prepared for owner-controlled
+P2 acceptance only; stdout/key captured in new root-private ignored files, never
+shown. These are intentionally test configuration records, not customers/revenue.
+Production env changes are limited to explicit GitHub predeploy backend and the
+registered public dogfood site key; all existing secrets/age recipient/data gate
+remain unchanged. This preparation does not claim production metadata unchanged
+across an intentional forthcoming deployment.
+
+Reviewed proxy source adds only exact `/dogfood` preview routing, keeping browser
+events 202/drop, trusted APIs 503 and internal/fixtures 404. The consent page has
+required-consent/deny/withdraw/GPC and explicit test-data labels. Normal reviewed
+deployment must retain backup-before-build/migrate, smoke and rollback. G1 fixture
+readiness now requires final PostgreSQL TCP server rather than transient init
+socket. Actual browser consent acceptance, persisted test attribution and populated
+backup restore remain pending; P2 stays open and P3 is not started.
