@@ -104,6 +104,7 @@ jobs:
           bash scripts/vps/test-deploy-control.sh
           bash scripts/vps/test-backup-readback.sh
           node --test scripts/vps/test-public-observation.mjs
+          python3 scripts/vps/test-github-backup.py
 
       - name: Production Docker package, consent dogfood and encrypted restore proof
         run: |

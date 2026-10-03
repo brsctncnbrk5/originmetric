@@ -1,0 +1,40 @@
+name: Public HTTPS observation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: public-https-observe
+  cancel-in-progress: false
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "22"
+      - name: Observe public HTTPS without credentials or writes
+        shell: bash
+        run: |
+          set -o pipefail
+          node observe-public.mjs | tee observation.json
+      - name: Record safe phone-readable result
+        if: always()
+        shell: bash
+        run: |
+          node --input-type=module - <<'JS'
+          import fs from 'node:fs';
+          let summary = '# Public HTTPS observation\n\nUNKNOWN: observer did not finish.\n';
+          if (fs.existsSync('observation.json')) {
+            const r = JSON.parse(fs.readFileSync('observation.json', 'utf8'));
+            summary = `# Public HTTPS observation\n\n${r.observed_at} UTC — ${r.passed ? 'PASS' : 'FAIL'}\n\n`;
+            summary += '| Public path | HTTP | Result |\n|---|---|---|\n';
+            for (const item of r.results) summary += `| ${item.path} | ${item.status ?? 'unavailable'} | ${item.passed ? 'PASS' : 'FAIL'} |\n`;
+          }
+          summary += '\nAvailability sample only; no email delivery or missing-workflow alarm is verified.\n';
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary);
+          JS

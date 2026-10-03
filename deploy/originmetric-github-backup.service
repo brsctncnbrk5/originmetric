@@ -1,0 +1,15 @@
+[Unit]
+Description=OriginMetric encrypted DB backup to private GitHub draft Releases
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/originmetric
+Environment=GH_CONFIG_DIR=/opt/originmetric/.runtime/github-auth
+LoadCredential=backup-token:/opt/originmetric/.runtime/github-auth/backup-token
+ExecStart=/usr/bin/python3 /opt/originmetric/scripts/vps/github-backup.py
+TimeoutStartSec=20min
+UMask=0077
+Nice=10
