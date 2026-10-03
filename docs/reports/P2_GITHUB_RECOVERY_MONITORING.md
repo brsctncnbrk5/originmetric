@@ -841,3 +841,38 @@ Existing injected live-page GPC=true technical proof remains separate from owner
 browser signal evidence. No new OriginMetric data/test revenue/restore was run;
 no production source/env/config/DB/volume/timer change. Ingestion remains closed;
 **data collection NOT PASSED; formal G1 PENDING; P2 OPEN; P3 NOT STARTED.**
+
+
+## GPC NOT_EXPOSED recorded / formal G1 review — 2026-10-03
+
+Owner reports GPC reference **Client-side detection: DOM signal not present**
+in the previously identified **Android Chrome** browser. Recorded as
+**NOT_EXPOSED / OWNER-REPORTED**. The reference-result step is complete;
+enabled-owner GPC acceptance is **NOT PASSED**, not waived. No browser-wide
+support conclusion or server-side Sec-GPC result is inferred. Existing injected
+live-page GPC=true technical proof remains separate.
+
+Advanced to the formal six-item G1 evidence review (§28). This review uses the
+existing deployed-source evidence, not a new test execution. Reviewed source:
+`e74bfc1fcc6e404be977feee059dc1d3c78d170c`; private gate summary:
+`.runtime/g1-1791046258249-2898892/summary.json` (technical PASS, 7 regression files,
+fixtures removed and production facts unchanged at that execution).
+
+| Canonical G1 item | Consolidated evidence / outcome |
+| --- | --- |
+| 1. Required consent / withdrawal | Technical PASS from deployed clone and independent live controls; owner deny/allow/withdraw UI reports complete. Dated owner confirmation of actual required-consent banner setup remains PENDING. Phone storage/network not inspected. |
+| 2. Default GPC | Technical PASS from deployed clone and injected true on live page. Owner reference result NOT_EXPOSED; enabled-owner behavior acceptance NOT PASSED, remains open. |
+| 3. Body/schema/origin/dedup/failure isolation | Technical PASS from matching-source real-DB regressions. |
+| 4. Rate limits / abuse ceiling / daily cap / single edge rule | Technical PASS from deployed-source regression evidence; earlier transferred saved Cloudflare rule/window/order panel evidence remains accepted. Direct provider API/original-export review remains unverified; panels are not requested again. |
+| 5. Log redaction | Technical PASS from real-handler regressions and fixture runtime checks. |
+| 6. No browser identity/revenue creation | Technical PASS from deployed browser trust-boundary checks. |
+
+**Formal G1 remains PENDING.** Next owner evidence is dated actual-banner setup
+confirmation; enabled-owner GPC evidence stays explicitly open. No reference-test
+retry, dependency installation or experimental flag requested. No ingestion gate
+opening, production config/deploy/DB write, persisted visit, revenue or populated
+restore was performed. **Data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.**
+Existing age decision, completed vault/empty-restore evidence and daily 03:15 UTC
+schedule remain unchanged. After formal G1 is complete, continue the labelled
+persisted visit → trusted identify → revenue → attribution chain, then its
+populated backup/restore; these steps are not yet eligible to run.

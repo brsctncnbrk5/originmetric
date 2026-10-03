@@ -27,17 +27,20 @@
 
 ## Next step
 
-**2026-10-03 — owner browser identified: Android Chrome (OWNER-REPORTED).**
-Version/channel/native enabled GPC signal unverified; no browser support or GPC
-PASS inferred from the name or DNT setting. Existing injected GPC=true live proof
-remains independent technical evidence. **Next single owner check:** open the
-[officially linked GPC reference](https://global-privacy-control.vercel.app/) in
-Android Chrome private tab; report only Client-side detection value **true**,
-**false**, or **DOM signal not present**. True establishes an enabled signal at
-that reference, not OriginMetric acceptance; false/absent cannot pass enabled
-owner GPC. No browser/extension install, flags, gate opening or production change.
-Ingestion closed; **data collection NOT PASSED; formal G1 pending; P2 OPEN;
-P3 NOT STARTED.**
+**2026-10-03 — owner GPC reference result: NOT_EXPOSED (OWNER-REPORTED).**
+Android Chrome Client-side detection reported **DOM signal not present**. The
+owner signal check is recorded and complete with this result; enabled-owner GPC
+acceptance is **NOT PASSED**, not waived. Server-side Sec-GPC was not checked.
+Existing injected live-page GPC=true proof remains separate technical PASS.
+**Next step advanced to formal six-item G1 review:** evidence reconciled in the
+[latest G1 checklist](reports/P2_GITHUB_RECOVERY_MONITORING.md#gpc-not-exposed-recorded--formal-g1-review--2026-10-03).
+Technical checks pass at the reviewed deployed source; formal G1 remains
+**PENDING** for dated owner actual-banner setup confirmation and enabled-owner
+GPC evidence. Earlier Cloudflare panel evidence stays accepted; direct provider
+API/export verification remains a source limitation. No repeat reference check,
+new browser/extension or flag requested. Persisted controlled test chain and
+populated restore follow only after G1; ingestion remains closed.
+**Data collection NOT PASSED; P2 OPEN; P3 NOT STARTED.**
 
 **2026-10-03 — owner WITHDRAW UI COMPLETE / independent live withdrawal controls verified:**
 owner clicked **İzni geri çek** in the same tab without reload and saw

@@ -59,20 +59,21 @@ failure fallback localStorage 3 → 0. No new analytics requests after history
 events/reload in either control. These controls are not phone storage/network
 inspection and the UI message alone is not deletion/sending proof.
 
-Current next acceptance is **GPC**. Owner browser is **Android Chrome**; version/
-channel and enabled GPC signal are unverified. Do not presume support or treat
-the Chrome DNT setting as GPC. Next single check: open the
-[GPC initiative's linked reference](https://global-privacy-control.vercel.app/) in
-Chrome private tab and report only Client-side detection **true**, **false**, or
-**DOM signal not present**. True is enabled signal at the reference, not an
-OriginMetric behavior proof; false/absent do not pass enabled owner GPC. No new
-browser/extension, experimental flag, screenshot, ID or cookie requested.
-Independently injected GPC=true on the live page blocked
-storage and analytics even after Allow, but owner browser setting is unverified.
-Live automated pre-consent/deny check already observed no analytics request,
-visitor identifier, tracker cookie or tracker local storage. Owner confirmation
-for GPC is still pending. Data gates remain
-closed throughout the banner acceptance checks.
+Owner GPC reference check is now **COMPLETE, OWNER-REPORTED: NOT_EXPOSED**.
+Android Chrome Client-side detection showed **DOM signal not present**; this
+records the absent DOM signal at the reference, not enabled-owner GPC acceptance.
+Server-side Sec-GPC was not checked. Enabled-owner GPC is **NOT PASSED**, not
+waived. Independently injected GPC=true on the live page remains technical proof
+that storage and analytics are blocked even after Allow.
+
+Current step is **formal six-item G1 review**; see the
+[consolidated checklist](../reports/P2_GITHUB_RECOVERY_MONITORING.md#gpc-not-exposed-recorded--formal-g1-review--2026-10-03).
+Technical evidence is PASS; dated owner actual-banner setup confirmation and
+enabled-owner GPC evidence remain pending. Preserve accepted Cloudflare panel
+proof and its direct API/export inspection limit. Do not repeat the completed
+reference check or install a browser/extension/change flags. Data gates remain
+closed; persisted visits/trusted conversion and populated restore start only
+after formal G1 completion.
 
 ## Visit → conversion → revenue → attribution
 
