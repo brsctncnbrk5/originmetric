@@ -1,7 +1,7 @@
 # CLAUDE.md — OriginMetric operating rules
 
 Product: **OriginMetric**, a revenue attribution micro-SaaS. Repository: `brsctncnbrk5/originmetric`.
-Roles: Barış = product owner and final decision maker; Claude Code = implementation agent; ChatGPT = review and briefs.
+Roles: Barış = product owner and final decision maker; ChatGPT/Codex = implementation and review agent for the current P2 task (D-004). Claude Code was the earlier implementation agent.
 
 ## Read order (keep context small)
 1. `docs/STATUS.md`: current phase, plan status, next step. **Always read it first.**

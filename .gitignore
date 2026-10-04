@@ -7,6 +7,7 @@ out/
 build/
 dist/
 tracker/dist/
+public/js/v1/om.js
 next-env.d.ts
 *.tsbuildinfo
 coverage/
@@ -31,3 +32,7 @@ secrets/
 *.log
 npm-debug.log*
 .DS_Store
+
+# Production state / encrypted backups
+.runtime/
+backups/

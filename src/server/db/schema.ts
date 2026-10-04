@@ -17,6 +17,7 @@ import {
   bigint,
   boolean,
   char,
+  date,
   check,
   foreignKey,
   index,
@@ -337,5 +338,89 @@ export const customerAttribution = pgTable(
       sql`(${t.status} = 'unattributed' and ${t.creditedSource} is null and ${t.firstTouchSource} is null)
         or (${t.status} <> 'unattributed' and ${t.creditedSource} is not null and ${t.firstTouchSource} is not null and ${t.acquiredAt} is not null)`,
     ),
+  ],
+);
+
+/** P2 abuse budget, UTC day; persistent across app restarts. Not billing/quota usage. */
+export const ingestionDaily = pgTable(
+  "ingestion_daily",
+  {
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    day: date("day", { mode: "string" }).notNull(),
+    accepted: integer("accepted").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.projectId, t.day] }),
+    check("ingestion_daily_positive", sql`${t.accepted} > 0`),
+  ],
+);
+
+// Better Auth owns credentials and sessions; tenant membership stays application-owned.
+export const user = pgTable("auth_user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  email: text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  image: text("image"),
+  createdAt: tstz("created_at").notNull().defaultNow(),
+  updatedAt: tstz("updated_at").notNull().defaultNow(),
+});
+export const session = pgTable("auth_session", {
+  id: text("id").primaryKey(),
+  token: text("token").notNull().unique(),
+  expiresAt: tstz("expires_at").notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: tstz("created_at").notNull().defaultNow(),
+  updatedAt: tstz("updated_at").notNull().defaultNow(),
+});
+export const account = pgTable(
+  "auth_account",
+  {
+    id: text("id").primaryKey(),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    idToken: text("id_token"),
+    accessTokenExpiresAt: tstz("access_token_expires_at"),
+    refreshTokenExpiresAt: tstz("refresh_token_expires_at"),
+    scope: text("scope"),
+    password: text("password"),
+    createdAt: tstz("created_at").notNull().defaultNow(),
+    updatedAt: tstz("updated_at").notNull().defaultNow(),
+  },
+  (t) => [unique("auth_account_provider_unique").on(t.providerId, t.accountId)],
+);
+export const verification = pgTable("auth_verification", {
+  id: text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value: text("value").notNull(),
+  expiresAt: tstz("expires_at").notNull(),
+  createdAt: tstz("created_at").notNull().defaultNow(),
+  updatedAt: tstz("updated_at").notNull().defaultNow(),
+});
+export const workspaceMembers = pgTable(
+  "workspace_members",
+  {
+    workspaceId: uuid("workspace_id")
+      .notNull()
+      .references(() => workspaces.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    role: text("role").notNull().default("owner"),
+  },
+  (t) => [
+    primaryKey({ columns: [t.workspaceId, t.userId] }),
+    check("workspace_members_owner", sql`${t.role} = 'owner'`),
   ],
 );

@@ -1,4 +1,4 @@
-import { createDb, type DbHandle } from "./client";
+import { createDb, type DbHandle } from "@/server/db/client";
 
 const globalForDb = globalThis as unknown as { __originmetricDb?: DbHandle };
 

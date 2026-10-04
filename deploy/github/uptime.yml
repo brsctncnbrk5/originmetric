@@ -1,0 +1,21 @@
+# Historical template; active isolated repository is brsctncnbrk5/originmetric-monitoring.
+# Source mirror: deploy/github/monitoring/uptime.yml. Do not activate this in app repository.
+# REVIEW TEMPLATE ONLY. Not installed under .github/workflows and not activated.
+# Approve exact target/operation and potential Actions notifications before dispatch.
+name: OriginMetric independent HTTPS observation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  observe:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+      - name: Check only public HTTPS health and tracker
+        shell: bash
+        run: node scripts/vps/observe-public.mjs

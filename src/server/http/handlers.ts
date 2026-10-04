@@ -9,10 +9,13 @@
 import type { Logger } from "pino";
 import { errorFacts } from "@/server/logging/logger";
 import type { Database } from "@/server/db/client";
-import { identify, parseIdentifyBody } from "@/server/identity/identify";
-import { recordRevenueEvent } from "@/server/revenue/service";
+import { parseIdentifyBody } from "@/server/identity/identify";
 import { parseRevenueBody } from "@/server/revenue/validation";
-import { authenticateApiKey, type AuthenticatedKey } from "@/server/tenancy/api-keys";
+import {
+  authorizeServerKey,
+  forProject,
+  type AuthorizedProjectContext,
+} from "@/server/data/project";
 import type { Clock } from "@/server/time/clock";
 import {
   InvalidRequest,
@@ -39,19 +42,19 @@ async function withServerKey(
   route: string,
   request: Request,
   deps: ApiDeps,
-  handle: (key: AuthenticatedKey) => Promise<HandlerResult>,
+  handle: (context: AuthorizedProjectContext) => Promise<HandlerResult>,
 ): Promise<Response> {
   const started = performance.now();
   const fields: Record<string, unknown> = { route, method: request.method };
   let response: Response;
   try {
-    const key = await authenticateApiKey(deps.db, request.headers.get("authorization"), deps.clock);
+    const key = await authorizeServerKey(deps.db, request.headers.get("authorization"), deps.clock);
     if (!key) {
       response = unauthorized();
     } else {
       fields.project_id = key.projectId;
       fields.api_key_prefix = key.prefix;
-      const result = await handle(key);
+      const result = await handle(key.context);
       response = result.response;
       if (result.outcome) fields.outcome = result.outcome;
     }
@@ -76,18 +79,18 @@ async function withServerKey(
 
 /** POST /api/v1/identify */
 export function handleIdentify(request: Request, deps: ApiDeps): Promise<Response> {
-  return withServerKey("/api/v1/identify", request, deps, async (key) => {
+  return withServerKey("/api/v1/identify", request, deps, async (context) => {
     const input = parseIdentifyBody(await readJsonObject(request));
-    const status = await identify(deps.db, key.projectId, input, deps.clock);
+    const status = await forProject(context).identify(input, deps.clock);
     return { response: json(200, { status }), outcome: status };
   });
 }
 
 /** POST /api/v1/revenue-events */
 export function handleRevenueEvent(request: Request, deps: ApiDeps): Promise<Response> {
-  return withServerKey("/api/v1/revenue-events", request, deps, async (key) => {
+  return withServerKey("/api/v1/revenue-events", request, deps, async (context) => {
     const input = parseRevenueBody(await readJsonObject(request), deps.clock);
-    const outcome = await recordRevenueEvent(deps.db, key.projectId, input, deps.clock);
+    const outcome = await forProject(context).revenue(input, deps.clock);
     if (outcome.kind === "conflict") {
       const body: ErrorBody = {
         error: {

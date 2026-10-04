@@ -9,6 +9,7 @@ import { createApiKey } from "@/server/tenancy/api-keys";
 import { ProjectInputError, createProject, findActiveProject } from "@/server/tenancy/projects";
 import type { Clock } from "@/server/time/clock";
 import { recomputeCustomerByExternalId, recomputeProject } from "./recompute";
+import { applyMigrations } from "@/server/db/migrate";
 
 export interface OpsIo {
   out: (line: string) => void;
@@ -23,6 +24,8 @@ export interface OpsDeps extends OpsIo {
 export const USAGE = `Usage: npm run ops -- <command> [options]
 
 Commands:
+  migrate
+      Apply committed forward-only database migrations (also used by the app image).
   create-project --name <name> --domain <host> [--domain <host> ...]
                  --timezone <IANA tz> --currency <ISO 4217>
                  [--exclude-referrer <host> ...] [--workspace <uuid> | --workspace-name <name>]
@@ -158,6 +161,12 @@ async function recomputeCommand(args: string[], deps: OpsDeps): Promise<number> 
 }
 
 const COMMANDS: Record<string, (args: string[], deps: OpsDeps) => Promise<number>> = {
+  migrate: async (args, deps) => {
+    if (args.length) throw new UsageError("migrate takes no arguments");
+    await applyMigrations(deps.db);
+    deps.out("migrations: PASS");
+    return 0;
+  },
   "create-project": createProjectCommand,
   "create-key": createKeyCommand,
   recompute: recomputeCommand,
