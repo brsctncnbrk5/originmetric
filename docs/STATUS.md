@@ -4,14 +4,14 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P3 — Accounts, workspaces, projects, keys (tenancy): IN PROGRESS**, independent development authorized by D-010; P2 acceptance OPEN / G1 PENDING |
+| Current phase | **P2 — acceptance continuation IN PROGRESS / OPEN; G1 PENDING** (D-013). Existing D-010/D-011 P3 implementation preserved; no new P3 work. |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
 | P2 | **OPEN — DATA ROUTES CLOSED; ACCEPTANCE PENDING**, no PASS/CLOSED claim |
-| P3 | **IN PROGRESS** — auth/workspace/membership, project/key UI and scoped ingress implemented/tested; U1 LOCKED (D-011); acceptance/email configuration OPEN |
+| P3 | **EXISTING IMPLEMENTATION PRESERVED / acceptance OPEN** — D-010/D-011 work retained; no continuation in this P2 session (D-013); email/rollout OPEN |
 | P2 last full-suite tested code head | `f959cd31fe441b0b0c531c7cd40a393c15dce7c4` — [CI closed-ingestion acceptance preparation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37157304870); deployed application remains `e74bfc1fcc6e404be977feee059dc1d3c78d170c` |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
@@ -27,6 +27,47 @@
 | Locked owner decisions | **U0** (D-001) · **U13** core stack (D-002) · **U2** attribution + trusted-link model (D-003) · **U1** Better Auth email/password (D-011) |
 
 ## Next step
+
+**2026-10-04 — P2 scheduled evidence and G1 continuation (D-013).**
+Installation ease work package **COMPLETE / isolated technical PASS**;
+independent user test **PENDING / setup time UNMEASURED**. P4 not DONE.
+This entry supersedes prior next-step sequencing: P2 is the active task;
+committed P3/Better Auth work is preserved, with no new P3 work or rollout.
+
+First scheduled backup **PASS at execution/readback scope**: 03:15:00–03:15:12 UTC,
+remote ciphertext 33,236 B, matching SHA-256/manifest and age header, daily+weekly,
+0 pruned. First scheduled expiry **PASS at execution scope**:
+[37180284300](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37180284300),
+05:34:27 UTC versus configured 03:45 UTC; 0 expired/0 deleted/3 protected.
+Scheduled freshness [37179440970](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37179440970)
+PASS after backup. Sparse/delayed schedules do not prove hourly/five-minute
+coverage, actual failure delivery, independent dead-man or strict 90-day lifecycle.
+
+**Recovery provenance defect found and corrected for future backups:** scheduled
+manifest pins checkout `eb3fad8` (5 migrations), while deployed DB/app use `e74bfc1`
+(4 migrations). Historical manifest unchanged; **this snapshot's restore NOT RUN /
+compatibility NOT PASSED**. Backup now verifies the running image and deployed
+commit before/after dumping and records that source, refusing mismatch before
+upload/retention. Read-only actual image/source check PASS; next scheduled output
+must still be audited. Existing timer remains active/enabled; no manual backup,
+remote metadata write/deletion, decryption or key operation.
+
+Fresh deployed-image G1 technical controls and full isolated chain **PASS**:
+98 tests / 9 files; 14 FKs, zero orphans, semantic restore and four tamper controls.
+Backup/status/retention/restore checks **34 tests PASS**. Physical native GPC
+**OPEN / NOT PASSED**; G1/1 operator PASS and owner banner acceptance retained;
+G1/3–6 refreshed technical PASS, Cloudflare direct API/export limit explicit.
+Production remains 1 event / 1 session / 0 customers, links, revenue, attribution;
+protected env/nginx/units/container state unchanged; `PUBLIC_G1_READY=no`.
+
+Next: obtain native true GPC/actual-site zero-storage/send evidence when a suitable
+physical browser is available; then separately review any bounded production-chain
+scope. No repeat Chrome/banner request. Current deployment suffices for these
+checks; no P3 deployment required. Concrete future scope and rollback:
+[P2 runbook](runbooks/P2_DOGFOOD_ACCEPTANCE.md#p2-continuation-scope-and-rollback--2026-10-04).
+[Scheduled audit, G1 outcomes and handoff](reports/P2_GITHUB_RECOVERY_MONITORING.md#first-scheduled-backup-retention-and-g1-continuation--2026-10-04).
+**G1 PENDING; P2 OPEN; independent user test PENDING; no P3 continuation.**
+
 
 
 **2026-10-04 — Installation ease work package (D-012): isolated technical PASS;

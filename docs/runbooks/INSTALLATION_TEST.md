@@ -1,5 +1,9 @@
 # Independent installation test (English)
 
+Status (2026-10-04): **PENDING / not run with an independent participant**.
+Installation ease implementation is COMPLETE at isolated technical scope; customer
+installation time remains UNMEASURED.
+
 Purpose: test the hypothesis **first revenue match within 15 minutes**. It is not
 an established promise. Use only a fresh synthetic customer and `test: true` on an
 isolated staging OriginMetric and sample SaaS. Do not use originmetric.app's live

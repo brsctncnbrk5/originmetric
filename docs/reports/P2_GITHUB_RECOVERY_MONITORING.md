@@ -1745,3 +1745,109 @@ Existing one-event/one-session baseline is retained. **PUBLIC_G1_READY=no;
 G1 PENDING; P2 OPEN; physical GPC OPEN; recovery DEFERRED; P3 IN PROGRESS.**
 Next owner action is the still-open U1 auth selection, not waiting for backup
 proof; physical-GPC follow-up remains conditional on an available capable browser.
+
+## First scheduled backup, retention and G1 continuation — 2026-10-04
+
+Current instruction [D-013](../DECISIONS.md#d-013--2026-10-04--return-to-p2-evidence-and-preserve-installation-work)
+returns active work to canonical §§26/28 P2. Installation ease is COMPLETE at its
+isolated technical scope; independent user test PENDING, customer time UNMEASURED.
+Historical D-010/D-011 P3 implementation is preserved; no new P3 work. Earlier
+“not due / no scheduled run” entries are historical and superseded by this audit.
+
+### Actual scheduled operations and remote readback
+
+Private evidence `.runtime/p2-scheduled-audit-20261004/`: audit JSON, downloaded
+ciphertext/manifest, actual Actions logs, source-provenance comparison, production
+before/after protected-resource/count records, and `g1-proof/`. Observed around
+10:53–10:55 UTC. No workflow dispatch, manual backup, remote mutation or deletion.
+
+| Evidence | Verified result and limit |
+| --- | --- |
+| First systemd scheduled backup | LastTrigger **4 October 03:15:00 UTC**, actual service start 03:15:00, exit **03:15:12**, Result success / ExecMainStatus 0; journal confirms execution. Timer remains enabled/active; next 5 October 03:15 UTC. |
+| Exact snapshot | `om-db-v1-20261004T031502Z-9ee17021`, release **402803598**, captured 03:15:02, verified 03:15:11.208965 UTC; daily+weekly (Sunday), **33,236 B**, no size warning, **0 pruned**. |
+| New independent readback | Exact remote ciphertext and manifest downloaded again; SHA-256 **23e8539e4cd19e9ff60ee5dc0917d3d12ee3f4b6e19a79ab8ab4ee403e0f716d** equals local success record and remote metadata, exact manifest and size match, age v1 header correct. Remote body/assets unchanged across readback. **Integrity PASS**, no decrypt or restore inferred. |
+| First scheduled expiry | [37180284300](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37180284300), event schedule, SUCCESS, created **05:34:27**, completed **05:34:38 UTC**. Logs: apply mode, **0 expired candidates / 0 deletions / 3 protected inventory records**. Configured time 03:45 UTC; actual start delayed **1 h 49 m 27 s**. No actual expired-object deletion was exercised. |
+| Scheduled remote freshness | [37172128140](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37172128140) at 02:47:28 UTC checked the earlier backup; [37179440970](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37179440970) at **05:17:07–05:17:16 UTC**, after the new backup, logs **PASS / FRESH_REMOTE_VERIFIED_BACKUP**. These prove scheduled execution, not uninterrupted hourly coverage or failure notification delivery. |
+| Read-only retention reevaluation | 3 remote records, **0 period-policy candidates**, **0 >=90-day owned candidates**. Dry-run only; original phone ZIP and both DB snapshots preserved. |
+| Public scheduled observation | [37196625353](https://github.com/brsctncnbrk5/originmetric-monitoring/actions/runs/37196625353) SUCCESS at 10:49:39–10:49:47 UTC; only three 4 October scheduled observations returned in inspected inventory. Fresh local GET-only health/tracker 200 semantic PASS. Sparse samples do not prove continuous five-minute uptime or missed-run detection. |
+
+An initial Actions-log download with an octet-stream Accept header was rejected;
+using the normal GitHub log endpoint downloaded the ZIP logs successfully. That
+failed download is not counted as operational success or backup failure.
+
+### Backup source provenance defect and authorized correction
+
+The successful scheduled manifest's `source_sha` is checkout
+`eb3fad858ec4946bc30b4e31cc97b90361a56e00`, containing **5** migration journal entries
+including undeployed P3 migration `0004_brown_rogue`. Actual application remains
+`e74bfc1fcc6e404be977feee059dc1d3c78d170c`, with **4** journal entries. The receiver
+uses snapshot `source_sha` to reconstruct migrations; thus **this scheduled
+snapshot's source/schema compatibility is NOT PASSED / restore NOT RUN**.
+Ciphertext/hash PASS does not close that gap. Earlier exact empty-snapshot phone
+restore PASS remains valid for its own snapshot only.
+
+Corrected `github-backup.py`: resolve `.runtime/current-tag` to its exact Git commit,
+verify the running app image equals `originmetric:<tag>` and check the same source
+again after the dump, before upload/retention. Record this deployed commit in the
+manifest, rather than working-tree HEAD. Missing/invalid commit, image mismatch,
+inspection failure or source change fail closed with suppressed diagnostics.
+Tests exercise diverged checkout, invalid/missing tag, image mismatch and source
+change with zero remote creation/deletion. Actual **GET/read-only deployed-source
+probe PASS**, returning `e74bfc1`; no production backup was manufactured to prove
+the fix. The installed service points to this repository script, so the next
+scheduled execution will use the correction after publication; units/time/key
+unchanged. **Next-run manifest/readback remains PENDING**. Historical remote
+metadata is untouched. No claim that image identity alone proves every possible
+out-of-band DB schema change; an actual restore remains separate evidence.
+
+Rollback for the code correction: restore only `scripts/vps/github-backup.py`
+from entry commit `7f739a1` through a normal reviewed revert (no history rewrite);
+leave timer, credentials, key and snapshots intact. This reinstates the known
+provenance defect and must keep snapshot compatibility OPEN. Do not restore the
+entire checkout or roll back preserved auth/installation code.
+
+### Fresh six-item G1 review and remaining acceptance
+
+To avoid testing newer undeployed P3 source against the older image, used a
+**detached disposable worktree at `f959cd3`**, whose `src/tracker/drizzle` match the
+deployed `e74bfc1`, existing installed Node/browser dependencies and the deployed
+Docker image. `gate-g1 --technical-only --rehearse-dogfood` ran under the existing
+operation lock. Live tracker bytes equal fixture bytes; **98 tests / 9 files PASS**.
+Full isolated trusted visit/identify/retry/payment/409/renewal/refund/internal
+rendered row PASS; USD **5800 payment / 500 refund / 5300 net**; semantic populated
+fixture restore, 14 FKs/zero orphans and four tamper refusals PASS. Owned fixture
+containers/network removed; protected production resources/counts unchanged.
+Worktree evidence copied to private `g1-proof/` before owned worktree cleanup.
+
+| Canonical G1 item | Current outcome / remaining proof |
+| --- | --- |
+| 1. Required consent / withdrawal | Fresh deployed-image technical PASS; prior actual-domain operator persistence/withdrawal PASS and owner banner acceptance retained. Owner-phone storage/network unobserved; no repeated confirmation requested. |
+| 2. Default GPC / configurable ignore | Default fresh fixture PASS; prior injected live true and isolated ignore override evidence retained. **Physical native true plus actual-site zero-storage/zero-request evidence OPEN / NOT PASSED**. Android Chrome NOT_EXPOSED and no alternative browser available remain recorded. |
+| 3. Body/schema/origin/dedup/failure isolation | Fresh matching-source real-DB technical PASS. Closed public responses are not evidence of active production ingestion. |
+| 4. IP/site/project limits, abuse ceiling, daily cap and edge rule | Fresh application controls PASS; previously accepted saved single-rule/window/order panels retained. Direct provider API/original export unverified; no new provider inspection or five-minute continuity claim. |
+| 5. Log redaction | Fresh real-handler/fixture sensitive-log PASS; previous actual-window log PASS retained. No unperformed live revenue-handler observation inferred. |
+| 6. Browser cannot create trusted links/customers/revenue | Fresh deployed-image browser and matching-source identity-poisoning regressions PASS; production customer/link/revenue/attribution remain zero. |
+
+**Formal G1 PENDING.** Physical native GPC is the first missing acceptance proof;
+no ingestion opening is needed to observe a tracker sending zero requests. A new
+bounded production chain requires the concrete scope/rollback in the
+[current runbook](../runbooks/P2_DOGFOOD_ACCEPTANCE.md#p2-continuation-scope-and-rollback--2026-10-04)
+and separate authorization; exhausted D-009 does not authorize reuse. Current P2
+image is sufficient: no auth/P3 deployment is required for this next proof.
+
+P2 also retains OPEN: actual production consented attribution chain, populated
+encrypted phone restore, this scheduled snapshot's incompatible provenance,
+actual backup-failure/missing-run delivery, GitHub-independent dead-man, strict
+90-day lifecycle during provider/account/schedule failure and saved `/js/*`
+Cloudflare cache verification. Phone-independent recovery **DEFERRED**, no key
+operation. Owner-reported existing email receipts retain their exact scopes.
+
+Checks: backup policy **21**, local status **4**, retention **3**, restore acceptance
+**6** = **34 tests PASS**, plus deployed-image **98** tests and isolated chain.
+Actual deployed-source/image check and public GET checks PASS. No new full
+application/remote CI PASS inferred for these operational changes. Protected
+production env/nginx/units/container start/restart metadata and canonical plan
+unchanged; ten-table counts unchanged (events 1, sessions 1, ingestion_daily 1;
+workspaces/projects/api_keys 1 each; other four fact tables 0).
+**PUBLIC_G1_READY=no; G1 PENDING; P2 OPEN; installation work COMPLETE;
+independent user test PENDING; existing P3 work preserved, no new P3 work.**

@@ -1,7 +1,7 @@
 # Installation ease — separate MVP work package
 
-2026-10-04. **Isolated technical experiment PASS; independent installation time
-UNMEASURED.** Entry head `eb3fad8` (Better Auth implementation), assigned branch
+2026-10-04. **Work package COMPLETE / isolated technical experiment PASS;
+independent user test PENDING; independent installation time UNMEASURED.** Entry head `eb3fad8` (Better Auth implementation), assigned branch
 `codex/originmetric-p2-vps-preparation`. Working tree was clean: no uncommitted
 Better Auth work was overwritten. Basis: CLAUDE, STATUS, locked canonical plan (especially §§3–7, 19, 26–28,
 33), latest P3 reports and P2 evidence. The canonical plan file,
@@ -246,3 +246,12 @@ No global account switch or backup credential change. This documentation note
 follows in its own commit; final local/remote SHA and clean-tree audit are saved in
 `.runtime/installation-ease/publication.json`. Local checks are PASS; remote CI
 results have not been claimed. Live deployment remains unchanged.
+
+
+### P2 continuation handoff — 2026-10-04
+
+D-013 preserves this completed implementation and its isolated PASS. The independent
+unassisted user test is explicitly PENDING; no participant/time evidence has been
+added. Active work returns to P2 scheduled-backup/G1 acceptance. Existing P3 work
+remains preserved with no new P3 continuation. See the current STATUS entry and
+[P2 scheduled evidence](P2_GITHUB_RECOVERY_MONITORING.md#first-scheduled-backup-retention-and-g1-continuation--2026-10-04).

@@ -126,3 +126,11 @@ Format: `D-NNN | date | decision | why | alternatives rejected | supersedes`.
   delivery work. Commit/push to the assigned existing branch and verify remote SHA.
 - **Evidence:** [Installation ease report](reports/INSTALLATION_EASE.md) and
   [independent test protocol](runbooks/INSTALLATION_TEST.md).
+
+
+### D-013 | 2026-10-04 | Return to P2 evidence and preserve installation work
+
+- **Owner instruction:** Keep installation ease completed, record independent user test pending; continue P2 from canonical plan/STATUS/handoff, verify 4 October scheduled backup/retention and remote integrity, progress authorized G1 items, prepare concrete scope/rollback before any deployment or ingestion opening; do not count missing proof as PASS or start P3.
+- **Current sequencing:** P2 acceptance continuation only. D-010/D-011 committed P3 work and D-012 installation implementation remain preserved; no new P3 work. This supersedes their continuation next steps for the current task, without rewriting historical implementation or canonical phase acceptance.
+- **Boundary:** Existing D-008 read-only backup/schedule/integrity audits and safe operational code corrections are within scope. No new live deployment, recurring test-window authorization, public data opening, production revenue write, notification, paid service or age-key change. D-009's completed one-time window remains exhausted.
+- **Acceptance:** Installation work package COMPLETE at isolated technical scope; independent user test PENDING and customer setup time UNMEASURED. P2 OPEN / G1 PENDING; P3 acceptance and actual email delivery OPEN; P4 not DONE.

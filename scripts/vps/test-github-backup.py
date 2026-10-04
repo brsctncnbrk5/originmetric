@@ -147,6 +147,11 @@ class FakeGitHub:
 
 
 class ChainTests(unittest.TestCase):
+    def setUp(self):
+        source = patch.object(b, 'deployed_source', return_value='a'*40)
+        source.start()
+        self.addCleanup(source.stop)
+
     def dump(self, args, **kwargs):
         self.assertIn('pg_dump', args[-1])
         self.assertNotIn('tar ', args[-1])
@@ -202,6 +207,43 @@ class ChainTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder, patch.object(b.subprocess, 'run', self.dump), patch.object(b.subprocess, 'check_output', return_value='a'*40):
             with self.assertRaises(b.BackupError):
                 b.backup(gh, Path(folder))
+        self.assertEqual(gh.deleted, [])
+
+
+class DeployedSourceTests(unittest.TestCase):
+    def test_running_image_source_wins_over_checkout(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); (root / '.runtime').mkdir()
+            tag = 'b'*40; (root / '.runtime/current-tag').write_text(tag + '\n')
+            image = 'sha256:' + 'c'*64
+            with patch.object(b, 'ROOT', root), patch.object(b.subprocess, 'check_output', side_effect=[tag, image, image]) as read:
+                self.assertEqual(b.deployed_source(), tag)
+                self.assertEqual(read.call_args_list[0].args[0], ['git', 'rev-parse', tag + '^{commit}'])
+
+    def test_mismatched_running_image_refuses_source(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); (root / '.runtime').mkdir()
+            tag = 'b'*40; (root / '.runtime/current-tag').write_text(tag)
+            with patch.object(b, 'ROOT', root), patch.object(b.subprocess, 'check_output', side_effect=[tag, 'sha256:'+'c'*64, 'sha256:'+'d'*64]):
+                with self.assertRaises(b.BackupError): b.deployed_source()
+
+    def test_invalid_or_missing_tag_refuses_before_commands(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder); (root / '.runtime').mkdir()
+            with patch.object(b, 'ROOT', root), patch.object(b.subprocess, 'check_output') as read:
+                with self.assertRaises(b.BackupError): b.deployed_source()
+                (root / '.runtime/current-tag').write_text('main')
+                with self.assertRaises(b.BackupError): b.deployed_source()
+                read.assert_not_called()
+
+    def test_source_change_during_dump_never_uploads(self):
+        gh = FakeGitHub()
+        def dump(args, **kwargs):
+            kwargs['stdout'].write(b'age-encryption.org/v1\nfixture')
+            return type('Result', (), {'returncode': 0})()
+        with tempfile.TemporaryDirectory() as folder, patch.object(b, 'deployed_source', side_effect=['a'*40, 'b'*40]), patch.object(b.subprocess, 'run', dump):
+            with self.assertRaises(b.BackupError): b.backup(gh, Path(folder))
+        self.assertIsNone(gh.release)
         self.assertEqual(gh.deleted, [])
 
 

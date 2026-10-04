@@ -332,3 +332,59 @@ and protected metadata unchanged. This completes isolated validation only; actua
 production chain and populated encrypted phone restore remain OPEN. Physical real
 GPC is still OPEN; injected technical checks do not replace it. Recovery DEFERRED,
 existing age key unchanged, G1 PENDING, P2 OPEN, P3 NOT STARTED.
+
+## P2 continuation scope and rollback — 2026-10-04
+
+D-013 makes P2 the current task; installation work COMPLETE, independent user test
+PENDING. Existing P3 work is preserved. No new deployment or ingestion opening is
+currently necessary/authorized. Scheduled audit and six-item G1 outcomes are in
+[the current report](../reports/P2_GITHUB_RECOVERY_MONITORING.md#first-scheduled-backup-retention-and-g1-continuation--2026-10-04).
+
+1. **Native GPC, closed ingestion:** when a physical browser exposing native true
+   becomes available, record browser name/reference signal, then actual
+   `originmetric.app/dogfood` storage/visitor/network before Allow, after Allow,
+   history navigation and reload. Require zero tracker identifiers/storage and
+   zero request attempts; server 202/drop alone is insufficient. No access window,
+   browser installation request or repeat Chrome/banner check. Physical evidence
+   remains OPEN while unavailable. Record the remaining G1 provider-source limits.
+2. **Future production-chain scope, not activated:** after formal G1 evidence and
+   separate authorization, use the existing deployed P2 image and registered test
+   project, one fresh isolated browser, fresh private campaign/customer/event IDs.
+   Proposed `/api/v1/e` window: at most **600 seconds**, private cookie, exact origin,
+   POST and dogfood-page restriction with server expiry and pre-armed rollback.
+   Existing completed D-009 cookie/window must not be reused. Identify/revenue calls
+   stay on the authenticated private operator path; no public identify/revenue route
+   opening and no browser secret. Review actual route capability before activation.
+   Budget: **+1 event, +1 session, +1 customer, +1 trusted link, +1 attribution and
+   +3 test revenue rows** (2900 payment, 2900 renewal, 500 refund USD). Exact retries
+   add zero rows; conflict 409. Stop on unexpected facts or responses.
+3. **Before activation:** capture current production counts/protected hashes,
+   deployed image/tag, fresh labels and private payloads; compare candidate nginx
+   changes against the exact current closed config, run `nginx -t`, review fresh
+   activation/rollback commands and server expiry, pre-arm scoped rollback timer.
+   Preserve `PUBLIC_G1_READY=no`; keep all unrelated routes closed. No permanent
+   gate/normal public go-live implied. If image/schema deployment becomes necessary,
+   stop at a separate exact-image/migration/backup/smoke/revert proposal; no P3
+   rollout is included in this scope.
+4. **Immediate rollback:** restore the exact captured closed nginx bytes, syntax
+   check and reload; verify original hash, formerly authorized cookie rejected by
+   the restored gate, unchanged SQL counts across that closure probe, protected
+   resources unchanged. Stop rollback timer only after verified immediate closure;
+   otherwise leave expiry safeguard armed and stop the test. Record elapsed window
+   and exact owned facts. Preserve labelled test evidence; no unreviewed SQL deletes.
+   A config rollback does not erase already persisted test rows.
+5. **Backup/restore follow-up:** capture quiescent semantic baseline, use only a new
+   verified-source encrypted snapshot with remote readback, and compare source
+   migration journal to the tested deployed schema. The 4 October scheduled
+   manifest incorrectly names the undeployed checkout and must not satisfy this
+   proof. Next scheduled corrected manifest is still unobserved. Do not rewrite
+   historical metadata or substitute an empty restore. Populated phone restore
+   requires existing offline key and explicit pipeline exits plus server semantic
+   results, without key transfer. Keep it OPEN until actually performed.
+
+This is a concrete future scope and rollback checklist, not an executable activation
+approval. Fresh candidate/rollback commands must be generated and reviewed against
+the runtime at that time; no previously consumed window is implicitly reauthorized.
+Strict lifecycle, independent dead-man and actual failure-delivery proofs remain
+separate OPEN items; no notification dispatch is authorized here. **G1 PENDING;
+P2 OPEN; no new P3 work.**

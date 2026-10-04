@@ -169,7 +169,29 @@ def size_warning(previous, current):
              'current_bytes': current, 'threshold_percent': 50}]
 
 
+def deployed_source():
+    """Pin recovery migrations to the running image, not a newer development checkout."""
+    try:
+        tag = (ROOT / '.runtime/current-tag').read_text().strip()
+        if not re.fullmatch(r'[a-f0-9]{40}', tag):
+            raise ValueError('Invalid deployed tag')
+        committed = subprocess.check_output(['git', 'rev-parse', tag + '^{commit}'],
+                                            cwd=ROOT, text=True, stderr=subprocess.PIPE, timeout=10).strip()
+        running = subprocess.check_output(['docker', 'inspect', '--format', '{{.Image}}',
+                                           'originmetric-app-1'], text=True,
+                                          stderr=subprocess.PIPE, timeout=10).strip()
+        expected = subprocess.check_output(['docker', 'image', 'inspect', '--format', '{{.Id}}',
+                                            'originmetric:' + tag], text=True,
+                                           stderr=subprocess.PIPE, timeout=10).strip()
+        if committed != tag or not re.fullmatch(r'sha256:[a-f0-9]{64}', running) or running != expected:
+            raise ValueError('Deployed image mismatch')
+        return tag
+    except Exception:
+        raise BackupError('Deployed source/image not verified; no upload/retention') from None
+
+
 def backup(gh, work, previous_size=None):
+    source_sha = deployed_source()
     now = dt.datetime.now(UTC).replace(microsecond=0)
     snapshot = 'om-db-v1-' + now.strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
     cipher = work / 'database.dump.age'
@@ -185,6 +207,8 @@ dc exec -T db pg_dump -U originmetric -d originmetric -Fc --no-owner --no-acl | 
                            stderr=subprocess.PIPE, timeout=300)
     if r.returncode or not cipher.stat().st_size:
         raise BackupError('DB encryption failed; no upload/retention')
+    if deployed_source() != source_sha:
+        raise BackupError('Deployed source changed during dump; no upload/retention')
     with cipher.open('rb') as f:
         if f.read(22) != b'age-encryption.org/v1\n':
             # Header is 22 bytes including newline.
@@ -195,7 +219,7 @@ dc exec -T db pg_dump -U originmetric -d originmetric -Fc --no-owner --no-acl | 
          'state': 'pending', 'classes': ['daily'], 'sha256': digest(cipher),
          'size_bytes': cipher.stat().st_size,
          'warnings': size_warning(previous_size, cipher.stat().st_size),
-         'source_sha': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()}
+         'source_sha': source_sha}
     if now.weekday() == 6:
         m['classes'].append('weekly')
     if now.day == 1:
