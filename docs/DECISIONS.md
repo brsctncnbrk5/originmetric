@@ -88,3 +88,13 @@ Format: `D-NNN | date | decision | why | alternatives rejected | supersedes`.
 - **Scope:** One fresh operator browser, temporary private-cookie/POST/origin/dogfood-referrer gate; existing project and unique campaign. No uncontrolled traffic, identify/revenue events, backup, phone restore or new service/key. `PUBLIC_G1_READY=no` retained.
 - **Boundary:** Canonical §28 controlled-traffic test authorization only; formal G1 and enabled-owner GPC are not waived. D-007's closed-ingestion restriction temporarily relaxed only for this one test; route restored immediately after completion. No recurring or further window authorized.
 - **Result:** Actual G1/1 PASS in operator-browser scope; one labelled event/session, no customer/link/revenue/attribution. Immediate verified closure within 7.982 seconds. Off-phone recovery remains DEFERRED, existing age identity/recipient unchanged, P2 OPEN and P3 NOT STARTED.
+
+
+### D-010 | 2026-10-04 | Continue independent P3 development while P2 evidence stays open
+
+- **Owner:** Barış, explicit current instruction.
+- **Decision:** Do not wait for pending backup evidence to continue development. Start and complete safe P3 work independent of missing P2 proofs. Block only work with an actual technical dependency; do not alter the canonical phase scope or acceptance criteria.
+- **Verified phase:** Canonical §28 **P3 — Accounts, workspaces, projects, keys (tenancy)**; dependencies P2 (or P1b if deployment is delayed) and U1 auth. This is development sequencing authorization, not P2 acceptance or public go-live.
+- **Supersedes:** Earlier “do not proceed to P3” restrictions in D-005/D-006/D-007 and historical P3 NOT STARTED next-step instructions. P2 remains OPEN / acceptance pending, G1 PENDING, physical GPC OPEN / NOT PASSED, phone-independent recovery DEFERRED.
+- **Constraints:** Preserve existing age key/recipient and installed working backup scheduler; no paid service, production deployment, data-gate opening, test-window reuse, production revenue write or external notification implied. Canonical plan and exit criteria remain unchanged.
+- **U1:** Still OPEN unless separately explicitly decided by the owner; independent data-layer/lint/test foundations do not select or install an auth dependency.

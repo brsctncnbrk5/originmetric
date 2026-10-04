@@ -1,4 +1,4 @@
-import { apiDeps } from "@/server/http/deps";
+import { apiDeps } from "@/server/data/api-deps";
 import { handleRevenueEvent } from "@/server/http/handlers";
 
 export const runtime = "nodejs";

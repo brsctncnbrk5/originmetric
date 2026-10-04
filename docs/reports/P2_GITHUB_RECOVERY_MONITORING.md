@@ -1,5 +1,13 @@
 # P2 — originmetric.app consent, GitHub recovery and dashboard monitoring
 
+**Current sequencing (2026-10-04): P2 OPEN / G1 PENDING; P3 IN PROGRESS under D-010.**
+The owner explicitly lifted the earlier “do not proceed to P3” restriction and
+instructed continuing independent development without waiting for backup proof.
+[Current P3 foundation and dependencies](P3_TENANCY_FOUNDATION.md). Historical
+“P3 NOT STARTED” statements below describe earlier evidence dates, not today's
+sequencing. Physical GPC stays OPEN, phone-independent recovery DEFERRED; current
+age key and working scheduler unchanged. No P2 acceptance criterion is waived.
+
 Date: 2026-10-02; Cloudflare/owner evidence, remote ZIP readback and concrete proposal updates: 2026-10-03. Local encryption/env preparation and documentation only; **no production redeploy, ingestion opening or scheduled external probe**; the authorized private draft ZIP transfer is recorded below. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
 
 **Latest result (2026-10-03): REAL MANUAL RESTORE VERIFIED for the exact empty GitHub DB snapshot; P2 remains OPEN.** The [final verification and remaining canonical criteria](#real-manual-restore-verified-and-remaining-p2-acceptance--2026-10-03) supersede earlier restore OPEN/UNVERIFIED/pending-phone entries. Earlier dated sections remain historical evidence; no blanket P2 acceptance is implied.
@@ -1710,3 +1718,30 @@ commit; its final SHA/clean-tree/cache audit is stored privately as
 **Physical real GPC OPEN / NOT PASSED; Recovery DEFERRED; existing age key
 unchanged; ingestion closed; G1 PENDING; P2 OPEN; P3 NOT STARTED.** No key,
 production-data, deployment, access-window or notification operation occurred.
+
+
+## D-010 — Independent P3 development while P2 acceptance remains open — 2026-10-04
+
+Owner explicitly decided not to wait for backup evidence and removed the previous
+P3 prohibition. Recorded in DECISIONS and STATUS. Canonical P3 is **Accounts,
+workspaces, projects, keys (tenancy)**, dependencies P2 (or P1b when deployment is
+delayed) plus U1. Scope and exit criteria are unchanged. Independent scoped
+operator data/key primitives, internal-page integration, lint guard and isolated
+attack tests are completed; full auth/membership/UI/two-account acceptance remain
+OPEN. [P3 report](P3_TENANCY_FOUNDATION.md) records tests and technical boundaries.
+
+All missing P2 criteria from the latest full-chain audit remain OPEN: physical
+native GPC; actual production trusted revenue chain; populated encrypted backup
+and phone restore; first scheduled backup/readback and scheduled retention/freshness
+proof; actual backup-failure/missing-run email and independent dead-man; strict
+lifecycle. No new operational proof was collected for these gaps and configured
+or manual checks are not reclassified as scheduled PASS. Phone-independent
+recovery remains DEFERRED. Existing empty manual restore and isolated full-chain
+acceptance retain their precise evidence scope.
+
+No deployed application/production-data mutation, temporary access, notification,
+backup run, key read/change or scheduler alteration in this development task.
+Existing one-event/one-session baseline is retained. **PUBLIC_G1_READY=no;
+G1 PENDING; P2 OPEN; physical GPC OPEN; recovery DEFERRED; P3 IN PROGRESS.**
+Next owner action is the still-open U1 auth selection, not waiting for backup
+proof; physical-GPC follow-up remains conditional on an available capable browser.

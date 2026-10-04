@@ -1,4 +1,4 @@
-import { getDbHandle } from "@/server/db/instance";
+import { getDbHandle } from "@/server/data/connection";
 import { handleBrowserEvent } from "@/server/ingestion/handler";
 import { logger } from "@/server/logging/logger";
 import { systemClock } from "@/server/time/clock";

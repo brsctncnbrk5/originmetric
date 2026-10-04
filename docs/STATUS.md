@@ -4,13 +4,14 @@
 
 | Item | State |
 |---|---|
-| Current phase | **P2 — Deploy the slice & dogfood**: CLOUDFLARE EDGE / PROXY / HOST WEB FIREWALL VERIFIED; G1 PENDING |
+| Current phase | **P3 — Accounts, workspaces, projects, keys (tenancy): IN PROGRESS**, independent development authorized by D-010; P2 acceptance OPEN / G1 PENDING |
 | P0 | **COMPLETE / ACCEPTED** (Barış + ChatGPT: APPROVE AS-IS, 2026-09-28) |
 | P0-R1 | **COMPLETE / ACCEPTED** (PASS; no further revision) |
 | Accepted P0 head | `b99a4a9e4ea56a29f47f29eb1f91916cdcecaaa4` — final CI: GitHub Actions run #4 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36399409364 |
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
-| P2 | **TRADEBOT REMOVED; WEB FIREWALL VERIFIED — DATA ROUTES CLOSED; ACCEPTANCE PENDING** |
+| P2 | **OPEN — DATA ROUTES CLOSED; ACCEPTANCE PENDING**, no PASS/CLOSED claim |
+| P3 | **IN PROGRESS** — independent data-layer, key lifecycle and lint/test foundation; U1 auth decision OPEN |
 | P2 last full-suite tested code head | `f959cd31fe441b0b0c531c7cd40a393c15dce7c4` — [CI closed-ingestion acceptance preparation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37157304870); deployed application remains `e74bfc1fcc6e404be977feee059dc1d3c78d170c` |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
@@ -26,6 +27,21 @@
 | Locked owner decisions | **U0** (D-001) · **U13** core stack (D-002) · **U2** attribution + trusted-link model (D-003) |
 
 ## Next step
+
+**2026-10-04 — D-010: continue independent P3 development without waiting for backup evidence.**
+Canonical title/scope/dependencies verified against §28 and tenancy §9.
+Earlier “P3 NOT STARTED / do not proceed” entries below are historical and superseded
+for development sequencing. P2 remains OPEN, G1 PENDING; physical GPC and deferred
+recovery are not waived. Existing age identity/recipient and working backup scheduler
+are preserved. Next owner action is U1 auth selection; conditional physical GPC
+follow-up stays open and does not block independent development. No new paid service or production rollout authorized.
+Independent P3 scoped data/key/lint foundation COMPLETE: 356 tests / 25 files PASS
+(13 new scope/lint controls); rebuilt Playwright 13/13 PASS. Production
+1 event / 1 session / 0 customer/link/revenue/attribution; protected runtime and
+timer unchanged, isolated fixture removed. U1 remains OPEN, full P3 acceptance NOT CLAIMED.
+[Current P3 report](reports/P3_TENANCY_FOUNDATION.md) records completed work,
+remaining dependencies and checks. This entry takes precedence over historical next steps below.
+
 
 **2026-10-04 local / 3 October 23:51 UTC — publication AssertionError RESOLVED / reverified.**
 The first `local == remote and clean` check failed only on cleanliness: this

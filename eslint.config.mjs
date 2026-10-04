@@ -13,6 +13,41 @@ export default defineConfig([
       "no-implied-eval": "error",
     },
   },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/server/data/**", "src/server/ops/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: "(^@/server/db/(client|instance)$|(^|/)db/(client|instance)$|^\\./client$)",
+              allowTypeImports: true,
+              message:
+                "Raw DB clients belong in src/server/data or src/server/ops; use the scoped data layer.",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ["src/app/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              regex: "(^@/server/db/|(^|/)db/|^drizzle-orm($|/)|^postgres$)",
+              message: "App routes and UI must query through src/server/data.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   globalIgnores([
     ".next/**",
     "out/**",

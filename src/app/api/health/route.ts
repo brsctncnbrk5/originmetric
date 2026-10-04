@@ -1,4 +1,4 @@
-import { getDbHandle } from "@/server/db/instance";
+import { getDbHandle } from "@/server/data/connection";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
