@@ -98,3 +98,11 @@ Format: `D-NNN | date | decision | why | alternatives rejected | supersedes`.
 - **Supersedes:** Earlier “do not proceed to P3” restrictions in D-005/D-006/D-007 and historical P3 NOT STARTED next-step instructions. P2 remains OPEN / acceptance pending, G1 PENDING, physical GPC OPEN / NOT PASSED, phone-independent recovery DEFERRED.
 - **Constraints:** Preserve existing age key/recipient and installed working backup scheduler; no paid service, production deployment, data-gate opening, test-window reuse, production revenue write or external notification implied. Canonical plan and exit criteria remain unchanged.
 - **U1:** Still OPEN unless separately explicitly decided by the owner; independent data-layer/lint/test foundations do not select or install an auth dependency.
+
+### D-011 | 2026-10-04 | U1 locked: Better Auth + email/password
+
+- **Owner instruction:** Approve self-hosted Better Auth with email/password; continue independent P3 work without waiting for backup evidence.
+- **Decision:** U1 LOCKED. Integrate with existing Next.js/Drizzle/PostgreSQL architecture and application-owned workspace membership. Prepare and test provider-independent verification/reset as explicitly requested; this does not redefine canonical phases. Administrator CLI reset is a secure local recovery method only.
+- **Email:** No corporate email package purchase now. U3 transactional provider remains OPEN. Missing real delivery must be explicit; never claim a message was sent without delivery.
+- **Constraints:** No paid service, production rollout or gate opening. Preserve age identity, recovery credentials and working scheduler. P2 evidence and P3 acceptance stay OPEN until actually satisfied.
+- **Supersedes:** D-010's U1 OPEN restriction only; locked plan and acceptance remain unchanged.

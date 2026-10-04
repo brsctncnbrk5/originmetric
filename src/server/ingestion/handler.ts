@@ -3,7 +3,7 @@ import { normalizeHost } from "@/server/attribution/source";
 import type { Database } from "@/server/db/client";
 import { errorFacts } from "@/server/logging/logger";
 import type { Clock } from "@/server/time/clock";
-import { findProjectBySiteKey, recordBrowserEvent } from "./service";
+import { authorizeSiteKey, forProject } from "@/server/data/project";
 import { parseBrowserEvent } from "./validation";
 import { BodyTooLarge, readBoundedBody } from "@/server/http/bounded-body";
 import { ingestionClient, ingestionLimits, type IngestionLimits } from "./limits";
@@ -98,11 +98,12 @@ export async function handleBrowserEvent(request: Request, deps: IngestionDeps):
       return acceptedResponse(null);
     }
 
-    const project = await findProjectBySiteKey(deps.db, input.siteKey);
-    if (!project) {
+    const grant = await authorizeSiteKey(deps.db, input.siteKey);
+    if (!grant) {
       fields.outcome = "dropped_unknown_site";
       return acceptedResponse(null);
     }
+    const { project, context } = grant;
     fields.project_id = project.id;
 
     corsOrigin = requestOrigin(request, project.allowedDomains);
@@ -120,7 +121,7 @@ export async function handleBrowserEvent(request: Request, deps: IngestionDeps):
       fields.outcome = projectLimit;
       return acceptedResponse(corsOrigin);
     }
-    fields.outcome = await recordBrowserEvent(deps.db, project, input, deps.clock, limits.dailyCap);
+    fields.outcome = await forProject(context).browserEvent(input, deps.clock, limits.dailyCap);
     return acceptedResponse(corsOrigin);
   } catch (error) {
     if (error instanceof BodyTooLarge) {

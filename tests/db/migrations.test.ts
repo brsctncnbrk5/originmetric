@@ -16,6 +16,10 @@ const journal = JSON.parse(
 
 const P1A_TABLES = [
   "api_keys",
+  "auth_account",
+  "auth_session",
+  "auth_user",
+  "auth_verification",
   "customer_attribution",
   "customer_visitors",
   "customers",
@@ -24,6 +28,7 @@ const P1A_TABLES = [
   "projects",
   "revenue_events",
   "sessions",
+  "workspace_members",
   "workspaces",
 ];
 
@@ -66,7 +71,7 @@ describe("migrations", () => {
     expect(baseline.trim().endsWith("SELECT 1;")).toBe(true);
   });
 
-  it("create domain tables and the P2 abuse budget (no auth, billing or job tables)", async () => {
+  it("create domain tables and the P2 abuse budget (P3 auth/membership, no billing or job tables)", async () => {
     expect(await publicTables(tmp)).toEqual(P1A_TABLES);
   });
 });

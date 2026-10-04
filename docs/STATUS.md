@@ -11,7 +11,7 @@
 | P1a | **COMPLETE / ACCEPTED** (Barış + ChatGPT technical review: APPROVE AS-IS) |
 | P1b | **TECHNICALLY COMPLETE / PROCEEDING AUTHORIZED** (`codex/originmetric-p1b-vertical-slice`) |
 | P2 | **OPEN — DATA ROUTES CLOSED; ACCEPTANCE PENDING**, no PASS/CLOSED claim |
-| P3 | **IN PROGRESS** — independent data-layer, key lifecycle and lint/test foundation; U1 auth decision OPEN |
+| P3 | **IN PROGRESS** — auth/workspace/membership, project/key UI and scoped ingress implemented/tested; U1 LOCKED (D-011); acceptance/email configuration OPEN |
 | P2 last full-suite tested code head | `f959cd31fe441b0b0c531c7cd40a393c15dce7c4` — [CI closed-ingestion acceptance preparation: success](https://github.com/brsctncnbrk5/originmetric/actions/runs/37157304870); deployed application remains `e74bfc1fcc6e404be977feee059dc1d3c78d170c` |
 | P1a code commit | `760362f` (CI-verified; the final P1a commit is the STATUS commit on top of it) |
 | P1b code head | `9ce12b7672141d2d42f43992c5a766f3609f59c7` — CI run #38 **success** — https://github.com/brsctncnbrk5/originmetric/actions/runs/36911778514 |
@@ -24,24 +24,33 @@
 | MASTER DEVELOPMENT PLAN v2 R1 | **APPROVED / LOCKED** (2026-09-28) — [`docs/planning/MASTER_DEVELOPMENT_PLAN_v2.md`](planning/MASTER_DEVELOPMENT_PLAN_v2.md) — D-001 |
 | PLAN-0 | **COMPLETE** |
 | Pre-P0 transition | **COMPLETE** (`main` = `1b7b1e2`, GitHub default branch = `main`, repo renamed and verified) |
-| Locked owner decisions | **U0** (D-001) · **U13** core stack (D-002) · **U2** attribution + trusted-link model (D-003) |
+| Locked owner decisions | **U0** (D-001) · **U13** core stack (D-002) · **U2** attribution + trusted-link model (D-003) · **U1** Better Auth email/password (D-011) |
 
 ## Next step
 
-**2026-10-04 — D-010: continue independent P3 development without waiting for backup evidence.**
-Canonical title/scope/dependencies verified against §28 and tenancy §9.
-Earlier “P3 NOT STARTED / do not proceed” entries below are historical and superseded
-for development sequencing. P2 remains OPEN, G1 PENDING; physical GPC and deferred
-recovery are not waived. Existing age identity/recipient and working backup scheduler
-are preserved. Next owner action is U1 auth selection; conditional physical GPC
-follow-up stays open and does not block independent development. No new paid service or production rollout authorized.
-Independent P3 scoped data/key/lint foundation COMPLETE: 356 tests / 25 files PASS
-(13 new scope/lint controls); rebuilt Playwright 13/13 PASS. Production
-1 event / 1 session / 0 customer/link/revenue/attribution; protected runtime and
-timer unchanged, isolated fixture removed. U1 remains OPEN, full P3 acceptance NOT CLAIMED.
-[Current P3 report](reports/P3_TENANCY_FOUNDATION.md) records completed work,
-remaining dependencies and checks. This entry takes precedence over historical next steps below.
+**2026-10-04 — D-011: Better Auth email/password approved; P3 implementation tested.**
+U1 LOCKED; corporate email purchase deferred, U3 transactional provider OPEN.
+Canonical §28 P3 scope remains unchanged. English auth/session, automatic owner
+workspace/membership, project/key UI, server membership authorization and scoped
+API/site-key contexts implemented. Provider-independent verification/reset tested;
+unconfigured actual delivery returns explicit 503, never simulated success.
+Secure local administrator recovery uses a hidden interactive TTY prompt.
 
+Final `npm run check`: **372 tests / 27 files PASS**; production build and rebuilt
+Playwright **14/14 PASS**, Docker package/migrations/type/lint/format/tracker PASS. Final staged
+secret scans/publication evidence lives privately in `.runtime/p3-auth/`.
+[P3 auth/tenancy report](reports/P3_AUTH_TENANCY.md) is the current continuation;
+[foundation report](reports/P3_TENANCY_FOUNDATION.md) is historical implementation evidence.
+
+**P3 IN PROGRESS / acceptance OPEN**, actual email delivery/setup OPEN; no production
+rollout. **P2 OPEN / G1 PENDING**, physical GPC, recovery, scheduled-proof and
+notification/dead-man/lifecycle items remain open. Independent development does
+not wait for backup evidence. Existing age identity/recovery credentials and
+active/enabled backup timer preserved. Production counts remain 1/1/0/0/0/0;
+protected runtime/env/units/nginx/plan match prior baseline. No paid service or
+external notification. Next work is separately authorized rollout/auth config,
+real transactional provider delivery and remaining acceptance proofs. This entry
+takes precedence over historical next steps below.
 
 **2026-10-04 local / 3 October 23:51 UTC — publication AssertionError RESOLVED / reverified.**
 The first `local == remote and clean` check failed only on cleanliness: this

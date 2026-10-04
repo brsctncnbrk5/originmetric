@@ -1,8 +1,24 @@
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
-import type { Executor } from "@/server/db/client";
-import { apiKeys, customerAttribution, customers, projects } from "@/server/db/schema";
+import type { Database, Executor } from "@/server/db/client";
+import {
+  apiKeys,
+  customerAttribution,
+  customers,
+  projects,
+  workspaceMembers,
+} from "@/server/db/schema";
 import { isInternalRequestAuthorized } from "@/server/internal/auth";
+import { identify, type IdentifyInput } from "@/server/identity/identify";
+import { recordRevenueEvent } from "@/server/revenue/service";
+import type { RevenueInput } from "@/server/revenue/validation";
+import {
+  findProjectBySiteKey,
+  recordBrowserEvent,
+  type IngestionProject,
+} from "@/server/ingestion/service";
+import type { BrowserEventInput } from "@/server/ingestion/validation";
+import { authenticateApiKey } from "@/server/tenancy/api-keys";
 import { createApiKey } from "@/server/tenancy/api-keys";
 import { validateProjectInput, type CreateProjectInput } from "@/server/tenancy/projects";
 import type { Clock } from "@/server/time/clock";
@@ -14,7 +30,15 @@ export interface AuthorizedProjectContext {
 }
 
 // No exported constructor, caller-supplied project ID, database, or mutable grant.
-const grants = new WeakMap<AuthorizedProjectContext, { db: Executor; projectId: string }>();
+const grants = new WeakMap<
+  AuthorizedProjectContext,
+  {
+    db: Executor;
+    projectId: string;
+    userId?: string;
+    ingress?: { db: Database; kind: "server" | "browser"; site?: IngestionProject };
+  }
+>();
 
 export class ProjectNotFound extends Error {
   readonly status = 404;
@@ -57,20 +81,78 @@ export async function authorizeInternalProject(
   return context;
 }
 
+/** Accept only the user identity resolved from a validated server session. */
+export async function authorizeProject(
+  db: Executor,
+  userId: string,
+  projectId: string,
+): Promise<AuthorizedProjectContext> {
+  if (!z.string().uuid().safeParse(projectId).success) throw new ProjectNotFound();
+  const [row] = await db
+    .select({ id: projects.id })
+    .from(projects)
+    .innerJoin(workspaceMembers, eq(workspaceMembers.workspaceId, projects.workspaceId))
+    .where(
+      and(
+        eq(projects.id, projectId),
+        isNull(projects.deletedAt),
+        eq(workspaceMembers.userId, userId),
+      ),
+    );
+  if (!row) throw new ProjectNotFound();
+  const context: AuthorizedProjectContext = Object.freeze({ [authorizedProject]: true as const });
+  grants.set(context, { db, projectId, userId });
+  return context;
+}
+
+/** Resolve ingress identities inside the data boundary; input cannot choose a project. */
+export async function authorizeServerKey(db: Database, authorization: string | null, clock: Clock) {
+  const key = await authenticateApiKey(db, authorization, clock);
+  if (!key) return null;
+  const context: AuthorizedProjectContext = Object.freeze({ [authorizedProject]: true as const });
+  grants.set(context, { db, projectId: key.projectId, ingress: { db, kind: "server" } });
+  return { context, projectId: key.projectId, prefix: key.prefix };
+}
+export async function authorizeSiteKey(db: Database, siteKey: string) {
+  const project = await findProjectBySiteKey(db, siteKey);
+  if (!project) return null;
+  const context: AuthorizedProjectContext = Object.freeze({ [authorizedProject]: true as const });
+  grants.set(context, {
+    db,
+    projectId: project.id,
+    ingress: { db, kind: "browser", site: project },
+  });
+  return { context, project };
+}
+
 /** Queries close over a server-issued grant; no method accepts a project ID. */
 export function forProject(context: AuthorizedProjectContext) {
   const grant = grants.get(context);
   if (!grant) throw new ProjectNotFound();
-  const { db, projectId } = grant;
+  const { db, projectId, userId, ingress } = grant;
   const activeProject = and(eq(projects.id, projectId), isNull(projects.deletedAt));
 
   async function requireActive() {
+    if (ingress) throw new ProjectNotFound();
+    if (userId) await authorizeProject(db, userId, projectId);
     const [project] = await db.select().from(projects).where(activeProject);
     if (!project) throw new ProjectNotFound();
     return project;
   }
 
   return Object.freeze({
+    async identify(input: IdentifyInput, clock: Clock) {
+      if (ingress?.kind !== "server") throw new ProjectNotFound();
+      return identify(ingress.db, projectId, input, clock);
+    },
+    async revenue(input: RevenueInput, clock: Clock) {
+      if (ingress?.kind !== "server") throw new ProjectNotFound();
+      return recordRevenueEvent(ingress.db, projectId, input, clock);
+    },
+    async browserEvent(input: BrowserEventInput, clock: Clock, dailyCap: number) {
+      if (ingress?.kind !== "browser" || !ingress.site) throw new ProjectNotFound();
+      return recordBrowserEvent(ingress.db, ingress.site, input, clock, dailyCap);
+    },
     project: requireActive,
     async customerRows() {
       await requireActive();
@@ -93,6 +175,7 @@ export function forProject(context: AuthorizedProjectContext) {
         .limit(100);
     },
     async update(input: Omit<CreateProjectInput, "workspaceId" | "workspaceName">, clock: Clock) {
+      await requireActive();
       const valid = validateProjectInput(input);
       const [project] = await db
         .update(projects)
@@ -103,6 +186,7 @@ export function forProject(context: AuthorizedProjectContext) {
       return project;
     },
     async delete(clock: Clock) {
+      await requireActive();
       const [project] = await db
         .update(projects)
         .set({ deletedAt: clock.now(), updatedAt: clock.now() })
@@ -143,6 +227,7 @@ export function forProject(context: AuthorizedProjectContext) {
       if (!key) throw new ProjectNotFound();
     },
     async rotateKey(keyId: string, clock: Clock) {
+      await requireActive();
       if (!z.string().uuid().safeParse(keyId).success) throw new ProjectNotFound();
       return db.transaction(async (tx) => {
         const [project] = await tx

@@ -1,5 +1,9 @@
 # P3 — Accounts, workspaces, projects, keys (tenancy): independent foundation
 
+**Historical foundation snapshot:** U1 OPEN and unfinished-auth statements below
+were superseded by owner D-011 and the [current P3 auth/tenancy report](P3_AUTH_TENANCY.md).
+P3 acceptance, email setup and P2 proofs remain OPEN.
+
 Date: 2026-10-04. **P3 IN PROGRESS; independent foundation COMPLETE / tested.**
 **P2 OPEN / acceptance pending; G1 PENDING.** Owner decision [D-010](../DECISIONS.md)
 authorizes continued development without waiting for backup evidence and supersedes

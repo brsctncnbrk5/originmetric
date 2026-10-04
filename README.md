@@ -120,3 +120,15 @@ tracker/            consent-aware browser tracker v0
 scripts/            tracker build + size gate
 tests/              unit, db (real PostgreSQL), e2e (Playwright)
 ```
+
+## P3 accounts (source implementation; production activation pending)
+
+Self-hosted Better Auth email/password is approved (D-011). `/sign-in` provides
+English account flows; `/dashboard` enforces validated sessions and workspace
+membership. Configure `BETTER_AUTH_URL` and a separate random `BETTER_AUTH_SECRET`
+securely before an authorized rollout and apply the reviewed migrations.
+No real email sender is configured: verification/reset requests explicitly fail
+with 503; they do not pretend to send messages. Local administrator recovery is
+`npm run auth:recover`, run as root in an interactive TTY without arguments;
+password entry is hidden and all sessions/reset tokens are revoked.
+[P3 implementation, tests and open acceptance](docs/reports/P3_AUTH_TENANCY.md).

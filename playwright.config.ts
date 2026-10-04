@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { defineConfig, devices } from "@playwright/test";
 
 const port = Number(process.env.E2E_PORT ?? 3100);
@@ -29,6 +30,8 @@ export default defineConfig({
     timeout: 60_000,
     env: {
       INTERNAL_TOKEN: internalToken,
+      BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET ?? randomBytes(32).toString("hex"),
+      BETTER_AUTH_URL: `http://127.0.0.1:${port}`,
       INGEST_PROXY_MODE: "local",
       // Isolated browser fixture only; production must use its registered public key.
       OM_DOGFOOD_SITE_KEY: "pk_DogfoodBrowserTest0001",

@@ -5,7 +5,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY package*.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
-RUN npm run build && npm run ops:build
+RUN npm run build && npm run ops:build && node scripts/build-auth-recovery.mjs
 
 FROM build AS production-dependencies
 RUN npm prune --omit=dev --no-audit --no-fund

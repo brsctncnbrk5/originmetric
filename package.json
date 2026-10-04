@@ -28,9 +28,11 @@
     "db:check": "drizzle-kit check",
     "check": "npm run lint && npm run format:check && npm run typecheck && npm run test && npm run tracker:build",
     "test:e2e": "npm run build && playwright test",
-    "demo": "npm run build && playwright test tests/e2e/vertical-slice.spec.ts --project=chromium"
+    "demo": "npm run build && playwright test tests/e2e/vertical-slice.spec.ts --project=chromium",
+    "auth:recover": "node scripts/build-auth-recovery.mjs && node dist/recover-password.mjs"
   },
   "dependencies": {
+    "better-auth": "1.7.7",
     "drizzle-orm": "0.45.3",
     "next": "16.3.6",
     "pino": "10.3.1",

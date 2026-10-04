@@ -40,6 +40,8 @@ services:
     environment:
       DATABASE_URL: ${DATABASE_URL:?Run init-env.sh first}
       INTERNAL_TOKEN: ${INTERNAL_TOKEN:?Run init-env.sh first}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-}
       INGEST_PROXY_TOKEN: ${INGEST_PROXY_TOKEN:?Run init-env.sh first}
       INGEST_PROXY_MODE: cloudflare
       OM_DOGFOOD_SITE_KEY: ${OM_DOGFOOD_SITE_KEY:-}
