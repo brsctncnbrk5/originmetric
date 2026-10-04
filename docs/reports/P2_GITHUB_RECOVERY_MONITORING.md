@@ -1,12 +1,13 @@
 # P2 — originmetric.app consent, GitHub recovery and dashboard monitoring
 
-**Current sequencing (2026-10-04): P2 OPEN / G1 PENDING; P3 IN PROGRESS under D-010.**
-The owner explicitly lifted the earlier “do not proceed to P3” restriction and
-instructed continuing independent development without waiting for backup proof.
-[Current P3 foundation and dependencies](P3_TENANCY_FOUNDATION.md). Historical
-“P3 NOT STARTED” statements below describe earlier evidence dates, not today's
-sequencing. Physical GPC stays OPEN, phone-independent recovery DEFERRED; current
-age key and working scheduler unchanged. No P2 acceptance criterion is waived.
+**Current sequencing (2026-10-04): P2 OPEN / G1 PENDING under D-013; existing P3
+implementation preserved / acceptance OPEN, no new P3 work.** D-010/D-011 authorized
+the earlier independent P3 development; D-013 supersedes its continuation next steps.
+[Latest corrected backup, pending phone restore, retention and P3 reconciliation](#corrected-backup-restore-dependency-and-canonical-retention-assessment--2026-10-04)
+supersedes older backup/next-step summaries at their exact evidence scopes. Historical
+“P3 NOT STARTED” statements describe earlier dates. Physical GPC stays OPEN,
+phone-independent recovery DEFERRED; current age key and working scheduler unchanged.
+No P2 acceptance criterion is waived.
 
 Date: 2026-10-02; Cloudflare/owner evidence, remote ZIP readback and concrete proposal updates: 2026-10-03. Local encryption/env preparation and documentation only; **no production redeploy, ingestion opening or scheduled external probe**; the authorized private draft ZIP transfer is recorded below. P2 remains open; P3 not started. This extends the installation report and records owner preference D-007, not acceptance of a new architecture.
 
@@ -1851,3 +1852,135 @@ unchanged; ten-table counts unchanged (events 1, sessions 1, ingestion_daily 1;
 workspaces/projects/api_keys 1 each; other four fact tables 0).
 **PUBLIC_G1_READY=no; G1 PENDING; P2 OPEN; installation work COMPLETE;
 independent user test PENDING; existing P3 work preserved, no new P3 work.**
+
+## Corrected backup, restore dependency and canonical retention assessment — 2026-10-04
+
+This is the current P2 backup follow-up. **New backup + independent remote
+integrity PASS; current DB/source migration correspondence PASS; actual restore
+PHONE REQUIRED / NOT RUN. P2 OPEN / G1 PENDING.** Missing decryption/restore,
+lifecycle or physical-browser evidence is not accepted. No new P3 implementation.
+
+### Exact new backup and retained historical snapshot
+
+| Evidence | Result |
+| --- | --- |
+| New manual backup | `om-db-v1-20261004T112104Z-dd7ce112`, Release **402984015**, captured **11:21:04 UTC**, verified **11:21:13.172108 UTC**. Scoped existing credential; private draft DB-only assets. This is manual, not a second scheduled-run proof. |
+| Corrected provenance | `source_sha=e74bfc1fcc6e404be977feee059dc1d3c78d170c`, verified running image before/after the consistent dump. All **4** actual production migration hashes/timestamps equal that commit's migration files/journal. Working checkout contains undeployed P3; it was not used as the recovery reference. |
+| New remote ciphertext | **33,236 B**, SHA-256 **`3142d05e640c93f017269b4d30740cb0fb4a7577517d252e00acbd3407b4f149`**. Fresh independent remote GET of both assets, exact size/hash/SHA256SUMS and API asset digest, age header, private/draft ownership and unchanged metadata/assets across download **PASS**. |
+| Existing scheduled ciphertext | Release **402803598**, `om-db-v1-20261004T031502Z-9ee17021`, **33,236 B**, hash **`23e8539e4cd19e9ff60ee5dc0917d3d12ee3f4b6e19a79ab8ab4ee403e0f716d`**. Independently downloaded again; hash/manifest/API digest/header **PASS**. Original remote metadata unchanged. |
+| Existing declared recovery reference | Original `eb3fad858ec4946bc30b4e31cc97b90361a56e00` expects **5** migrations including undeployed P3. It does **not** equal the actual four production migration records. Declared source/schema correspondence **FAIL**; archive restore itself **NOT RUN**, not an assumed restore failure or PASS. |
+| Actual restore | Neither ciphertext has been decrypted in this task. Existing private identity remains on the phone. New source correspondence does not prove decryptability, archive restore, row counts or relational integrity. Previous empty restore proves its historical snapshot only. |
+| Retention during this audit | New optional `--skip-retention` preserves older snapshots for comparison and explicitly reports `retention_applied=false`, **0 pruned / 1 deferred candidate** (402803598). This does not claim retention PASS. Existing daily timer/unit/default cleanup semantics unchanged. All existing remote objects remain: phone ZIP **402255166**, prior daily DB **402599302**, scheduled DB **402803598**, plus new DB. |
+
+Private ignored/root-only evidence: `.runtime/p2-backup-completion-20261004/`,
+including `before.json`, `after.json`, `readback.json`, both ciphertexts/manifests,
+and separate snapshot receiver evidence. Pre/post protected resources and ten
+production table counts exactly match: events/sessions/ingestion_daily **1/1/1**,
+workspaces/projects/api_keys **1/1/1**, customers/links/revenue/attribution **0/0/0/0**.
+No plaintext dump persisted. Production image/config/schema/gates unchanged;
+**PUBLIC_G1_READY=no**. Backup timer active/enabled; next **5 October 03:15 UTC**.
+The earlier next-run provenance PENDING is closed for this **new manual output**;
+next corrected scheduled output is still separately unaudited.
+
+### One phone action; acceptance stays pending
+
+Prepared private `phone-restore.sh` uses the already reported phone identity path
+and authenticated SSH connection. It downloads only the two verified ciphertexts
+and their manifests, checks phone hashes, then streams decryption to the existing
+network-none/tmpfs disposable receiver. No private key leaves the phone and no
+plaintext file is written. It runs three labelled checks:
+
+1. Old scheduled snapshot with its **original declared** five-migration reference:
+   expected nonzero receiver result; never relabelled PASS.
+2. The same old snapshot with a **separate local corrected recovery reference**
+   `e74bfc1`: original remote manifest unchanged. Success would establish recovery
+   using an explicit correction, not validate the defective original manifest.
+3. New corrected snapshot with its own declared four-migration reference.
+
+For successful checks require both decrypt/SSH-receiver exits zero, exact migration
+hashes/timestamps, ten-table schema/counts, 14 FK checks/zero orphans, protected
+resources unchanged and owned-container cleanup. The first nonzero result must
+specifically be migration mismatch after successful decrypt/restore, not an SSH
+or other infrastructure failure. Numeric phone exits are written privately for
+follow-up reconciliation; no actual exits/results yet exist. Counts include one
+real consent-test event/session but **no revenue chain**: even successful current
+snapshot restores will not close the separate populated-attribution restore proof.
+
+Phone step: substitute the previously successful SSH target for `VPS_HOST`:
+
+```bash
+OM_VPS='VPS_HOST'; bash <(ssh "$OM_VPS" 'cat /opt/originmetric/.runtime/p2-backup-completion-20261004/phone-restore.sh') "$OM_VPS"
+```
+
+Report only the final three labelled exit lines. Restore remains **OPEN / NOT
+PASSED** until actual evidence is reconciled. No new key or key rotation requested.
+
+### Retention delay versus canonical acceptance
+
+The first expiry run [37180284300](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37180284300)
+was configured for **03:45 UTC** and started **05:34:27 UTC**, **1 h 49 m 27 s late**.
+It executed successfully, with **0 expired candidates / 0 deletions**. Thus scheduled
+execution PASS is retained; actual expired-object removal is **NOT EXERCISED**.
+There is no observed >90-day object, so this is not evidence of an actual historical
+age-limit breach. It is evidence against treating the configured slot as a deadline.
+
+Canonical §21.2/§24 require the 7 daily / 4 weekly / 2 monthly policy, maximum
+90-day backup age and a bucket lifecycle backstop. Daily deletion of records only
+once they reach `>=90 days` can already leave one beyond the bound until the next
+run; queue delay adds to that interval. For this daily external workflow alone,
+a threshold crossed just after a slot can wait nearly 24 hours plus queue delay.
+GitHub documents delayed and potentially dropped scheduled jobs
+([official schedule semantics, checked 4 October](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule)).
+Running the expiry workflow outside the VPS helps when that host fails, but still
+depends on GitHub availability, account/credential access and schedule execution.
+It is not a provider bucket lifecycle rule, nor independent of GitHub failure.
+Therefore **strict <=90-day/lifecycle canonical acceptance OPEN / NOT PASSED**.
+No policy waiver or canonical plan change exists; a future concrete compliant
+backstop or explicit owner-approved criteria change must be resolved separately.
+Moving the cron earlier/more frequently alone cannot establish a strict guarantee.
+Actual backup-failure/missing-run delivery and independent dead-man remain OPEN.
+
+### What “existing P3 work preserved” means
+
+Commit **fb0dbcc** added scoped data/key foundations and a lint guard; commit
+**eb3fad8** added Better Auth accounts, sessions, automatic owner workspace/membership,
+project CRUD and site/server-key create/rotate/revoke UI, member-based authorization,
+API/site-key capability contexts, auth CSRF/origin/rate controls and secure local
+password-recovery CLI. Provider-independent reset/verification callbacks were tested
+in isolated recipient capture; no real email provider/delivery configured. Foundation
+checks **356/25**, later auth checks **372/27** and browser **14/14** are historical
+isolated validation, not new tests in this task. Full detail:
+[P3 auth report](P3_AUTH_TENANCY.md), [historical foundation](P3_TENANCY_FOUNDATION.md).
+D-012's installation guidance/source-check work in **7b2e58d** is also retained;
+its independent user test remains PENDING, P4 not DONE.
+
+**None of that P3/installation source is deployed.** Live application remains
+`e74bfc1`, with four P2 migrations and closed data gates; no production auth
+migration/account/UI rollout occurred. “Preserved” means commits and implemented
+source retained, not live delivery or phase acceptance. No P3 source was removed,
+reverted or extended during this P2 follow-up.
+
+This is compatible with canonical §28: P3 may depend on **P1b when deployment is
+delayed**, and U1 was selected under D-011. D-010/D-011 authorized prior independent
+source development without accepting P2. Tenant-suite/two-account fixture evidence
+supports the canonical P3 technical exit at isolated scope; it does not establish
+production tenant isolation or P2 go-live. Real email is an explicit D-011 addition,
+**not a newly invented canonical P3 exit requirement** (email flows are excluded
+from its locked scope). Current D-013 returns active work to **P2 OPEN / G1 PENDING**;
+P3 remains **existing implementation preserved / acceptance OPEN**, with no new work.
+
+### First concrete G1 owner step
+
+When a physical browser with native GPC is available, open
+[the GPC reference](https://global-privacy-control.vercel.app/) with its native GPC enabled
+and report **browser name + header signal / `navigator.globalPrivacyControl=true`**. Existing Android
+Chrome NOT_EXPOSED does not qualify; no repeat Chrome check or install request.
+If no suitable browser is available, physical proof stays OPEN. Then record
+actual `originmetric.app/dogfood` zero tracker storage/identifiers/request attempts
+before/after Allow, history navigation and reload. Closed ingestion suffices for
+this zero-send proof; no deployment/P3 rollout or traffic window needed.
+
+Checks this follow-up: backup **22**, status **4**, retention **3**, restore acceptance
+**6** = **35 targeted controls PASS**; shell syntax and production preservation PASS.
+Full application/remote CI and actual phone restore not claimed. Publication and
+secret-scan checks are recorded privately at handoff.

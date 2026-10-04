@@ -28,47 +28,51 @@
 
 ## Next step
 
-**2026-10-04 — P2 scheduled evidence and G1 continuation (D-013).**
-Installation ease work package **COMPLETE / isolated technical PASS**;
-independent user test **PENDING / setup time UNMEASURED**. P4 not DONE.
-This entry supersedes prior next-step sequencing: P2 is the active task;
-committed P3/Better Auth work is preserved, with no new P3 work or rollout.
+**2026-10-04 — Corrected P2 backup verified; real phone restore pending (D-013).**
+New manual snapshot **`om-db-v1-20261004T112104Z-dd7ce112`**, Release **402984015**,
+11:21:04 UTC, **33,236 B**, source **`e74bfc1fcc6e404be977feee059dc1d3c78d170c`**.
+SHA-256 **`3142d05e640c93f017269b4d30740cb0fb4a7577517d252e00acbd3407b4f149`**.
+Independent remote hash/manifest/API digest/header PASS; all four actual DB migration
+hashes/timestamps equal the declared deployed source. This is manual output;
+next corrected scheduled output is not yet audited. Backup timer remains enabled/active.
 
-First scheduled backup **PASS at execution/readback scope**: 03:15:00–03:15:12 UTC,
-remote ciphertext 33,236 B, matching SHA-256/manifest and age header, daily+weekly,
-0 pruned. First scheduled expiry **PASS at execution scope**:
-[37180284300](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37180284300),
-05:34:27 UTC versus configured 03:45 UTC; 0 expired/0 deleted/3 protected.
-Scheduled freshness [37179440970](https://github.com/brsctncnbrk5/originmetric-recovery/actions/runs/37179440970)
-PASS after backup. Sparse/delayed schedules do not prove hourly/five-minute
-coverage, actual failure delivery, independent dead-man or strict 90-day lifecycle.
+Existing scheduled snapshot **402803598** independently re-downloaded: integrity PASS,
+original five-migration source versus actual four remains **declared compatibility FAIL**.
+Actual archive restore **NOT RUN / PHONE REQUIRED** for both snapshots. Prepared one
+phone command tests old declared reference, explicit corrected local reference and
+new backup; original remote metadata remains unchanged. No missing proof counted PASS.
+One-event/session snapshot still cannot prove populated revenue-attribution restore.
 
-**Recovery provenance defect found and corrected for future backups:** scheduled
-manifest pins checkout `eb3fad8` (5 migrations), while deployed DB/app use `e74bfc1`
-(4 migrations). Historical manifest unchanged; **this snapshot's restore NOT RUN /
-compatibility NOT PASSED**. Backup now verifies the running image and deployed
-commit before/after dumping and records that source, refusing mismatch before
-upload/retention. Read-only actual image/source check PASS; next scheduled output
-must still be audited. Existing timer remains active/enabled; no manual backup,
-remote metadata write/deletion, decryption or key operation.
+Retention first scheduled execution PASS at **05:34:27 UTC**, **1 h 49 m 27 s late**
+versus 03:45; **0 expired / 0 deleted**. Actual expiry deletion unexercised and strict
+<=90-day/provider lifecycle guarantee **OPEN / NOT PASSED**. Daily threshold cleanup
+plus delayed/dropped GitHub jobs cannot supply that canonical backstop. New manual
+backup used explicit `--skip-retention`: **0 pruned / 1 deferred candidate**, older
+scheduled snapshot and all existing remote objects retained for restore comparison.
+Default scheduled cleanup/unit/time unchanged; no retention acceptance waiver.
 
-Fresh deployed-image G1 technical controls and full isolated chain **PASS**:
-98 tests / 9 files; 14 FKs, zero orphans, semantic restore and four tamper controls.
-Backup/status/retention/restore checks **34 tests PASS**. Physical native GPC
-**OPEN / NOT PASSED**; G1/1 operator PASS and owner banner acceptance retained;
-G1/3–6 refreshed technical PASS, Cloudflare direct API/export limit explicit.
-Production remains 1 event / 1 session / 0 customers, links, revenue, attribution;
-protected env/nginx/units/container state unchanged; `PUBLIC_G1_READY=no`.
+**“Existing P3 work preserved”** means committed scoped data/lint/key foundation
+(`fb0dbcc`) and Better Auth/session/workspace/member/project/key UI and auth controls
+(`eb3fad8`) retained, with historical isolated two-account tests. **Not deployed**:
+live app stays `e74bfc1` / four P2 migrations. D-010/D-011 development was compatible
+with canonical P3's P1b fallback when deployment is delayed and locked U1; it did not
+accept P2. P3 technical fixture evidence retained; acceptance OPEN, no new P3 work.
+Real email is a separately authorized addition, not a canonical P3 exit requirement.
+Installation package remains isolated technical COMPLETE; independent user test
+PENDING / time UNMEASURED; P4 not DONE.
 
-Next: obtain native true GPC/actual-site zero-storage/send evidence when a suitable
-physical browser is available; then separately review any bounded production-chain
-scope. No repeat Chrome/banner request. Current deployment suffices for these
-checks; no P3 deployment required. Concrete future scope and rollback:
-[P2 runbook](runbooks/P2_DOGFOOD_ACCEPTANCE.md#p2-continuation-scope-and-rollback--2026-10-04).
-[Scheduled audit, G1 outcomes and handoff](reports/P2_GITHUB_RECOVERY_MONITORING.md#first-scheduled-backup-retention-and-g1-continuation--2026-10-04).
-**G1 PENDING; P2 OPEN; independent user test PENDING; no P3 continuation.**
+Production resources/counts unchanged, closed gates, **PUBLIC_G1_READY=no**.
+Targeted recovery controls **35 PASS**; actual phone restore, physical native GPC,
+production attribution chain, populated encrypted-chain restore, backup-failure/
+missing-run delivery, independent dead-man and lifecycle conditions remain OPEN.
+Phone-independent recovery DEFERRED. **P2 OPEN / G1 PENDING / P3 preserved.**
 
-
+First G1 owner step: when a native-GPC physical browser is available, open
+https://global-privacy-control.vercel.app/ with native GPC enabled and report
+**browser name + header signal / navigator.globalPrivacyControl=true**. Then actual-site zero-storage/zero-send evidence.
+Existing Chrome NOT_EXPOSED is retained; no repeat check/install or new traffic window.
+[New backup, phone command, retention and P3 reconciliation](reports/P2_GITHUB_RECOVERY_MONITORING.md#corrected-backup-restore-dependency-and-canonical-retention-assessment--2026-10-04).
+[Concrete G1 continuation/rollback](runbooks/P2_DOGFOOD_ACCEPTANCE.md#p2-continuation-scope-and-rollback--2026-10-04).
 
 **2026-10-04 — Installation ease work package (D-012): isolated technical PASS;
 independent customer setup time UNMEASURED.** Canonical phases unchanged, P4 not

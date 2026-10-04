@@ -190,7 +190,7 @@ def deployed_source():
         raise BackupError('Deployed source/image not verified; no upload/retention') from None
 
 
-def backup(gh, work, previous_size=None):
+def backup(gh, work, previous_size=None, skip_retention=False):
     source_sha = deployed_source()
     now = dt.datetime.now(UTC).replace(microsecond=0)
     snapshot = 'om-db-v1-' + now.strftime('%Y%m%dT%H%M%SZ') + '-' + uuid.uuid4().hex[:8]
@@ -252,11 +252,15 @@ dc exec -T db pg_dump -U originmetric -d originmetric -Fc --no-owner --no-acl | 
     m['verified_at'] = dt.datetime.now(UTC).isoformat()
     gh.api(f'repos/{REPO}/releases/{rid}', 'PATCH', {'tag_name': snapshot, 'draft': True, 'body': json.dumps(m, sort_keys=True)})
     final = gh.api(f'repos/{REPO}/releases/{rid}')
-    return finish(gh, rid, m, final['html_url'])
+    return finish(gh, rid, m, final['html_url'], skip_retention=skip_retention)
 
 
-def finish(gh, rid, m, url):
+def finish(gh, rid, m, url, skip_retention=False):
     candidates = retention(gh.releases(), dt.datetime.now(UTC), rid)
+    if skip_retention:
+        return dict(m, release_id=rid, url=url, pruned=0,
+                    retention_applied=False, retention_deferred_candidates=len(candidates),
+                    result='BACKUP_CREATED_REMOTE_READBACK_VERIFIED', restore_verified=False)
     for old in candidates:
         gh.private()
         fresh = gh.api(f'repos/{REPO}/releases/{old["id"]}')
@@ -312,7 +316,11 @@ def main():
     parser.add_argument('--already-locked', action='store_true',
                         help='Deployment only: require inherited fd 9 for the exact operation lock')
     parser.add_argument('--verify-existing-snapshot', help='Exact owned snapshot name; reverify ciphertext, then safe retention')
+    parser.add_argument('--skip-retention', action='store_true',
+                        help='One-time new backup: preserve older snapshots for restore audit; cleanup is deferred')
     args = parser.parse_args()
+    if args.skip_retention and args.verify_existing_snapshot:
+        parser.error('--skip-retention requires a new backup')
     os.umask(0o077)
     state = ROOT / '.runtime/github-db'
     state.mkdir(parents=True, exist_ok=True, mode=0o700)
@@ -350,7 +358,8 @@ def main():
                     pass
             with tempfile.TemporaryDirectory(prefix='snapshot-', dir=state) as folder:
                 result = (verify_existing(gh, args.verify_existing_snapshot, Path(folder))
-                          if args.verify_existing_snapshot else backup(gh, Path(folder), previous_size))
+                          if args.verify_existing_snapshot else backup(gh, Path(folder), previous_size,
+                                                                       skip_retention=args.skip_retention))
             target = state / 'last-backup.json'
             tmp = state / 'last-backup.json.tmp'
             tmp.write_text(json.dumps(result, indent=2) + '\n')

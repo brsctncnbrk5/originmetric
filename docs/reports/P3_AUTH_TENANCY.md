@@ -1,5 +1,18 @@
 # P3 — Accounts, workspaces, projects, keys (tenancy)
 
+**Current sequencing clarification — 2026-10-04 / D-013:** active work is P2;
+existing P3 implementation **PRESERVED / acceptance OPEN**, with no new P3 work.
+“Preserved” refers to committed foundation `fb0dbcc` and auth/tenancy `eb3fad8`:
+all features and isolated validation described below remain in source. **None is
+production-deployed**; live app remains `e74bfc1` and its four P2 migrations.
+Canonical §28 permits the P1b dependency fallback when deployment is delayed;
+D-010/D-011 authorized that previous development and selected U1. This does not
+accept P2/G1 or claim production tenant isolation. Email preparation was an explicit
+D-011 addition, not a canonical P3 exit condition. [Detailed P3 scope and P2 backup
+reconciliation](P2_GITHUB_RECOVERY_MONITORING.md#corrected-backup-restore-dependency-and-canonical-retention-assessment--2026-10-04).
+The implementation/test account below is historical evidence; its continuation
+language is superseded by D-013, without removing or reverting any source.
+
 2026-10-04. Implementation and isolated technical validation complete; **P3 IN
 PROGRESS / acceptance OPEN**, **P2 OPEN / G1 PENDING**. No production deployment.
 Owner [D-011](../DECISIONS.md) locks U1 to self-hosted Better Auth email/password,

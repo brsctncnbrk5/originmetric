@@ -177,6 +177,17 @@ class ChainTests(unittest.TestCase):
         self.assertEqual(gh.deleted, [])
         self.assertEqual(json.loads(gh.release['body'])['state'], 'pending')
 
+    def test_audit_backup_preserves_old_snapshot_and_reports_deferred_retention(self):
+        gh = FakeGitHub()
+        with tempfile.TemporaryDirectory() as folder, patch.object(b.subprocess, 'run', self.dump):
+            result = b.backup(gh, Path(folder), skip_retention=True)
+        self.assertEqual(result['state'], 'verified')
+        self.assertFalse(result['restore_verified'])
+        self.assertFalse(result['retention_applied'])
+        self.assertEqual(result['retention_deferred_candidates'], 1)
+        self.assertEqual(result['pruned'], 0)
+        self.assertEqual(gh.deleted, [])
+
     def test_dump_failure_does_not_create_release(self):
         gh = FakeGitHub()
         class Failed:
