@@ -1,9 +1,13 @@
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import type { Database, Executor } from "@/server/db/client";
 import {
   apiKeys,
   customerAttribution,
+  customerVisitors,
+  events,
+  revenueEvents,
+  sessions,
   customers,
   projects,
   workspaceMembers,
@@ -154,6 +158,114 @@ export function forProject(context: AuthorizedProjectContext) {
       return recordBrowserEvent(ingress.db, ingress.site, input, clock, dailyCap);
     },
     project: requireActive,
+    async installationStatus() {
+      await requireActive();
+      // Latest retained tracker fact and latest TEST payment; never infer receipt from HTTP 202.
+      const [tracker] = await db
+        .select({ receivedAt: events.receivedAt })
+        .from(events)
+        .where(eq(events.projectId, projectId))
+        .orderBy(desc(events.receivedAt))
+        .limit(1);
+      const [payment] = await db
+        .select({
+          eventId: revenueEvents.eventId,
+          receivedAt: revenueEvents.receivedAt,
+          amount: revenueEvents.amountMinor,
+          currency: revenueEvents.currency,
+          status: customerAttribution.status,
+          source: customerAttribution.creditedSource,
+          campaign: customerAttribution.creditedCampaign,
+          sessionId: sessions.id,
+          linkedVisitor: customerVisitors.visitorId,
+        })
+        .from(revenueEvents)
+        .innerJoin(
+          customers,
+          and(
+            eq(customers.projectId, revenueEvents.projectId),
+            eq(customers.id, revenueEvents.customerId),
+            isNull(customers.deletedAt),
+          ),
+        )
+        .leftJoin(
+          customerAttribution,
+          and(
+            eq(customerAttribution.projectId, revenueEvents.projectId),
+            eq(customerAttribution.customerId, revenueEvents.customerId),
+          ),
+        )
+        .leftJoin(
+          sessions,
+          and(
+            eq(sessions.projectId, revenueEvents.projectId),
+            eq(sessions.id, customerAttribution.creditedSessionId),
+          ),
+        )
+        .leftJoin(
+          customerVisitors,
+          and(
+            eq(customerVisitors.projectId, revenueEvents.projectId),
+            eq(customerVisitors.customerId, revenueEvents.customerId),
+            eq(customerVisitors.visitorId, sessions.visitorId),
+          ),
+        )
+        .where(
+          and(
+            eq(revenueEvents.projectId, projectId),
+            eq(revenueEvents.test, true),
+            eq(revenueEvents.type, "payment"),
+          ),
+        )
+        .orderBy(desc(revenueEvents.receivedAt), desc(revenueEvents.id))
+        .limit(1);
+      let reason = "no_test_payment";
+      if (payment) {
+        const [link] = await db
+          .select({ visitorId: customerVisitors.visitorId })
+          .from(customerVisitors)
+          .innerJoin(
+            revenueEvents,
+            and(
+              eq(revenueEvents.projectId, customerVisitors.projectId),
+              eq(revenueEvents.customerId, customerVisitors.customerId),
+            ),
+          )
+          .where(
+            and(
+              eq(customerVisitors.projectId, projectId),
+              eq(revenueEvents.eventId, payment.eventId),
+            ),
+          )
+          .limit(1);
+        reason = !link
+          ? "missing_visitor_link"
+          : !payment.sessionId || !payment.linkedVisitor
+            ? "no_eligible_session"
+            : payment.status === "direct"
+              ? "direct_visit"
+              : payment.status === "attributed"
+                ? "matched"
+                : "no_eligible_session";
+      }
+      return {
+        trackerReceivedAt: tracker?.receivedAt.toISOString() ?? null,
+        revenueReceivedAt: payment?.receivedAt.toISOString() ?? null,
+        sourceMatched: reason === "matched",
+        reason,
+        // No customer/visitor identifiers or secrets in the checklist.
+        payment: payment
+          ? {
+              eventId: payment.eventId,
+              amount: payment.amount.toString(),
+              currency: payment.currency,
+              source: payment.source,
+              campaign: payment.campaign,
+              status: payment.status,
+            }
+          : null,
+      };
+    },
     async customerRows() {
       await requireActive();
       return db

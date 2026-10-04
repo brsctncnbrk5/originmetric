@@ -28,6 +28,32 @@
 
 ## Next step
 
+
+**2026-10-04 — Installation ease work package (D-012): isolated technical PASS;
+independent customer setup time UNMEASURED.** Canonical phases unchanged, P4 not
+DONE; P2/G1 and P3 acceptance remain OPEN. Better Auth committed work preserved,
+real email delivery/rollout still OPEN. Project-specific tracker copying, English
+visitor/customer guide, downloadable Node server test-payment example and scoped
+real-data checks implemented. Latest TEST payment must have its own credited
+session/trusted visitor link; newer unmatched test removes earlier green state.
+No server secret in tracker/guide. Full checks 378 tests / 28 files PASS; build and
+Playwright 15/15 PASS; fresh isolated demo 1/1 PASS, including executable CLI.
+Consent→tracker 199.64 ms, consent→matched read 643.00 ms, page→UI 4848.64 ms
+are automated fixture latencies, not customer install time. GA4/PostHog reviewed
+through current official docs only; no comparative setup times or superiority
+claim. Report: [INSTALLATION_EASE](reports/INSTALLATION_EASE.md).
+
+Next product-validation action: one unfamiliar developer follows the
+[English independent test](runbooks/INSTALLATION_TEST.md) on prepared isolated SaaS,
+records unassisted total time, steps/files/LOC, mistakes and correction ability;
+then repeat with five relevant developers. **≤15 minutes remains a hypothesis.**
+Source changes are not deployed. Production counts 1/1/0/0/0/0, closed gates,
+protected configs/plan/container state and active/enabled GitHub backup timer
+preserved; existing age key/recovery arrangement untouched. No paid service, new
+SDK/native integration or live test data. See report for handoff and remaining
+limits. This entry is current; the Better Auth configuration work below remains
+open and preserved.
+
 **2026-10-04 — D-011: Better Auth email/password approved; P3 implementation tested.**
 U1 LOCKED; corporate email purchase deferred, U3 transactional provider OPEN.
 Canonical §28 P3 scope remains unchanged. English auth/session, automatic owner

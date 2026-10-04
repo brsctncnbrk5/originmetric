@@ -43,7 +43,11 @@ export async function accountHttp(request: Request, id?: string) {
     const data = await accountProject(request.headers, id);
     if (!data) throw new ProjectNotFound();
     if (request.method === "GET")
-      return reply({ project: await data.project(), keys: await data.keys() });
+      return reply({
+        project: await data.project(),
+        keys: await data.keys(),
+        installation: await data.installationStatus(),
+      });
     const input = mutation.parse(
       JSON.parse(new TextDecoder().decode(await readBoundedBody(request, 16384))),
     );

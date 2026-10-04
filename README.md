@@ -132,3 +132,14 @@ with 503; they do not pretend to send messages. Local administrator recovery is
 `npm run auth:recover`, run as root in an interactive TTY without arguments;
 password entry is hidden and all sessions/reset tokens are revoked.
 [P3 implementation, tests and open acceptance](docs/reports/P3_AUTH_TENANCY.md).
+
+## Installation ease experiment (source only; production activation pending)
+
+Project pages provide a copyable public tracker, real-data test-revenue/source
+checks and an [English visitor-to-customer guide](src/app/installation/page.tsx).
+The [server example](public/examples/revenue.mjs) uses Node built-in fetch and
+server-only env; it always sends test payments. `npm run installation:demo` creates
+and removes a fresh loopback fixture; requirements are Node 22+, Docker, installed
+dependencies and Chromium. This automated demo measures latency, not customer
+installation time. [Findings](docs/reports/INSTALLATION_EASE.md) and
+[independent participant test](docs/runbooks/INSTALLATION_TEST.md).

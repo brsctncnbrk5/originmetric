@@ -106,3 +106,23 @@ Format: `D-NNN | date | decision | why | alternatives rejected | supersedes`.
 - **Email:** No corporate email package purchase now. U3 transactional provider remains OPEN. Missing real delivery must be explicit; never claim a message was sent without delivery.
 - **Constraints:** No paid service, production rollout or gate opening. Preserve age identity, recovery credentials and working scheduler. P2 evidence and P3 acceptance stay OPEN until actually satisfied.
 - **Supersedes:** D-010's U1 OPEN restriction only; locked plan and acceptance remain unchanged.
+
+### D-012 | 2026-10-04 | Installation ease as a separate authorized MVP work package
+
+- **Owner instruction:** Measure the isolated UTM → signup → server test payment →
+  visitor/customer → source-revenue chain, compare current official GA4/PostHog
+  requirements and simplify setup inside the existing MVP.
+- **Decision:** Implement project snippets, runnable existing-API server example,
+  short English identity guide, real-data scoped setup checks and actionable missing
+  match feedback. Record applied latencies separately from customer installation
+  time and competitor document review. Prepare an independent unassisted test.
+- **Boundary:** This overlaps canonical P4 onboarding work but does not renumber,
+  redefine or accept any phase. P2/G1/P3 acceptance remains OPEN; P4 not DONE. Keep
+  existing consent-required/GPC behaviour; no auto-mode default or production U7
+  rollout implied. Fifteen minutes is an experiment target, not a marketing promise.
+- **Constraints:** Disposable loopback synthetic data only; no production rollout,
+  live test writes, payment integrations, new SDK/paid service, secret browser key,
+  age-key/recovery/scheduler changes. Preserve committed Better Auth and open email
+  delivery work. Commit/push to the assigned existing branch and verify remote SHA.
+- **Evidence:** [Installation ease report](reports/INSTALLATION_EASE.md) and
+  [independent test protocol](runbooks/INSTALLATION_TEST.md).
