@@ -1855,10 +1855,11 @@ independent user test PENDING; existing P3 work preserved, no new P3 work.**
 
 ## Corrected backup, restore dependency and canonical retention assessment — 2026-10-04
 
-This is the current P2 backup follow-up. **New backup + independent remote
-integrity PASS; current DB/source migration correspondence PASS; actual restore
-PHONE REQUIRED / NOT RUN. P2 OPEN / G1 PENDING.** Missing decryption/restore,
-lifecycle or physical-browser evidence is not accepted. No new P3 implementation.
+This section records preparation before the phone run. Its PHONE REQUIRED / NOT
+RUN state is superseded by [the verified phone/VPS confirmation below](#phonevps-restore-confirmation--2026-10-04).
+New backup/independent remote integrity and current DB/source correspondence PASS
+remain valid; lifecycle and physical-browser evidence remain OPEN. P2 OPEN / G1
+PENDING; no new P3 implementation.
 
 ### Exact new backup and retained historical snapshot
 
@@ -1984,3 +1985,96 @@ Checks this follow-up: backup **22**, status **4**, retention **3**, restore acc
 **6** = **35 targeted controls PASS**; shell syntax and production preservation PASS.
 Full application/remote CI and actual phone restore not claimed. Publication and
 secret-scan checks are recorded privately at handoff.
+
+
+## Phone/VPS restore confirmation — 2026-10-04
+
+**PHONE_EXIT_PENDING RESOLVED: two real snapshot restore checks PASS; original
+scheduled declared-source validation FAIL. P2 OPEN / G1 PENDING. Populated
+revenue/attribution restore OPEN / NOT PASSED.** This confirmation supersedes the
+phone-required/not-run statements in the preceding preparation section only for
+these exact streams and snapshots.
+
+The owner's three labelled exit lines exactly match the numeric exits persisted
+by `phone-restore.sh` on the VPS. Phone decryption exits/hash checks are phone-side
+script and owner evidence; archive/schema/migration/count/FK/cleanup checks are
+independently inspected VPS evidence. Each match uses the exact snapshot name,
+ciphertext SHA-256, source commit and selected snapshot-reference file, as well as
+the distinct receiver execution time. Synthetic receiver tests are excluded.
+
+| Check | Exact snapshot / reference | Phone decrypt / receiver exit | VPS receiver and final outcome |
+| --- | --- | --- | --- |
+| `scheduled-declared` | `om-db-v1-20261004T031502Z-9ee17021`, Release **402803598**; original declared `eb3fad858ec4946bc30b4e31cc97b90361a56e00` | **0 / 1** | `.runtime/restore-phone-rnhiwb36/result.json`, **11:45:44–11:45:52 UTC**. PostgreSQL archive restore exit **0**; exact migration validation failed. **FAIL / restore_verified=false**. |
+| `scheduled-corrected` | Same scheduled ciphertext; explicit local reference `e74bfc1fcc6e404be977feee059dc1d3c78d170c` | **0 / 0** | `.runtime/restore-phone-9jbknag6/result.json`, **11:46:53–11:47:05 UTC**. **PASS / restore_verified=true** for recovery with this correction only. |
+| `corrected` | `om-db-v1-20261004T112104Z-dd7ce112`, Release **402984015**; own declared `e74bfc1fcc6e404be977feee059dc1d3c78d170c` | **0 / 0** | `.runtime/restore-phone-vg1q915d/result.json`, **11:47:24–11:47:36 UTC**. **PASS / restore_verified=true** for this new manual snapshot. |
+
+Scheduled ciphertext hash:
+`23e8539e4cd19e9ff60ee5dc0917d3d12ee3f4b6e19a79ab8ab4ee403e0f716d`.
+New manual ciphertext hash:
+`3142d05e640c93f017269b4d30740cb0fb4a7577517d252e00acbd3407b4f149`.
+The earlier independent remote integrity/manifest/API digest/header PASS is retained.
+The new manual result does not prove corrected provenance for a future scheduled run.
+
+For **each successful real stream**, independently checked:
+
+- PostgreSQL restore exit **0**, database checks complete, no failure field.
+- **10-table schema match**, all **4 migration hashes/timestamps exactly match**
+  the selected source reference, and all ten counts match pre-backup evidence.
+- **14 foreign keys checked / 0 orphan rows**, with all 14 per-constraint counts zero.
+- Network-none/tmpfs disposable receiver, no published ports; no production SQL
+  issued by the receiver, cleanup true and protected resources unchanged.
+- Fresh read-only production counts/protected metadata equal the preceding audit;
+  all three owned restore containers absent; backup timer still active/enabled.
+
+### Original scheduled source mismatch remains FAIL
+
+Original metadata declared **`eb3fad8` / 5 migrations**, including undeployed P3;
+restored production has **4 migrations** corresponding to deployed **`e74bfc1`**.
+The first stream successfully decrypted and restored the PostgreSQL archive, then
+failed at `migration_schema_validation` with
+`Restored migration hashes/timestamps differ from snapshot source`.
+Its nonzero exit is therefore an actual source-validation failure, not a connection
+failure. Expected rejection confirms detection; **the failed check is not PASS**.
+The corrected-reference success proves recoverability under an explicit local
+correction; it does not validate or rewrite the original remote manifest.
+
+Separate private record:
+`.runtime/p2-backup-completion-20261004/declared-source-mismatch.json`.
+Original receiver `result.json`, snapshot evidence and remote metadata remain
+unchanged. Each receiver directory now has a `verification.json` carrying the
+final phone/VPS outcome and SHA-256 of the original receiver and phone-exit files.
+These authoritative confirmation records resolve the two historical
+`ISOLATED_DB_CHECKS_COMPLETE_PHONE_EXIT_PENDING` states without erasing their
+pre-confirmation provenance. The failed receiver also has a confirmation retaining
+FAIL. Consolidated evidence:
+`.runtime/p2-backup-completion-20261004/phone-reconciliation.json`;
+fresh protected/count/timer capture: `phone-confirmation.json` in that directory.
+
+### Revenue/attribution boundary and next open P2/G1 step
+
+Both successful restores have **events=1, sessions=1, customers=0,
+customer_visitors=0, revenue_events=0, customer_attribution=0**; latest revenue is
+`NO_REVENUE_ROWS`. Zero orphan rows for empty revenue/customer tables cannot prove
+a populated attribution chain, its amounts, linked refunds or freshness.
+**Actual production visit → trusted identify → revenue → attribution and its
+populated encrypted phone restore remain OPEN / NOT PASSED.** Earlier isolated
+full-chain fixture PASS remains isolated evidence only.
+
+Next G1 acceptance step remains **physical native GPC evidence (canonical item 2)**:
+when a suitable physical browser is available, record its name and native reference
+header signal / `navigator.globalPrivacyControl=true`, then demonstrate actual-site
+zero tracker storage/identifiers/request attempts after Allow, history and reload.
+Existing Android Chrome NOT_EXPOSED remains; availability is still missing, so no
+repeat Chrome check or installation is requested. This zero-send check needs no
+new ingestion window. Formal G1 stays PENDING before full production-chain work.
+Closed gates and **PUBLIC_G1_READY=no** remain verified. Separate P2 gaps remain:
+corrected scheduled output audit; backup-failure/missing-run delivery; independent
+dead-man; actual expired-object deletion and strict <=90-day/provider lifecycle
+backstop. Phone-independent recovery remains DEFERRED. Existing P3/installation
+work preserved; no new P3 work or acceptance claim.
+
+Validation for this evidence-only update: all three phone/server/reference matches,
+required successful-check fields, exact failure cause, historical-file hashes,
+fresh cleanup and protected-resource/count/timer checks PASS. No new application
+suite or remote CI result is claimed. Commit/push and remote SHA verification are
+recorded privately at publication handoff.

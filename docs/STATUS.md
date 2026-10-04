@@ -28,20 +28,31 @@
 
 ## Next step
 
-**2026-10-04 — Corrected P2 backup verified; real phone restore pending (D-013).**
-New manual snapshot **`om-db-v1-20261004T112104Z-dd7ce112`**, Release **402984015**,
-11:21:04 UTC, **33,236 B**, source **`e74bfc1fcc6e404be977feee059dc1d3c78d170c`**.
-SHA-256 **`3142d05e640c93f017269b4d30740cb0fb4a7577517d252e00acbd3407b4f149`**.
-Independent remote hash/manifest/API digest/header PASS; all four actual DB migration
-hashes/timestamps equal the declared deployed source. This is manual output;
-next corrected scheduled output is not yet audited. Backup timer remains enabled/active.
+**2026-10-04 — Phone/VPS restore results reconciled (D-013): two snapshot
+checks PASS; old declared-source validation FAIL. P2 OPEN / G1 PENDING.**
 
-Existing scheduled snapshot **402803598** independently re-downloaded: integrity PASS,
-original five-migration source versus actual four remains **declared compatibility FAIL**.
-Actual archive restore **NOT RUN / PHONE REQUIRED** for both snapshots. Prepared one
-phone command tests old declared reference, explicit corrected local reference and
-new backup; original remote metadata remains unchanged. No missing proof counted PASS.
-One-event/session snapshot still cannot prove populated revenue-attribution restore.
+| Phone check | Exits decrypt / restore | Verified outcome |
+| --- | --- | --- |
+| `scheduled-declared` | **0 / 1** | **FAIL**: old scheduled snapshot's original `eb3fad8` reference expects 5 migrations; archive contains 4. PostgreSQL restore itself exited 0; validation failed on exact migration hashes/timestamps. |
+| `scheduled-corrected` | **0 / 0** | **PASS for this snapshot with explicit local `e74bfc1` correction only**. Original remote manifest remains defective and unchanged. |
+| `corrected` | **0 / 0** | **PASS for new manual snapshot with its own declared `e74bfc1` reference**. |
+
+Scheduled snapshot **`om-db-v1-20261004T031502Z-9ee17021`**, Release **402803598**,
+SHA-256 **`23e8539e4cd19e9ff60ee5dc0917d3d12ee3f4b6e19a79ab8ab4ee403e0f716d`**.
+New manual snapshot **`om-db-v1-20261004T112104Z-dd7ce112`**, Release **402984015**,
+SHA-256 **`3142d05e640c93f017269b4d30740cb0fb4a7577517d252e00acbd3407b4f149`**.
+Each **33,236 B**; independent remote integrity PASS retained. Successful real phone
+streams match exact snapshot/hash/source and recorded phone exits: ten-table schema
+match, **4** exact migrations, **14 FKs / 0 orphans**, exact ten-table row counts,
+cleanup and production preservation PASS. Pending phone results are now resolved
+in separate verification records; original receiver JSON remains historical.
+Declared-source mismatch is separately recorded and stays FAIL.
+
+Both restored snapshots contain **events=1, sessions=1, customers=0,
+revenue_events=0** (links/attribution also 0). **Populated revenue/attribution
+restore OPEN / NOT PASSED**; current snapshot PASS cannot close it or the actual
+production full-chain test. Corrected scheduled output is still separately
+unaudited; the corrected manual snapshot is not scheduled-run proof.
 
 Retention first scheduled execution PASS at **05:34:27 UTC**, **1 h 49 m 27 s late**
 versus 03:45; **0 expired / 0 deleted**. Actual expiry deletion unexercised and strict
@@ -62,8 +73,9 @@ Installation package remains isolated technical COMPLETE; independent user test
 PENDING / time UNMEASURED; P4 not DONE.
 
 Production resources/counts unchanged, closed gates, **PUBLIC_G1_READY=no**.
-Targeted recovery controls **35 PASS**; actual phone restore, physical native GPC,
-production attribution chain, populated encrypted-chain restore, backup-failure/
+Prior targeted recovery controls **35 PASS** retained; matched phone/VPS checks
+verified as above. Physical native GPC, production attribution chain, populated
+encrypted-chain restore, backup-failure/
 missing-run delivery, independent dead-man and lifecycle conditions remain OPEN.
 Phone-independent recovery DEFERRED. **P2 OPEN / G1 PENDING / P3 preserved.**
 
@@ -71,7 +83,7 @@ First G1 owner step: when a native-GPC physical browser is available, open
 https://global-privacy-control.vercel.app/ with native GPC enabled and report
 **browser name + header signal / navigator.globalPrivacyControl=true**. Then actual-site zero-storage/zero-send evidence.
 Existing Chrome NOT_EXPOSED is retained; no repeat check/install or new traffic window.
-[New backup, phone command, retention and P3 reconciliation](reports/P2_GITHUB_RECOVERY_MONITORING.md#corrected-backup-restore-dependency-and-canonical-retention-assessment--2026-10-04).
+[Verified phone/VPS outcomes and remaining acceptance](reports/P2_GITHUB_RECOVERY_MONITORING.md#phonevps-restore-confirmation--2026-10-04).
 [Concrete G1 continuation/rollback](runbooks/P2_DOGFOOD_ACCEPTANCE.md#p2-continuation-scope-and-rollback--2026-10-04).
 
 **2026-10-04 — Installation ease work package (D-012): isolated technical PASS;
