@@ -236,3 +236,13 @@ range. Compare actual GA4/PostHog runs under equal prerequisites before making a
 speed/effort claim. No ready payment integrations/new SDK/paid service are needed
 for this next experiment; framework/provider recipes may be proposed later only
 if observed participant failures justify them.
+
+### Publication handoff
+
+Implementation/report commit `7b2e58d` pushed to the assigned branch. The first
+push returned 403 because the shell's default GitHub account lacked repo write
+access; retry used the **existing scoped** `.runtime/github-auth` configuration.
+No global account switch or backup credential change. This documentation note
+follows in its own commit; final local/remote SHA and clean-tree audit are saved in
+`.runtime/installation-ease/publication.json`. Local checks are PASS; remote CI
+results have not been claimed. Live deployment remains unchanged.
